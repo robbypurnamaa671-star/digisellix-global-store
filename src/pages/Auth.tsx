@@ -1,43 +1,61 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingBag } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { user, userRole, signIn, signUp } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (user && userRole) {
+      if (userRole === "seller") {
+        navigate("/seller/dashboard");
+      } else if (userRole === "buyer") {
+        navigate("/buyer/dashboard");
+      } else if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      }
+    }
+  }, [user, userRole, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Placeholder for authentication
-    setTimeout(() => {
-      toast({
-        title: "Cloud Required",
-        description: "Please enable Lovable Cloud to use authentication features.",
-      });
-      setIsLoading(false);
-    }, 1000);
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const { error } = await signIn(email, password);
+    
+    if (!error) {
+      // Navigation will happen via useEffect above
+    }
+    
+    setIsLoading(false);
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Placeholder for authentication
-    setTimeout(() => {
-      toast({
-        title: "Cloud Required",
-        description: "Please enable Lovable Cloud to use authentication features.",
-      });
-      setIsLoading(false);
-    }, 1000);
+    const formData = new FormData(e.currentTarget);
+    const fullName = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const role = formData.get("role") as "seller" | "buyer";
+
+    const { error } = await signUp(email, password, fullName, role);
+    
+    setIsLoading(false);
   };
 
   return (
@@ -72,6 +90,7 @@ const Auth = () => {
                     <Label htmlFor="login-email">Email</Label>
                     <Input
                       id="login-email"
+                      name="email"
                       type="email"
                       placeholder="your@email.com"
                       required
@@ -81,6 +100,7 @@ const Auth = () => {
                     <Label htmlFor="login-password">Password</Label>
                     <Input
                       id="login-password"
+                      name="password"
                       type="password"
                       placeholder="••••••••"
                       required
@@ -113,6 +133,7 @@ const Auth = () => {
                     <Label htmlFor="signup-name">Full Name</Label>
                     <Input
                       id="signup-name"
+                      name="name"
                       type="text"
                       placeholder="John Doe"
                       required
@@ -122,6 +143,7 @@ const Auth = () => {
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email"
+                      name="email"
                       type="email"
                       placeholder="your@email.com"
                       required
@@ -131,15 +153,18 @@ const Auth = () => {
                     <Label htmlFor="signup-password">Password</Label>
                     <Input
                       id="signup-password"
+                      name="password"
                       type="password"
                       placeholder="••••••••"
                       required
+                      minLength={6}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-role">I want to</Label>
                     <select
                       id="signup-role"
+                      name="role"
                       className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                       required
                     >

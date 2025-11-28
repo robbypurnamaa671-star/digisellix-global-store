@@ -2,8 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingBag, Package, Download } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BuyerDashboard = () => {
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || userRole !== "buyer") {
+      navigate("/auth");
+    }
+  }, [user, userRole, navigate]);
   const orders = [
     {
       id: 1,
@@ -36,7 +47,7 @@ const BuyerDashboard = () => {
             <Link to="/products">
               <Button variant="ghost">Browse Products</Button>
             </Link>
-            <Button variant="outline">Logout</Button>
+            <Button variant="outline" onClick={signOut}>Logout</Button>
           </div>
         </div>
       </nav>

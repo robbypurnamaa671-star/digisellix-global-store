@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, ShoppingBag, Zap, Globe, Shield } from "lucide-react";
+import { Navigation } from "@/components/Navigation";
 import heroImage from "@/assets/hero-marketplace.jpg";
 import iconProducts from "@/assets/icon-products.png";
 import iconPayment from "@/assets/icon-payment.png";
@@ -11,28 +12,7 @@ import iconSecure from "@/assets/icon-secure.png";
 const Home = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <ShoppingBag className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Digisellix
-            </span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/products">
-              <Button variant="ghost">Products</Button>
-            </Link>
-            <Link to="/auth">
-              <Button variant="outline">Login</Button>
-            </Link>
-            <Link to="/auth">
-              <Button variant="hero">Start Selling</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">

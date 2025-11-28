@@ -2,8 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingBag, Users, Package, DollarSign, TrendingUp } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || userRole !== "admin") {
+      navigate("/auth");
+    }
+  }, [user, userRole, navigate]);
   const stats = [
     { title: "Total Users", value: "1,234", icon: Users, color: "text-primary" },
     { title: "Total Products", value: "456", icon: Package, color: "text-accent" },
@@ -22,7 +33,7 @@ const AdminDashboard = () => {
               Digisellix Admin
             </span>
           </Link>
-          <Button variant="outline">Logout</Button>
+          <Button variant="outline" onClick={signOut}>Logout</Button>
         </div>
       </nav>
 

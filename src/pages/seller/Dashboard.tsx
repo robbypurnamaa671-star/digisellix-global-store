@@ -2,8 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingBag, Plus, DollarSign, Package, TrendingUp } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SellerDashboard = () => {
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || userRole !== "seller") {
+      navigate("/auth");
+    }
+  }, [user, userRole, navigate]);
   const stats = [
     { title: "Total Sales", value: "$2,453", icon: DollarSign, trend: "+12.5%" },
     { title: "Products", value: "12", icon: Package, trend: "+2" },
@@ -25,7 +36,7 @@ const SellerDashboard = () => {
             <Link to="/products">
               <Button variant="ghost">Browse</Button>
             </Link>
-            <Button variant="outline">Logout</Button>
+            <Button variant="outline" onClick={signOut}>Logout</Button>
           </div>
         </div>
       </nav>
