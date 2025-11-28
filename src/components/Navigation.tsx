@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ShoppingBag, User, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -27,6 +28,16 @@ export const Navigation = () => {
           <Link to="/products">
             <Button variant="ghost">Products</Button>
           </Link>
+          
+          {userRole === "admin" && (
+            <Link to="/admin/dashboard">
+              <Button variant="outline" className="gap-2">
+                <Shield className="h-4 w-4" />
+                Admin
+                <Badge variant="secondary" className="ml-1">Panel</Badge>
+              </Button>
+            </Link>
+          )}
           
           {user ? (
             <DropdownMenu>
@@ -55,11 +66,13 @@ export const Navigation = () => {
                   </DropdownMenuItem>
                 )}
                 {userRole === "admin" && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin/dashboard">Admin Dashboard</Link>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/dashboard">Admin Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
                 )}
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>
                   Sign Out
                 </DropdownMenuItem>
