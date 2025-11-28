@@ -14,6 +14,193 @@ export type Database = {
   }
   public: {
     Tables: {
+      downloads: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          download_count: number | null
+          id: string
+          last_downloaded_at: string | null
+          order_id: string
+          product_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          download_count?: number | null
+          id?: string
+          last_downloaded_at?: string | null
+          order_id: string
+          product_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          download_count?: number | null
+          id?: string
+          last_downloaded_at?: string | null
+          order_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "downloads_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "downloads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "downloads_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount_idr: number
+          amount_usd: number
+          buyer_id: string
+          created_at: string
+          currency: string
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          payment_status: string | null
+          product_id: string
+          seller_id: string
+          updated_at: string
+          xendit_invoice_id: string | null
+          xendit_invoice_url: string | null
+        }
+        Insert: {
+          amount_idr: number
+          amount_usd: number
+          buyer_id: string
+          created_at?: string
+          currency: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          product_id: string
+          seller_id: string
+          updated_at?: string
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Update: {
+          amount_idr?: number
+          amount_usd?: number
+          buyer_id?: string
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          product_id?: string
+          seller_id?: string
+          updated_at?: string
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          download_link: string | null
+          file_url: string | null
+          id: string
+          price_idr: number
+          price_usd: number
+          seller_id: string
+          status: string | null
+          thumbnail_url: string | null
+          title: string
+          total_sales: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          download_link?: string | null
+          file_url?: string | null
+          id?: string
+          price_idr: number
+          price_usd: number
+          seller_id: string
+          status?: string | null
+          thumbnail_url?: string | null
+          title: string
+          total_sales?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          download_link?: string | null
+          file_url?: string | null
+          id?: string
+          price_idr?: number
+          price_usd?: number
+          seller_id?: string
+          status?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          total_sales?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
