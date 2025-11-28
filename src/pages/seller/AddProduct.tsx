@@ -6,9 +6,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ShoppingBag, ArrowLeft, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
   const { toast } = useToast();
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || userRole !== "seller") {
+      navigate("/auth");
+    }
+  }, [user, userRole, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +40,7 @@ const AddProduct = () => {
               Digisellix
             </span>
           </Link>
-          <Button variant="outline">Logout</Button>
+          <Button variant="outline" onClick={signOut}>Logout</Button>
         </div>
       </nav>
 

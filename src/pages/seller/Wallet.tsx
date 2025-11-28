@@ -5,9 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShoppingBag, ArrowLeft, Wallet as WalletIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Wallet = () => {
   const { toast } = useToast();
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || userRole !== "seller") {
+      navigate("/auth");
+    }
+  }, [user, userRole, navigate]);
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +54,7 @@ const Wallet = () => {
               Digisellix
             </span>
           </Link>
-          <Button variant="outline">Logout</Button>
+          <Button variant="outline" onClick={signOut}>Logout</Button>
         </div>
       </nav>
 
