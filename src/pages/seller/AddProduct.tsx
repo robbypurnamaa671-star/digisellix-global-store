@@ -137,7 +137,7 @@ const AddProduct = () => {
           file_url: fileUrl,
           download_link: formData.downloadLink || null,
           thumbnail_url: thumbnailUrl,
-          status: "active",
+          status: "pending",
         });
 
       if (insertError) {
@@ -146,7 +146,7 @@ const AddProduct = () => {
 
       toast({
         title: "Success!",
-        description: "Your product has been published successfully.",
+        description: "Your product has been submitted for review. It will be visible once approved by our admin team.",
       });
 
       navigate("/seller/dashboard");
