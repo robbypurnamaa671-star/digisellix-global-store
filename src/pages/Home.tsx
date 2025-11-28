@@ -46,21 +46,21 @@ const Home = () => {
                 </span>
               </div>
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                Jual & Beli Produk Digital Dengan Mudah
+                Buy & Sell Digital Products With Ease
               </h1>
               <p className="text-xl text-muted-foreground">
-                Platform global untuk kreator menjual e-book, desain, musik, software, template, dan banyak lagi.
+                Global platform for creators to sell e-books, designs, music, software, templates, and much more.
               </p>
               <div className="flex gap-4">
                 <Link to="/auth">
                   <Button variant="hero" size="lg" className="text-lg">
-                    Mulai Jualan Sekarang
+                    Start Selling Now
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 <Link to="/products">
                   <Button variant="outline" size="lg" className="text-lg">
-                    Lihat Produk
+                    View Products
                   </Button>
                 </Link>
               </div>
@@ -80,17 +80,17 @@ const Home = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold">Cara Kerja</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold">How It Works</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Mulai menjual produk digital Anda dalam 4 langkah mudah
+              Start selling your digital products in 4 easy steps
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { step: "01", title: "Buat Akun", desc: "Daftar gratis dalam hitungan detik" },
-              { step: "02", title: "Upload Produk", desc: "Tambahkan file atau link download" },
-              { step: "03", title: "Terima Pembayaran", desc: "Pembayaran otomatis & aman" },
-              { step: "04", title: "Pembeli Download", desc: "Akses instan untuk pembeli" },
+              { step: "01", title: "Create Account", desc: "Sign up free in seconds" },
+              { step: "02", title: "Upload Product", desc: "Add file or download link" },
+              { step: "03", title: "Receive Payment", desc: "Automatic & secure payment" },
+              { step: "04", title: "Buyer Downloads", desc: "Instant access for buyers" },
             ].map((item, idx) => (
               <Card
                 key={idx}
@@ -111,32 +111,32 @@ const Home = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold">Keunggulan Digisellix</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold">Digisellix Advantages</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Platform marketplace terpercaya dengan fitur lengkap untuk kreator
+              Trusted marketplace platform with complete features for creators
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 icon: iconPayment,
-                title: "Pembayaran Cepat",
-                desc: "Terima pembayaran dari seluruh dunia dengan aman",
+                title: "Fast Payments",
+                desc: "Receive payments from around the world securely",
               },
               {
                 icon: iconGlobal,
-                title: "Penjual Global",
-                desc: "Jual ke pelanggan di berbagai negara",
+                title: "Global Sellers",
+                desc: "Sell to customers in various countries",
               },
               {
                 icon: iconProducts,
-                title: "Upload File atau Link",
-                desc: "Fleksibel menggunakan file atau link eksternal",
+                title: "Upload File or Link",
+                desc: "Flexible to use file or external link",
               },
               {
                 icon: iconSecure,
-                title: "Marketplace Modern",
-                desc: "Platform responsif dan user-friendly",
+                title: "Modern Marketplace",
+                desc: "Responsive and user-friendly platform",
               },
             ].map((feature, idx) => (
               <Card
@@ -160,10 +160,10 @@ const Home = () => {
       <section className="py-20 bg-gradient-to-br from-primary to-accent text-white">
         <div className="container mx-auto px-4 text-center space-y-8">
           <h2 className="text-4xl lg:text-5xl font-bold">
-            Siap Memulai Bisnis Digital Anda?
+            Ready to Start Your Digital Business?
           </h2>
           <p className="text-xl max-w-2xl mx-auto opacity-90">
-            Bergabunglah dengan ribuan kreator yang telah mempercayai Digisellix
+            Join thousands of creators who trust Digisellix
           </p>
           <Link to="/auth">
             <Button
@@ -171,7 +171,7 @@ const Home = () => {
               size="lg"
               className="text-lg bg-white text-primary hover:bg-white/90 font-bold"
             >
-              Mulai Gratis Sekarang
+              Start Free Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
