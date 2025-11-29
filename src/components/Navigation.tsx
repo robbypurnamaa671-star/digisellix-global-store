@@ -3,24 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, User, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 export const Navigation = () => {
-  const { user, userRole, signOut } = useAuth();
-
-  return (
-    <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+  const {
+    user,
+    userRole,
+    signOut
+  } = useAuth();
+  return <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <ShoppingBag className="h-8 w-8 text-primary" />
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <span className="font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-sm">
             Digisellix
           </span>
         </Link>
@@ -29,67 +23,54 @@ export const Navigation = () => {
             <Button variant="ghost">Products</Button>
           </Link>
           
-          {userRole === "admin" && (
-            <Link to="/admin/dashboard">
+          {userRole === "admin" && <Link to="/admin/dashboard">
               <Button variant="outline" className="gap-2">
                 <Shield className="h-4 w-4" />
                 Admin
                 <Badge variant="secondary" className="ml-1">Panel</Badge>
               </Button>
-            </Link>
-          )}
+            </Link>}
           
-          {user ? (
-            <DropdownMenu>
+          {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
-                  <User className="h-4 w-4" />
+                  <User className="w-[10px] h-[10px]" />
                   Account
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {userRole === "seller" && (
-                  <>
+                {userRole === "seller" && <>
                     <DropdownMenuItem asChild>
                       <Link to="/seller/dashboard">Seller Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/seller/add-product">Add Product</Link>
                     </DropdownMenuItem>
-                  </>
-                )}
-                {userRole === "buyer" && (
-                  <DropdownMenuItem asChild>
+                  </>}
+                {userRole === "buyer" && <DropdownMenuItem asChild>
                     <Link to="/buyer/dashboard">My Purchases</Link>
-                  </DropdownMenuItem>
-                )}
-                {userRole === "admin" && (
-                  <>
+                  </DropdownMenuItem>}
+                {userRole === "admin" && <>
                     <DropdownMenuItem asChild>
                       <Link to="/admin/dashboard">Admin Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                  </>
-                )}
+                  </>}
                 <DropdownMenuItem onClick={signOut}>
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <>
+            </DropdownMenu> : <>
               <Link to="/auth">
                 <Button variant="outline">Login</Button>
               </Link>
               <Link to="/auth">
                 <Button variant="hero">Start Selling</Button>
               </Link>
-            </>
-          )}
+            </>}
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 };
