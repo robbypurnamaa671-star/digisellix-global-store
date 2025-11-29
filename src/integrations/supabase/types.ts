@@ -75,14 +75,15 @@ export type Database = {
           currency: string
           expires_at: string | null
           id: string
+          ipaymu_payment_url: string | null
+          ipaymu_session_id: string | null
+          ipaymu_transaction_id: string | null
           paid_at: string | null
           payment_method: string | null
           payment_status: string | null
           product_id: string
           seller_id: string
           updated_at: string
-          xendit_invoice_id: string | null
-          xendit_invoice_url: string | null
         }
         Insert: {
           amount_idr: number
@@ -92,14 +93,15 @@ export type Database = {
           currency: string
           expires_at?: string | null
           id?: string
+          ipaymu_payment_url?: string | null
+          ipaymu_session_id?: string | null
+          ipaymu_transaction_id?: string | null
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
           product_id: string
           seller_id: string
           updated_at?: string
-          xendit_invoice_id?: string | null
-          xendit_invoice_url?: string | null
         }
         Update: {
           amount_idr?: number
@@ -109,14 +111,15 @@ export type Database = {
           currency?: string
           expires_at?: string | null
           id?: string
+          ipaymu_payment_url?: string | null
+          ipaymu_session_id?: string | null
+          ipaymu_transaction_id?: string | null
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
           product_id?: string
           seller_id?: string
           updated_at?: string
-          xendit_invoice_id?: string | null
-          xendit_invoice_url?: string | null
         }
         Relationships: [
           {

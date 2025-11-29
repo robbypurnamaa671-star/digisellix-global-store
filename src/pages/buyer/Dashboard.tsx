@@ -357,11 +357,11 @@ const BuyerDashboard = () => {
                             </TableCell>
                             <TableCell>{getStatusBadge(order.payment_status)}</TableCell>
                             <TableCell className="text-right">
-                              {order.payment_status === "pending" && order.xendit_invoice_url ? (
+                              {order.payment_status === "pending" && order.ipaymu_payment_url ? (
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => window.open(order.xendit_invoice_url, "_blank")}
+                                  onClick={() => window.open(order.ipaymu_payment_url, "_blank")}
                                 >
                                   Pay Now
                                 </Button>
