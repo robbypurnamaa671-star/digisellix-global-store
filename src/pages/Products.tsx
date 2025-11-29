@@ -28,12 +28,17 @@ const Products = () => {
     },
   });
 
-  // Extract unique categories
-  const categories = useMemo(() => {
-    if (!products) return [];
-    const uniqueCategories = [...new Set(products.map((p) => p.category))];
-    return uniqueCategories.sort();
-  }, [products]);
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   // Filter products based on search and category
   const filteredProducts = useMemo(() => {
@@ -85,7 +90,7 @@ const Products = () => {
             </div>
             
             {/* Category Filters */}
-            {categories.length > 0 && (
+            {categories && categories.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant={selectedCategory === null ? "default" : "outline"}
@@ -96,12 +101,12 @@ const Products = () => {
                 </Button>
                 {categories.map((category) => (
                   <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
+                    key={category.id}
+                    variant={selectedCategory === category.name ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => setSelectedCategory(category.name)}
                   >
-                    {category}
+                    {category.name}
                   </Button>
                 ))}
               </div>
