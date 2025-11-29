@@ -32,6 +32,7 @@ import {
   XCircle,
   Eye,
   Trash2,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -137,6 +138,25 @@ const AdminDashboard = () => {
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to update product");
+    },
+  });
+
+  // Toggle featured status mutation
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: async ({ id, isFeatured }: { id: string; isFeatured: boolean }) => {
+      const { error } = await supabase
+        .from("products")
+        .update({ is_featured: isFeatured })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      toast.success("Featured status updated");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to update featured status");
     },
   });
 
@@ -306,6 +326,7 @@ const AdminDashboard = () => {
                         <TableHead>Price</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Sales</TableHead>
+                        <TableHead>Featured</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -340,6 +361,27 @@ const AdminDashboard = () => {
                             <TableCell>${Number(product.price_usd).toFixed(2)}</TableCell>
                             <TableCell>{getStatusBadge(product.status)}</TableCell>
                             <TableCell>{product.total_sales}</TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  toggleFeaturedMutation.mutate({
+                                    id: product.id,
+                                    isFeatured: !product.is_featured,
+                                  })
+                                }
+                                disabled={toggleFeaturedMutation.isPending}
+                              >
+                                <Star
+                                  className={`h-5 w-5 ${
+                                    product.is_featured
+                                      ? "fill-accent text-accent"
+                                      : "text-muted-foreground"
+                                  }`}
+                                />
+                              </Button>
+                            </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <Button
