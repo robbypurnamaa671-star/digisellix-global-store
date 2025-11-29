@@ -1,8 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CreditCard } from "lucide-react";
+import { ArrowLeft, CreditCard, Phone } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +14,7 @@ import { toast } from "sonner";
 const Checkout = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", orderId],
@@ -40,6 +44,12 @@ const Checkout = () => {
     try {
       if (!order) return;
 
+      // Validate phone number
+      if (!phoneNumber || phoneNumber.trim().length < 10) {
+        toast.error("Please enter a valid phone number (minimum 10 digits)");
+        return;
+      }
+
       toast.loading("Creating payment...");
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -49,9 +59,19 @@ const Checkout = () => {
         return;
       }
 
+      // Update profile with phone number
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ phone: phoneNumber })
+        .eq("id", user.id);
+
+      if (updateError) {
+        console.error("Error updating phone:", updateError);
+      }
+
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, phone")
         .eq("id", user.id)
         .single();
 
@@ -62,7 +82,7 @@ const Checkout = () => {
           currency: order.currency,
           buyerName: profile?.full_name || "Buyer",
           buyerEmail: user.email || "",
-          buyerPhone: "081234567890", // You may want to collect this from user
+          buyerPhone: phoneNumber,
           productTitle: product?.title || "Digital Product",
         },
       });
@@ -192,7 +212,30 @@ const Checkout = () => {
                 Secure payment processing powered by iPaymu
               </div>
 
-              <div className="space-y-2 p-4 bg-muted/50 rounded-lg mb-4">
+              {/* Phone Number Input */}
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-sm font-medium">
+                  Phone Number <span className="text-destructive">*</span>
+                </Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="e.g., 081234567890"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                    className="pl-10"
+                    maxLength={15}
+                    required
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Required for payment confirmation and transaction updates
+                </p>
+              </div>
+
+              <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
                 <h4 className="font-semibold text-sm">Supported Payment Methods:</h4>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>• Bank Transfer (BCA, Mandiri, BNI, BRI, etc.)</li>
@@ -206,6 +249,7 @@ const Checkout = () => {
                 size="lg"
                 className="w-full"
                 onClick={handlePayment}
+                disabled={!phoneNumber || phoneNumber.length < 10}
               >
                 <CreditCard className="mr-2 h-5 w-5" />
                 Proceed to Payment
