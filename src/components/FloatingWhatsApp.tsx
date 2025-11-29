@@ -11,7 +11,14 @@ const FloatingWhatsApp = () => {
       message || "Hello! I need assistance with Digisellix."
     );
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-    window.open(whatsappUrl, "_blank");
+    
+    // Create temporary anchor and click it
+    const link = document.createElement('a');
+    link.href = whatsappUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.click();
+    
     setIsOpen(false);
     setMessage("");
   };
