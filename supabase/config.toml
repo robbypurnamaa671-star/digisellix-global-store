@@ -1,1 +1,7 @@
 project_id = "yrowmukralyijublgkuk"
+
+[functions.create-ipaymu-payment]
+verify_jwt = true
+
+[functions.ipaymu-webhook]
+verify_jwt = false

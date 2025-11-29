@@ -37,8 +37,53 @@ const Checkout = () => {
   });
 
   const handlePayment = async () => {
-    toast.info("Payment integration coming soon!");
-    // Payment integration with Xendit will be implemented here
+    try {
+      if (!order) return;
+
+      toast.loading("Creating payment...");
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Please sign in to continue");
+        navigate("/auth");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+
+      const { data, error } = await supabase.functions.invoke("create-ipaymu-payment", {
+        body: {
+          orderId: order.id,
+          amount: order.currency === "IDR" ? order.amount_idr : order.amount_usd,
+          currency: order.currency,
+          buyerName: profile?.full_name || "Buyer",
+          buyerEmail: user.email || "",
+          buyerPhone: "081234567890", // You may want to collect this from user
+          productTitle: product?.title || "Digital Product",
+        },
+      });
+
+      if (error) throw error;
+
+      toast.dismiss();
+      toast.success("Payment created! Redirecting...");
+
+      // Redirect to payment page or show payment instructions
+      if (data.data.paymentUrl) {
+        window.location.href = data.data.paymentUrl;
+      } else {
+        // Show payment instructions (bank transfer details, etc.)
+        toast.info(`Payment Code: ${data.data.paymentCode}\nPayment: ${data.data.paymentName}\nTotal: Rp ${data.data.total.toLocaleString()}`);
+      }
+    } catch (error: any) {
+      console.error("Payment error:", error);
+      toast.dismiss();
+      toast.error(error.message || "Failed to create payment");
+    }
   };
 
   if (isLoading) {
@@ -144,7 +189,17 @@ const Checkout = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-sm text-muted-foreground mb-4">
-                Secure payment processing powered by Xendit
+                Secure payment processing powered by iPaymu
+              </div>
+
+              <div className="space-y-2 p-4 bg-muted/50 rounded-lg mb-4">
+                <h4 className="font-semibold text-sm">Supported Payment Methods:</h4>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Bank Transfer (BCA, Mandiri, BNI, BRI, etc.)</li>
+                  <li>• E-Wallets (GoPay, OVO, DANA, LinkAja)</li>
+                  <li>• Credit/Debit Cards (Visa, Mastercard)</li>
+                  <li>• QRIS (Quick Response Code Indonesian Standard)</li>
+                </ul>
               </div>
 
               <Button
