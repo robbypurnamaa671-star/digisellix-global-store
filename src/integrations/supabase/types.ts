@@ -171,6 +171,7 @@ export type Database = {
           download_link: string | null
           file_url: string | null
           id: string
+          is_featured: boolean | null
           price_idr: number
           price_usd: number
           seller_id: string
@@ -187,6 +188,7 @@ export type Database = {
           download_link?: string | null
           file_url?: string | null
           id?: string
+          is_featured?: boolean | null
           price_idr: number
           price_usd: number
           seller_id: string
@@ -203,6 +205,7 @@ export type Database = {
           download_link?: string | null
           file_url?: string | null
           id?: string
+          is_featured?: boolean | null
           price_idr?: number
           price_usd?: number
           seller_id?: string

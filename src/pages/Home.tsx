@@ -1,15 +1,118 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, ShoppingBag, Zap, Globe, Shield } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight, ShoppingBag, Zap, Globe, Shield, Star, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import heroImage from "@/assets/hero-marketplace.jpg";
 import iconProducts from "@/assets/icon-products.png";
 import iconPayment from "@/assets/icon-payment.png";
 import iconGlobal from "@/assets/icon-global.png";
 import iconSecure from "@/assets/icon-secure.png";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
+  // Fetch featured products
+  const { data: featuredProducts, isLoading: loadingFeatured } = useQuery({
+    queryKey: ["featured-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "active")
+        .eq("is_featured", true)
+        .order("created_at", { ascending: false })
+        .limit(6);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch popular products (sorted by total_sales)
+  const { data: popularProducts, isLoading: loadingPopular } = useQuery({
+    queryKey: ["popular-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "active")
+        .order("total_sales", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch regular products (at least 30)
+  const { data: products, isLoading: loadingProducts } = useQuery({
+    queryKey: ["home-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const ProductCard = ({ product }: { product: any }) => (
+    <Link to={`/products/${product.id}`}>
+      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
+        <div className="aspect-video overflow-hidden bg-muted">
+          {product.thumbnail_url ? (
+            <img
+              src={product.thumbnail_url}
+              alt={product.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-muted">
+              <span className="text-4xl">📦</span>
+            </div>
+          )}
+        </div>
+        <CardContent className="p-4">
+          <Badge variant="secondary" className="mb-2">
+            {product.category}
+          </Badge>
+          <h3 className="font-bold text-lg mb-2 line-clamp-2">
+            {product.title}
+          </h3>
+          <div className="text-2xl font-bold text-primary">
+            ${Number(product.price_usd).toFixed(2)}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Rp {Number(product.price_idr).toLocaleString('id-ID')}
+          </div>
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <Button variant="outline" className="w-full">
+            View Details
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
+  );
+
+  const ProductSkeleton = () => (
+    <Card>
+      <Skeleton className="aspect-video w-full" />
+      <CardContent className="p-4">
+        <Skeleton className="h-4 w-20 mb-2" />
+        <Skeleton className="h-6 w-full mb-2" />
+        <Skeleton className="h-8 w-24" />
+      </CardContent>
+      <CardFooter className="p-4 pt-0">
+        <Skeleton className="h-10 w-full" />
+      </CardFooter>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -132,6 +235,83 @@ const Home = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      {featuredProducts && featuredProducts.length > 0 && (
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 space-y-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full">
+                <Star className="h-5 w-5 text-accent fill-accent" />
+                <span className="font-semibold text-accent">Featured Products</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold">Premium Picks</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Handpicked premium products from top creators
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {loadingFeatured
+                ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
+                : featuredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Popular Products */}
+      {popularProducts && popularProducts.length > 0 && (
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 space-y-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-primary">Best Sellers</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold">Popular Products</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Most purchased products by our community
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+              {loadingPopular
+                ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
+                : popularProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* All Products */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 space-y-4">
+            <h2 className="text-4xl lg:text-5xl font-bold">Explore All Products</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Browse our complete collection of digital products
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {loadingProducts
+              ? [...Array(30)].map((_, i) => <ProductSkeleton key={i} />)
+              : products?.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link to="/products">
+              <Button variant="hero" size="lg">
+                View All Products
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
