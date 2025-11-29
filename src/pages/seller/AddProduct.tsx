@@ -183,7 +183,7 @@ const AddProduct = () => {
           file_url: fileUrl,
           download_link: formData.downloadLink || null,
           thumbnail_url: thumbnailUrl,
-          status: "pending",
+          status: "active",
         });
 
       if (insertError) {
@@ -192,7 +192,7 @@ const AddProduct = () => {
 
       toast({
         title: "Success!",
-        description: "Your product has been submitted for review. It will be visible once approved by our admin team.",
+        description: "Your product is now live and visible to buyers!",
       });
 
       navigate("/seller/dashboard");
