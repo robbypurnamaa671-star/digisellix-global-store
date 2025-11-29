@@ -19,6 +19,7 @@ const AddProduct = () => {
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(15750); // Default IDR to USD rate
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -30,6 +31,22 @@ const AddProduct = () => {
   
   const [productFile, setProductFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+
+  // Fetch current exchange rate
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        if (data.rates && data.rates.IDR) {
+          setExchangeRate(data.rates.IDR);
+        }
+      } catch (error) {
+        console.log('Using default exchange rate');
+      }
+    };
+    fetchExchangeRate();
+  }, []);
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -88,6 +105,22 @@ const AddProduct = () => {
       }
       setThumbnailFile(file);
     }
+  };
+
+  const handleUsdChange = (value: string) => {
+    setFormData({ 
+      ...formData, 
+      priceUsd: value,
+      priceIdr: value ? Math.round(parseFloat(value) * exchangeRate).toString() : ""
+    });
+  };
+
+  const handleIdrChange = (value: string) => {
+    setFormData({ 
+      ...formData, 
+      priceIdr: value,
+      priceUsd: value ? (parseFloat(value) / exchangeRate).toFixed(2) : ""
+    });
   };
 
   const uploadFile = async (file: File, bucket: string, folder: string): Promise<string | null> => {
@@ -242,8 +275,11 @@ const AddProduct = () => {
                     placeholder="49.99" 
                     required 
                     value={formData.priceUsd}
-                    onChange={(e) => setFormData({ ...formData, priceUsd: e.target.value })}
+                    onChange={(e) => handleUsdChange(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Auto-converts to IDR (Rate: 1 USD = {exchangeRate.toLocaleString()} IDR)
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="price-idr">Price (IDR) *</Label>
@@ -254,8 +290,11 @@ const AddProduct = () => {
                     placeholder="750000" 
                     required 
                     value={formData.priceIdr}
-                    onChange={(e) => setFormData({ ...formData, priceIdr: e.target.value })}
+                    onChange={(e) => handleIdrChange(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Auto-converts to USD
+                  </p>
                 </div>
               </div>
 
