@@ -63,10 +63,10 @@ const Products = () => {
       <Navigation />
 
       {/* Header */}
-      <section className="bg-gradient-to-br from-primary/10 to-accent/10 py-12">
+      <section className="bg-gradient-to-br from-primary/10 to-accent/10 py-8 sm:py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl lg:text-5xl font-bold mb-4">Browse Products</h1>
-          <p className="text-xl text-muted-foreground">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Browse Products</h1>
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
             Discover amazing digital products from creators worldwide
           </p>
         </div>
@@ -91,10 +91,11 @@ const Products = () => {
             
             {/* Category Filters */}
             {categories && categories.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
                 <Button
                   variant={selectedCategory === null ? "default" : "outline"}
                   size="sm"
+                  className="whitespace-nowrap"
                   onClick={() => setSelectedCategory(null)}
                 >
                   All Categories
@@ -104,6 +105,7 @@ const Products = () => {
                     key={category.id}
                     variant={selectedCategory === category.name ? "default" : "outline"}
                     size="sm"
+                    className="whitespace-nowrap"
                     onClick={() => setSelectedCategory(category.name)}
                   >
                     {category.name}
