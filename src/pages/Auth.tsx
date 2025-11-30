@@ -10,21 +10,34 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { user, userRole, signIn, signUp } = useAuth();
+  const [selectedRoles, setSelectedRoles] = useState<("seller" | "buyer")[]>(["buyer"]);
+  const { user, userRoles, hasRole, signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   // Redirect authenticated users to their dashboard
   useEffect(() => {
-    if (user && userRole) {
-      if (userRole === "seller") {
-        navigate("/seller/dashboard");
-      } else if (userRole === "buyer") {
-        navigate("/buyer/dashboard");
-      } else if (userRole === "admin") {
+    if (user && userRoles.length > 0) {
+      if (hasRole("admin")) {
         navigate("/admin/dashboard");
+      } else if (hasRole("seller")) {
+        navigate("/seller/dashboard");
+      } else if (hasRole("buyer")) {
+        navigate("/buyer/dashboard");
       }
     }
-  }, [user, userRole, navigate]);
+  }, [user, userRoles, hasRole, navigate]);
+
+  const toggleRole = (role: "seller" | "buyer") => {
+    setSelectedRoles(prev => {
+      if (prev.includes(role)) {
+        // Don't allow removing all roles
+        if (prev.length === 1) return prev;
+        return prev.filter(r => r !== role);
+      } else {
+        return [...prev, role];
+      }
+    });
+  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,9 +64,8 @@ const Auth = () => {
     const fullName = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const role = formData.get("role") as "seller" | "buyer";
 
-    const { error } = await signUp(email, password, fullName, role);
+    const { error } = await signUp(email, password, fullName, selectedRoles);
     
     setIsLoading(false);
   };
@@ -160,17 +172,41 @@ const Auth = () => {
                       minLength={6}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-role">I want to</Label>
-                    <select
-                      id="signup-role"
-                      name="role"
-                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      required
-                    >
-                      <option value="seller">Sell Products</option>
-                      <option value="buyer">Buy Products</option>
-                    </select>
+                  <div className="space-y-3">
+                    <Label>I want to</Label>
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={selectedRoles.includes("buyer")}
+                          onChange={() => toggleRole("buyer")}
+                          className="w-4 h-4"
+                        />
+                        <div>
+                          <div className="font-medium">Buy Products</div>
+                          <div className="text-xs text-muted-foreground">
+                            Purchase and download digital products
+                          </div>
+                        </div>
+                      </label>
+                      <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={selectedRoles.includes("seller")}
+                          onChange={() => toggleRole("seller")}
+                          className="w-4 h-4"
+                        />
+                        <div>
+                          <div className="font-medium">Sell Products</div>
+                          <div className="text-xs text-muted-foreground">
+                            Upload and sell your digital products
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      You can select both options to buy and sell
+                    </p>
                   </div>
                   <Button
                     type="submit"

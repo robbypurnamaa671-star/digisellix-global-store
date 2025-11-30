@@ -7,8 +7,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 export const Navigation = () => {
-  const { user, userRole, signOut } = useAuth();
+  const { user, userRoles, hasRole, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+
+  const isAdmin = hasRole("admin");
+  const isSeller = hasRole("seller");
+  const isBuyer = hasRole("buyer");
 
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -26,7 +30,7 @@ export const Navigation = () => {
             <Button variant="ghost" size="sm">Products</Button>
           </Link>
           
-          {userRole === "admin" && (
+          {isAdmin && (
             <Link to="/admin/dashboard">
               <Button variant="outline" size="sm" className="gap-2">
                 <Shield className="h-4 w-4" />
@@ -47,7 +51,8 @@ export const Navigation = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {userRole === "seller" && (
+                
+                {isSeller && (
                   <>
                     <DropdownMenuItem asChild>
                       <Link to="/seller/dashboard">Seller Dashboard</Link>
@@ -55,14 +60,20 @@ export const Navigation = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/seller/add-product">Add Product</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                   </>
                 )}
-                {userRole === "buyer" && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/buyer/dashboard">My Purchases</Link>
-                  </DropdownMenuItem>
+                
+                {isBuyer && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/buyer/dashboard">My Purchases</Link>
+                    </DropdownMenuItem>
+                    {isSeller && <DropdownMenuSeparator />}
+                  </>
                 )}
-                {userRole === "admin" && (
+                
+                {isAdmin && (
                   <>
                     <DropdownMenuItem asChild>
                       <Link to="/admin/dashboard">Admin Dashboard</Link>
@@ -70,6 +81,7 @@ export const Navigation = () => {
                     <DropdownMenuSeparator />
                   </>
                 )}
+                
                 <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -102,7 +114,7 @@ export const Navigation = () => {
                 </Button>
               </Link>
 
-              {userRole === "admin" && (
+              {isAdmin && (
                 <Link to="/admin/dashboard" onClick={() => setOpen(false)}>
                   <Button variant="outline" className="w-full justify-start gap-2">
                     <Shield className="h-4 w-4" />
@@ -117,7 +129,8 @@ export const Navigation = () => {
                     <p className="text-sm font-semibold text-muted-foreground mb-2 px-2">
                       My Account
                     </p>
-                    {userRole === "seller" && (
+                    
+                    {isSeller && (
                       <>
                         <Link to="/seller/dashboard" onClick={() => setOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start">
@@ -131,14 +144,16 @@ export const Navigation = () => {
                         </Link>
                       </>
                     )}
-                    {userRole === "buyer" && (
+                    
+                    {isBuyer && (
                       <Link to="/buyer/dashboard" onClick={() => setOpen(false)}>
                         <Button variant="ghost" className="w-full justify-start">
                           My Purchases
                         </Button>
                       </Link>
                     )}
-                    {userRole === "admin" && (
+                    
+                    {isAdmin && (
                       <Link to="/admin/dashboard" onClick={() => setOpen(false)}>
                         <Button variant="ghost" className="w-full justify-start">
                           Admin Dashboard

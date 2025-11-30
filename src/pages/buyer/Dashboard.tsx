@@ -21,15 +21,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const BuyerDashboard = () => {
-  const { user, userRole, signOut } = useAuth();
+  const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!user || userRole !== "buyer") {
+    if (!user || !hasRole("buyer")) {
       navigate("/auth");
     }
-  }, [user, userRole, navigate]);
+  }, [user, hasRole, navigate]);
 
   // Fetch purchased products (paid orders)
   const { data: purchases, isLoading: purchasesLoading } = useQuery({

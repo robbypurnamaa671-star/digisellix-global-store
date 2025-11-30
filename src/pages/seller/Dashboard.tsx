@@ -56,7 +56,7 @@ type RevenueStats = {
 };
 
 const SellerDashboard = () => {
-  const { user, userRole, signOut } = useAuth();
+  const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -70,12 +70,12 @@ const SellerDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || userRole !== "seller") {
+    if (!user || !hasRole("seller")) {
       navigate("/auth");
       return;
     }
     fetchDashboardData();
-  }, [user, userRole, navigate]);
+  }, [user, hasRole, navigate]);
 
   const fetchDashboardData = async () => {
     if (!user) return;
