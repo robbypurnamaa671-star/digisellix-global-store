@@ -42,7 +42,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const AdminDashboard = () => {
-  const { user, userRole, signOut } = useAuth();
+  const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null; type: string | null }>({
@@ -52,10 +52,10 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    if (!user || userRole !== "admin") {
+    if (!user || !hasRole("admin")) {
       navigate("/auth");
     }
-  }, [user, userRole, navigate]);
+  }, [user, hasRole, navigate]);
 
   // Fetch all users with their roles
   const { data: users, isLoading: usersLoading } = useQuery({
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data;
     },
-    enabled: userRole === "admin",
+    enabled: hasRole("admin"),
   });
 
   // Fetch all products
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data;
     },
-    enabled: userRole === "admin",
+    enabled: hasRole("admin"),
   });
 
   // Fetch all orders
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data;
     },
-    enabled: userRole === "admin",
+    enabled: hasRole("admin"),
   });
 
   // Calculate stats

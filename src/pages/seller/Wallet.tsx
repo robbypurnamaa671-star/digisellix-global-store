@@ -11,14 +11,14 @@ import { useNavigate } from "react-router-dom";
 
 const Wallet = () => {
   const { toast } = useToast();
-  const { user, userRole, signOut } = useAuth();
+  const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || userRole !== "seller") {
+    if (!user || !hasRole("seller")) {
       navigate("/auth");
     }
-  }, [user, userRole, navigate]);
+  }, [user, hasRole, navigate]);
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();

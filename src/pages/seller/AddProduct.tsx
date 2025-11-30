@@ -15,7 +15,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 
 const AddProduct = () => {
   const { toast } = useToast();
-  const { user, userRole, signOut } = useAuth();
+  const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(false);
@@ -61,10 +61,10 @@ const AddProduct = () => {
   });
 
   useEffect(() => {
-    if (!user || userRole !== "seller") {
+    if (!user || !hasRole("seller")) {
       navigate("/auth");
     }
-  }, [user, userRole, navigate]);
+  }, [user, hasRole, navigate]);
 
   const validateFile = (file: File, maxSize: number = MAX_FILE_SIZE): string | null => {
     if (file.size > maxSize) {
