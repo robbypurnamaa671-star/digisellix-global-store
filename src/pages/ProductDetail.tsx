@@ -152,10 +152,10 @@ const ProductDetail = () => {
           Back to Products
         </Link>
 
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 lg:mb-16">
           {/* Product Image */}
           <div>
-            <div className="aspect-video rounded-2xl overflow-hidden shadow-[var(--shadow-card-hover)]">
+            <div className="aspect-video rounded-xl lg:rounded-2xl overflow-hidden shadow-[var(--shadow-card-hover)]">
               {product.thumbnail_url ? (
                 <img
                   src={product.thumbnail_url}
@@ -171,12 +171,12 @@ const ProductDetail = () => {
           </div>
 
           {/* Product Details */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div>
-              <Badge variant="secondary" className="mb-3">
+              <Badge variant="secondary" className="mb-2 sm:mb-3">
                 {product.category}
               </Badge>
-              <h1 className="text-4xl font-bold mb-4">{product.title}</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">{product.title}</h1>
               
               <div className="flex items-center gap-3 mb-4">
                 <User className="h-4 w-4 text-muted-foreground" />
@@ -193,11 +193,11 @@ const ProductDetail = () => {
                 )}
               </div>
               
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-primary">
+              <div className="space-y-1 sm:space-y-2">
+                <div className="text-3xl sm:text-4xl font-bold text-primary">
                   ${Number(product.price_usd).toFixed(2)}
                 </div>
-                <div className="text-xl text-muted-foreground">
+                <div className="text-lg sm:text-xl text-muted-foreground">
                   Rp {Number(product.price_idr).toLocaleString("id-ID")}
                 </div>
               </div>
@@ -256,8 +256,8 @@ const ProductDetail = () => {
         {/* Related Products */}
         {relatedProducts && relatedProducts.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold mb-8">Related Products</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Related Products</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {relatedProducts.map((relatedProduct) => (
                 <Link key={relatedProduct.id} to={`/products/${relatedProduct.id}`}>
                   <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">

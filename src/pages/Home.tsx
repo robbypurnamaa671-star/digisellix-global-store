@@ -135,29 +135,29 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-        <div className="container mx-auto px-4 py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+        <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20 relative">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-left duration-700">
               <div className="inline-block">
-                <span className="px-4 py-2 bg-secondary text-secondary-foreground rounded-full text-sm font-semibold">
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-secondary text-secondary-foreground rounded-full text-xs sm:text-sm font-semibold">
                   Global Digital Marketplace
                 </span>
               </div>
-              <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-7xl font-bold leading-tight">
                 Buy & Sell Digital Products With Ease
               </h1>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
                 Global platform for creators to sell e-books, designs, music, software, templates, and much more.
               </p>
-              <div className="flex gap-4">
-                <Link to="/auth">
-                  <Button variant="hero" size="lg" className="text-lg">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link to="/auth" className="w-full sm:w-auto">
+                  <Button variant="hero" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
                     Start Selling Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </Link>
-                <Link to="/products">
-                  <Button variant="outline" size="lg" className="text-lg">
+                <Link to="/products" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
                     View Products
                   </Button>
                 </Link>
@@ -167,7 +167,7 @@ const Home = () => {
               <img
                 src={heroImage}
                 alt="Digital Marketplace"
-                className="rounded-2xl shadow-[var(--shadow-card-hover)] hover:scale-105 transition-transform duration-500"
+                className="rounded-2xl shadow-[var(--shadow-card-hover)] hover:scale-105 transition-transform duration-500 w-full"
               />
             </div>
           </div>
@@ -175,15 +175,15 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold">How It Works</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">How It Works</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
               Start selling your digital products in 4 easy steps
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               { step: "01", title: "Create Account", desc: "Sign up free in seconds" },
               { step: "02", title: "Upload Product", desc: "Add file or download link" },
@@ -206,15 +206,15 @@ const Home = () => {
       </section>
 
       {/* Features */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold">Digisellix Advantages</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Digisellix Advantages</h2>
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
               Trusted marketplace platform with complete features for creators
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               {
                 icon: iconPayment,
@@ -357,22 +357,22 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-accent text-white">
-        <div className="container mx-auto px-4 text-center space-y-8">
-          <h2 className="text-4xl lg:text-5xl font-bold">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-primary to-accent text-white">
+        <div className="container mx-auto px-4 text-center space-y-6 sm:space-y-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold px-4">
             Ready to Start Your Digital Business?
           </h2>
-          <p className="text-xl max-w-2xl mx-auto opacity-90">
+          <p className="text-base sm:text-lg lg:text-xl max-w-2xl mx-auto opacity-90 px-4">
             Join thousands of creators who trust Digisellix
           </p>
           <Link to="/auth">
             <Button
               variant="secondary"
               size="lg"
-              className="text-lg bg-white text-primary hover:bg-white/90 font-bold"
+              className="text-base sm:text-lg bg-white text-primary hover:bg-white/90 font-bold"
             >
               Start Free Now
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           </Link>
         </div>
