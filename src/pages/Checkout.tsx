@@ -58,7 +58,7 @@ const Checkout = () => {
           orderId: order.id,
           amount: order.currency === "IDR" ? order.amount_idr : order.amount_usd,
           currency: order.currency === "IDR" ? "IDR" : "USD",
-          returnUrl: `${window.location.origin}/buyer/dashboard`,
+          returnUrl: `${window.location.origin}/payment-success?orderId=${order.id}`,
           cancelUrl: window.location.href,
         },
       });
