@@ -36,6 +36,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { AnalyticsOverview } from "@/components/seller/AnalyticsOverview";
+import { ProductAnalyticsCard } from "@/components/seller/ProductAnalyticsCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Product = {
   id: string;
@@ -55,6 +58,22 @@ type RevenueStats = {
   productsCount: number;
 };
 
+type AnalyticsData = {
+  totalViews: number;
+  totalViewsThisWeek: number;
+  averageConversion: number;
+  clickThroughRate: number;
+  viewsData: Array<{ date: string; views: number }>;
+  productStats: Array<{
+    id: string;
+    title: string;
+    views: number;
+    sales: number;
+    conversion_rate: number;
+    recent_views_7d: number;
+  }>;
+};
+
 const SellerDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
@@ -66,6 +85,14 @@ const SellerDashboard = () => {
     totalRevenueUSD: 0,
     totalRevenueIDR: 0,
     productsCount: 0,
+  });
+  const [analytics, setAnalytics] = useState<AnalyticsData>({
+    totalViews: 0,
+    totalViewsThisWeek: 0,
+    averageConversion: 0,
+    clickThroughRate: 0,
+    viewsData: [],
+    productStats: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -112,6 +139,9 @@ const SellerDashboard = () => {
         totalRevenueIDR: revenueIDR,
         productsCount: productsData?.length || 0,
       });
+
+      // Fetch analytics data
+      await fetchAnalytics(productsData || []);
     } catch (error: any) {
       console.error("Error fetching dashboard data:", error);
       toast({
@@ -121,6 +151,93 @@ const SellerDashboard = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async (productsData: Product[]) => {
+    if (!user || productsData.length === 0) return;
+
+    try {
+      const productIds = productsData.map(p => p.id);
+
+      // Fetch all views for seller's products
+      const { data: allViews, error: viewsError } = await supabase
+        .from("product_views")
+        .select("product_id, viewed_at")
+        .in("product_id", productIds);
+
+      if (viewsError) throw viewsError;
+
+      const totalViews = allViews?.length || 0;
+
+      // Calculate views from last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const recentViews = allViews?.filter(
+        v => new Date(v.viewed_at) >= sevenDaysAgo
+      ) || [];
+
+      // Calculate views data for last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const viewsByDate = new Map<string, number>();
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(thirtyDaysAgo);
+        date.setDate(date.getDate() + i);
+        viewsByDate.set(date.toISOString().split('T')[0], 0);
+      }
+
+      allViews?.forEach(view => {
+        const viewDate = new Date(view.viewed_at);
+        if (viewDate >= thirtyDaysAgo) {
+          const dateKey = viewDate.toISOString().split('T')[0];
+          viewsByDate.set(dateKey, (viewsByDate.get(dateKey) || 0) + 1);
+        }
+      });
+
+      const viewsData = Array.from(viewsByDate.entries())
+        .map(([date, views]) => ({
+          date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          views,
+        }));
+
+      // Calculate per-product stats
+      const productStats = productsData.map(product => {
+        const productViews = allViews?.filter(v => v.product_id === product.id) || [];
+        const recentProductViews = productViews.filter(
+          v => new Date(v.viewed_at) >= sevenDaysAgo
+        );
+        
+        const views = productViews.length;
+        const sales = product.total_sales || 0;
+        const conversion_rate = views > 0 ? (sales / views) * 100 : 0;
+
+        return {
+          id: product.id,
+          title: product.title,
+          views,
+          sales,
+          conversion_rate,
+          recent_views_7d: recentProductViews.length,
+        };
+      });
+
+      // Calculate overall metrics
+      const totalSales = productsData.reduce((sum, p) => sum + (p.total_sales || 0), 0);
+      const averageConversion = totalViews > 0 ? (totalSales / totalViews) * 100 : 0;
+      const clickThroughRate = totalViews > 0 ? (totalSales / totalViews) * 100 : 0;
+
+      setAnalytics({
+        totalViews,
+        totalViewsThisWeek: recentViews.length,
+        averageConversion,
+        clickThroughRate,
+        viewsData,
+        productStats,
+      });
+    } catch (error: any) {
+      console.error("Error fetching analytics:", error);
     }
   };
 
@@ -255,7 +372,15 @@ const SellerDashboard = () => {
           ))}
         </div>
 
-        {/* Products Table */}
+        {/* Tabs for Products and Analytics */}
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="products" className="space-y-6">
+            {/* Products Table */}
         <Card className="shadow-[var(--shadow-card-hover)]">
           <CardHeader>
             <CardTitle className="text-2xl">Your Products</CardTitle>
@@ -365,6 +490,57 @@ const SellerDashboard = () => {
             )}
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p className="text-muted-foreground mt-4">Loading analytics...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <Card className="shadow-[var(--shadow-card-hover)]">
+                <CardContent className="p-12 text-center">
+                  <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No analytics yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Add products to start tracking views and performance
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Analytics Overview */}
+                <AnalyticsOverview
+                  totalViews={analytics.totalViews}
+                  totalViewsThisWeek={analytics.totalViewsThisWeek}
+                  averageConversion={analytics.averageConversion}
+                  clickThroughRate={analytics.clickThroughRate}
+                  viewsData={analytics.viewsData}
+                />
+
+                {/* Per-Product Analytics */}
+                <Card className="shadow-[var(--shadow-card-hover)]">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">Product Performance</CardTitle>
+                    <p className="text-muted-foreground">View detailed stats for each product</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {analytics.productStats.map((product) => (
+                        <ProductAnalyticsCard
+                          key={product.id}
+                          product={product}
+                          onClick={() => navigate(`/products/${product.id}`)}
+                        />
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-6 mt-8">
