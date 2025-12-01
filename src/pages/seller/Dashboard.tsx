@@ -221,13 +221,16 @@ const SellerDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Seller Dashboard</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Seller Dashboard</h1>
             <p className="text-muted-foreground">Manage your products and track your sales</p>
+            <p className="text-sm text-primary font-medium mt-1">
+              ✨ No limits - upload unlimited products!
+            </p>
           </div>
           <Link to="/seller/add-product">
-            <Button variant="hero" size="lg">
+            <Button variant="hero" size="lg" className="w-full sm:w-auto">
               <Plus className="mr-2 h-5 w-5" />
               Add Product
             </Button>
@@ -265,10 +268,12 @@ const SellerDashboard = () => {
                 <p className="text-muted-foreground mt-4">Loading products...</p>
               </div>
             ) : products.length === 0 ? (
-              <div className="text-center py-12">
+              <div className="text-center py-12 bg-muted/30 rounded-lg border-2 border-dashed">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No products yet</h3>
-                <p className="text-muted-foreground mb-6">Start selling by adding your first digital product</p>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Start your digital business by adding your first product. You can upload as many as you want - there are no limits!
+                </p>
                 <Link to="/seller/add-product">
                   <Button variant="hero">
                     <Plus className="mr-2 h-4 w-4" />
