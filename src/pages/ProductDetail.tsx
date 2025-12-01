@@ -9,11 +9,39 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Track product view
+  useEffect(() => {
+    const trackView = async () => {
+      if (!id) return;
+      
+      // Generate session ID if not exists
+      let sessionId = sessionStorage.getItem("session_id");
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        sessionStorage.setItem("session_id", sessionId);
+      }
+
+      try {
+        await supabase.from("product_views").insert({
+          product_id: id,
+          viewer_id: user?.id || null,
+          session_id: sessionId,
+          referrer: document.referrer || null,
+        });
+      } catch (error) {
+        console.error("Failed to track view:", error);
+      }
+    };
+
+    trackView();
+  }, [id, user]);
 
   const { data: product, isLoading: productLoading } = useQuery({
     queryKey: ["product", id],
