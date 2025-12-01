@@ -238,6 +238,11 @@ const AddProduct = () => {
             <p className="text-muted-foreground mt-2">
               Fill in the details to publish your digital product
             </p>
+            <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+              <p className="text-sm text-primary font-medium">
+                ✨ Upload as many products as you want - there are no limits!
+              </p>
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
