@@ -346,12 +346,20 @@ const SellerDashboard = () => {
               ✨ No limits - upload unlimited products!
             </p>
           </div>
-          <Link to="/seller/add-product">
-            <Button variant="hero" size="lg" className="w-full sm:w-auto">
-              <Plus className="mr-2 h-5 w-5" />
-              Add Product
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link to="/seller/custom-order">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                <DollarSign className="mr-2 h-5 w-5" />
+                Custom Order
+              </Button>
+            </Link>
+            <Link to="/seller/add-product">
+              <Button variant="hero" size="lg" className="w-full sm:w-auto">
+                <Plus className="mr-2 h-5 w-5" />
+                Add Product
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}

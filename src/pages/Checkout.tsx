@@ -110,6 +110,7 @@ const Checkout = () => {
   }
 
   const product = order.products as any;
+  const isCustomOrder = order.is_custom_order;
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,7 +135,11 @@ const Checkout = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
-                {product?.thumbnail_url ? (
+                {isCustomOrder ? (
+                  <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                ) : product?.thumbnail_url ? (
                   <img
                     src={product.thumbnail_url}
                     alt={product.title}
@@ -146,10 +151,20 @@ const Checkout = () => {
                   </div>
                 )}
                 <div>
-                  <h3 className="font-semibold line-clamp-2">{product?.title}</h3>
-                  <p className="text-sm text-muted-foreground">Digital Product</p>
+                  <h3 className="font-semibold line-clamp-2">
+                    {isCustomOrder ? order.custom_order_title : product?.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {isCustomOrder ? "Custom Order" : "Digital Product"}
+                  </p>
                 </div>
               </div>
+
+              {isCustomOrder && order.custom_order_description && (
+                <div className="bg-muted/30 rounded-lg p-3">
+                  <p className="text-sm text-muted-foreground">{order.custom_order_description}</p>
+                </div>
+              )}
 
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between">
