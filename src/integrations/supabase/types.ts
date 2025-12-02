@@ -91,15 +91,18 @@ export type Database = {
           buyer_id: string
           created_at: string
           currency: string
+          custom_order_description: string | null
+          custom_order_title: string | null
           expires_at: string | null
           id: string
           ipaymu_payment_url: string | null
           ipaymu_session_id: string | null
           ipaymu_transaction_id: string | null
+          is_custom_order: boolean | null
           paid_at: string | null
           payment_method: string | null
           payment_status: string | null
-          product_id: string
+          product_id: string | null
           seller_id: string
           updated_at: string
         }
@@ -109,15 +112,18 @@ export type Database = {
           buyer_id: string
           created_at?: string
           currency: string
+          custom_order_description?: string | null
+          custom_order_title?: string | null
           expires_at?: string | null
           id?: string
           ipaymu_payment_url?: string | null
           ipaymu_session_id?: string | null
           ipaymu_transaction_id?: string | null
+          is_custom_order?: boolean | null
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
-          product_id: string
+          product_id?: string | null
           seller_id: string
           updated_at?: string
         }
@@ -127,15 +133,18 @@ export type Database = {
           buyer_id?: string
           created_at?: string
           currency?: string
+          custom_order_description?: string | null
+          custom_order_title?: string | null
           expires_at?: string | null
           id?: string
           ipaymu_payment_url?: string | null
           ipaymu_session_id?: string | null
           ipaymu_transaction_id?: string | null
+          is_custom_order?: boolean | null
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
-          product_id?: string
+          product_id?: string | null
           seller_id?: string
           updated_at?: string
         }
