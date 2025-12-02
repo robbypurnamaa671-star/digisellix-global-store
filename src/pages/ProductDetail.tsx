@@ -3,18 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Download, Shield, ArrowLeft, User, ShoppingCart } from "lucide-react";
+import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [startingChat, setStartingChat] = useState(false);
 
   // Track product view
   useEffect(() => {
@@ -119,13 +120,63 @@ const ProductDetail = () => {
         .select()
         .single();
 
-      if (error) throw error;
+    if (error) throw error;
 
       toast.success("Order created! Redirecting to checkout...");
       // Navigate to checkout page (to be created)
       navigate(`/checkout/${order.id}`);
     } catch (error: any) {
       toast.error(error.message || "Failed to create order");
+    }
+  };
+
+  const handleChatWithSeller = async () => {
+    if (!user) {
+      toast.error("Please sign in to chat with seller");
+      navigate("/auth");
+      return;
+    }
+
+    if (user.id === product?.seller_id) {
+      toast.error("This is your own product");
+      return;
+    }
+
+    setStartingChat(true);
+    try {
+      // Check if conversation already exists
+      const { data: existingConv } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("buyer_id", user.id)
+        .eq("seller_id", product.seller_id)
+        .eq("product_id", product.id)
+        .maybeSingle();
+
+      if (existingConv) {
+        navigate(`/chat?conversation=${existingConv.id}`);
+        return;
+      }
+
+      // Create new conversation
+      const { data: newConv, error } = await supabase
+        .from("conversations")
+        .insert({
+          buyer_id: user.id,
+          seller_id: product.seller_id,
+          product_id: product.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      navigate(`/chat?conversation=${newConv.id}`);
+    } catch (error: any) {
+      console.error("Error starting chat:", error);
+      toast.error("Failed to start chat");
+    } finally {
+      setStartingChat(false);
     }
   };
 
@@ -248,6 +299,16 @@ const ProductDetail = () => {
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   Buy Now
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleChatWithSeller}
+                  disabled={startingChat || user?.id === product.seller_id}
+                >
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  {startingChat ? "Starting..." : "Chat with Seller"}
                 </Button>
               </CardContent>
             </Card>

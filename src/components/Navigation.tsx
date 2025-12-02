@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu } from "lucide-react";
+import { ShoppingBag, User, Shield, Menu, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -39,6 +39,15 @@ export const Navigation = () => {
               </Button>
             </Link>
           )}
+
+          {user && (
+            <Link to="/chat">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <MessageCircle className="h-4 w-4" />
+                <span className="hidden lg:inline">Messages</span>
+              </Button>
+            </Link>
+          )}
           
           {user ? (
             <DropdownMenu>
@@ -60,6 +69,9 @@ export const Navigation = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/seller/add-product">Add Product</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/chat">Messages</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 )}
@@ -68,6 +80,9 @@ export const Navigation = () => {
                   <>
                     <DropdownMenuItem asChild>
                       <Link to="/buyer/dashboard">My Purchases</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/chat">Messages</Link>
                     </DropdownMenuItem>
                     {isSeller && <DropdownMenuSeparator />}
                   </>
@@ -142,15 +157,29 @@ export const Navigation = () => {
                             Add Product
                           </Button>
                         </Link>
+                        <Link to="/chat" onClick={() => setOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start gap-2">
+                            <MessageCircle className="h-4 w-4" />
+                            Messages
+                          </Button>
+                        </Link>
                       </>
                     )}
                     
                     {isBuyer && (
-                      <Link to="/buyer/dashboard" onClick={() => setOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start">
-                          My Purchases
-                        </Button>
-                      </Link>
+                      <>
+                        <Link to="/buyer/dashboard" onClick={() => setOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start">
+                            My Purchases
+                          </Button>
+                        </Link>
+                        <Link to="/chat" onClick={() => setOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start gap-2">
+                            <MessageCircle className="h-4 w-4" />
+                            Messages
+                          </Button>
+                        </Link>
+                      </>
                     )}
                     
                     {isAdmin && (

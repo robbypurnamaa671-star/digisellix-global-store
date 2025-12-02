@@ -19,6 +19,7 @@ import Wallet from "./pages/seller/Wallet";
 import CustomOrder from "./pages/seller/CustomOrder";
 import BuyerDashboard from "./pages/buyer/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/seller/custom-order" element={<CustomOrder />} />
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/chat" element={<Chat />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
