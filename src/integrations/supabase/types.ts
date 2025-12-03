@@ -365,6 +365,7 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          is_limited: boolean | null
           phone: string | null
           updated_at: string
         }
@@ -372,6 +373,7 @@ export type Database = {
           created_at?: string
           full_name: string
           id: string
+          is_limited?: boolean | null
           phone?: string | null
           updated_at?: string
         }
@@ -379,10 +381,49 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          is_limited?: boolean | null
           phone?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          buyer_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          order_id: string
+          rating: number
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          rating: number
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          rating?: number
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

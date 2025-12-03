@@ -5,19 +5,22 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   ArrowLeft, 
-  User, 
   MessageCircle, 
   Package, 
   ShoppingBag,
-  Calendar
+  Calendar,
+  AlertTriangle,
+  Star
 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { SellerReviews } from "@/components/reviews/SellerReviews";
 
 const SellerPage = () => {
   const { id } = useParams();
@@ -57,6 +60,25 @@ const SellerPage = () => {
   });
 
   const totalSales = products?.reduce((sum, p) => sum + (p.total_sales || 0), 0) || 0;
+
+  // Fetch average rating
+  const { data: reviewStats } = useQuery({
+    queryKey: ["seller-review-stats", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("seller_id", id);
+
+      if (error) throw error;
+      
+      if (!data || data.length === 0) return { average: 0, count: 0 };
+      
+      const average = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
+      return { average: parseFloat(average.toFixed(1)), count: data.length };
+    },
+    enabled: !!id,
+  });
 
   const handleChatWithSeller = async () => {
     if (!user) {
@@ -163,6 +185,18 @@ const SellerPage = () => {
           Back to Products
         </Link>
 
+        {/* Limited Account Warning */}
+        {seller.is_limited && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Limited Account</AlertTitle>
+            <AlertDescription>
+              This seller's account is currently limited due to low ratings. 
+              Please be cautious when making purchases.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Seller Profile Header */}
         <Card className="mb-8">
           <CardContent className="p-6 md:p-8">
@@ -174,9 +208,14 @@ const SellerPage = () => {
               </Avatar>
               
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-2xl md:text-3xl font-bold mb-2">
-                  {seller.full_name}
-                </h1>
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <h1 className="text-2xl md:text-3xl font-bold">
+                    {seller.full_name}
+                  </h1>
+                  {seller.is_limited && (
+                    <Badge variant="destructive">Limited</Badge>
+                  )}
+                </div>
                 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center gap-1">
@@ -187,6 +226,12 @@ const SellerPage = () => {
                     <ShoppingBag className="h-4 w-4" />
                     <span>{totalSales} Sales</span>
                   </div>
+                  {reviewStats && reviewStats.count > 0 && (
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span>{reviewStats.average} ({reviewStats.count} reviews)</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     <span>Joined {new Date(seller.created_at).toLocaleDateString()}</span>
@@ -280,6 +325,11 @@ const SellerPage = () => {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Seller Reviews Section */}
+        <div className="mt-12">
+          <SellerReviews sellerId={id!} />
         </div>
       </div>
     </div>
