@@ -33,6 +33,8 @@ import {
   Eye,
   Trash2,
   Star,
+  AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -120,7 +122,27 @@ const AdminDashboard = () => {
       ?.filter((o) => o.payment_status === "paid")
       .reduce((sum, o) => sum + Number(o.amount_usd), 0) || 0,
     pendingProducts: products?.filter((p) => p.status === "pending")?.length || 0,
+    limitedSellers: users?.filter((u) => u.is_limited)?.length || 0,
   };
+
+  // Remove seller limitation mutation
+  const removeLimitationMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_limited: false })
+        .eq("id", userId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success("Seller limitation removed");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to remove limitation");
+    },
+  });
 
   // Update product status mutation
   const updateProductMutation = useMutation({
@@ -302,6 +324,14 @@ const AdminDashboard = () => {
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="limited" className="relative">
+              Limited Sellers
+              {stats.limitedSellers > 0 && (
+                <span className="ml-2 bg-destructive text-destructive-foreground text-xs rounded-full px-2">
+                  {stats.limitedSellers}
+                </span>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Products Tab */}
@@ -539,6 +569,81 @@ const AdminDashboard = () => {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Limited Sellers Tab */}
+          <TabsContent value="limited">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Limited Seller Accounts
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Sellers who received low ratings (3 stars or below) have limited accounts. 
+                  Review their case and remove the limitation if appropriate.
+                </p>
+              </CardHeader>
+              <CardContent>
+                {usersLoading ? (
+                  <Skeleton className="h-64 w-full" />
+                ) : (() => {
+                  const limitedSellers = users?.filter((u) => u.is_limited) || [];
+                  
+                  if (limitedSellers.length === 0) {
+                    return (
+                      <div className="text-center py-12">
+                        <ShieldCheck className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">No Limited Accounts</h3>
+                        <p className="text-muted-foreground">
+                          All sellers are in good standing
+                        </p>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Seller Name</TableHead>
+                          <TableHead>Joined</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {limitedSellers.map((seller) => (
+                          <TableRow key={seller.id}>
+                            <TableCell className="font-medium">{seller.full_name}</TableCell>
+                            <TableCell>
+                              {new Date(seller.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="destructive">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                Limited
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeLimitationMutation.mutate(seller.id)}
+                                disabled={removeLimitationMutation.isPending}
+                              >
+                                <ShieldCheck className="h-4 w-4 mr-2" />
+                                Remove Limitation
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>

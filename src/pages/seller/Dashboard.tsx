@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   ShoppingBag, 
   Plus, 
@@ -10,12 +11,15 @@ import {
   Edit,
   Trash2,
   ExternalLink,
-  Eye
+  Eye,
+  AlertTriangle,
+  MessageCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -95,6 +99,22 @@ const SellerDashboard = () => {
     productStats: [],
   });
   const [loading, setLoading] = useState(true);
+
+  // Fetch seller profile to check if limited
+  const { data: sellerProfile } = useQuery({
+    queryKey: ["seller-profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_limited")
+        .eq("id", user?.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   useEffect(() => {
     if (!user || !hasRole("seller")) {
@@ -337,6 +357,22 @@ const SellerDashboard = () => {
       </nav>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Limited Account Warning */}
+        {sellerProfile?.is_limited && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Account Limited</AlertTitle>
+            <AlertDescription className="mt-2">
+              Your seller account has been limited due to receiving a low rating from a buyer. 
+              Your products are still visible, but buyers will see a warning on your seller page. 
+              <Link to="/chat" className="underline font-medium ml-1 inline-flex items-center gap-1">
+                <MessageCircle className="h-3 w-3" />
+                Contact admin to resolve this issue
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>

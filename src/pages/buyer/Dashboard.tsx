@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,19 +12,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingBag, Package, Download, Clock, CheckCircle, XCircle } from "lucide-react";
+import { ShoppingBag, Package, Download, Clock, CheckCircle, XCircle, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ReviewForm } from "@/components/reviews/ReviewForm";
 
 const BuyerDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   useEffect(() => {
     if (!user || !hasRole("buyer")) {
@@ -45,14 +54,16 @@ const BuyerDashboard = () => {
             thumbnail_url,
             category,
             file_url,
-            download_link
+            download_link,
+            seller_id
           ),
           orders (
             id,
             amount_usd,
             amount_idr,
             currency,
-            paid_at
+            paid_at,
+            seller_id
           )
         `)
         .eq("buyer_id", user?.id)
@@ -60,6 +71,21 @@ const BuyerDashboard = () => {
 
       if (error) throw error;
       return data;
+    },
+    enabled: !!user,
+  });
+
+  // Fetch user's reviews to check which orders have been reviewed
+  const { data: userReviews } = useQuery({
+    queryKey: ["user-reviews", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("order_id")
+        .eq("buyer_id", user?.id);
+
+      if (error) throw error;
+      return data?.map(r => r.order_id) || [];
     },
     enabled: !!user,
   });
@@ -228,6 +254,7 @@ const BuyerDashboard = () => {
                 {purchases.map((purchase) => {
                   const product = purchase.products as any;
                   const order = purchase.orders as any;
+                  const hasReviewed = userReviews?.includes(order?.id);
                   
                   return (
                     <Card
@@ -235,7 +262,7 @@ const BuyerDashboard = () => {
                       className="hover:shadow-[var(--shadow-card-hover)] transition-all duration-300"
                     >
                       <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                           {product?.thumbnail_url ? (
                             <img
                               src={product.thumbnail_url}
@@ -251,7 +278,7 @@ const BuyerDashboard = () => {
                             <h3 className="text-xl font-bold mb-2">
                               {product?.title}
                             </h3>
-                            <div className="flex items-center gap-4 text-sm">
+                            <div className="flex flex-wrap items-center gap-4 text-sm">
                               <Badge variant="secondary">{product?.category}</Badge>
                               <span className="text-muted-foreground">
                                 Downloaded {purchase.download_count} times
@@ -266,14 +293,38 @@ const BuyerDashboard = () => {
                               )}
                             </div>
                           </div>
-                          <Button
-                            variant="hero"
-                            onClick={() => handleDownload(purchase)}
-                            disabled={downloadMutation.isPending}
-                          >
-                            <Download className="mr-2 h-4 w-4" />
-                            Download
-                          </Button>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            {!hasReviewed && order && (
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedOrder({
+                                    orderId: order.id,
+                                    sellerId: order.seller_id,
+                                    productTitle: product?.title
+                                  });
+                                  setReviewDialogOpen(true);
+                                }}
+                              >
+                                <Star className="mr-2 h-4 w-4" />
+                                Leave Review
+                              </Button>
+                            )}
+                            {hasReviewed && (
+                              <Badge variant="secondary" className="h-10 px-4 flex items-center">
+                                <Star className="mr-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                Reviewed
+                              </Badge>
+                            )}
+                            <Button
+                              variant="hero"
+                              onClick={() => handleDownload(purchase)}
+                              disabled={downloadMutation.isPending}
+                            >
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -384,6 +435,29 @@ const BuyerDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Review Dialog */}
+      <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Leave a Review for {selectedOrder?.productTitle}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedOrder && user && (
+            <ReviewForm
+              orderId={selectedOrder.orderId}
+              sellerId={selectedOrder.sellerId}
+              buyerId={user.id}
+              onSuccess={() => {
+                setReviewDialogOpen(false);
+                setSelectedOrder(null);
+                queryClient.invalidateQueries({ queryKey: ["user-reviews"] });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
