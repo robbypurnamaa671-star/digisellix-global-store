@@ -60,7 +60,7 @@ const Home = () => {
     },
   });
 
-  // Fetch regular products (at least 30)
+  // Fetch regular products (20 for 4 rows x 5 columns)
   const { data: products, isLoading: loadingProducts } = useQuery({
     queryKey: ["home-products"],
     queryFn: async () => {
@@ -69,7 +69,7 @@ const Home = () => {
         .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(20);
       if (error) throw error;
       return data;
     },
@@ -88,6 +88,17 @@ const Home = () => {
       <CardFooter className="p-4 pt-0">
         <Skeleton className="h-10 w-full" />
       </CardFooter>
+    </Card>
+  );
+
+  const ProductSkeletonCompact = () => (
+    <Card>
+      <Skeleton className="aspect-[4/3] w-full" />
+      <CardContent className="p-2 sm:p-3">
+        <Skeleton className="h-3 w-12 mb-1" />
+        <Skeleton className="h-4 w-full mb-1" />
+        <Skeleton className="h-5 w-16" />
+      </CardContent>
     </Card>
   );
 
@@ -256,11 +267,11 @@ const Home = () => {
                 Most purchased products by our community
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
               {loadingPopular
-                ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
+                ? [...Array(5)].map((_, i) => <ProductSkeletonCompact key={i} />)
                 : popularProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} compact />
                   ))}
             </div>
           </div>
@@ -281,11 +292,11 @@ const Home = () => {
                 Fresh products just added to the marketplace
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
               {loadingNewest
-                ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
+                ? [...Array(5)].map((_, i) => <ProductSkeletonCompact key={i} />)
                 : newestProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} compact />
                   ))}
             </div>
           </div>
@@ -301,11 +312,11 @@ const Home = () => {
               Browse our complete collection of digital products
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
             {loadingProducts
-              ? [...Array(30)].map((_, i) => <ProductSkeleton key={i} />)
-              : products?.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+              ? [...Array(20)].map((_, i) => <ProductSkeletonCompact key={i} />)
+              : products?.slice(0, 20).map((product) => (
+                  <ProductCard key={product.id} product={product} compact />
                 ))}
           </div>
           <div className="text-center mt-12">
