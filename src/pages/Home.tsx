@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, ShoppingBag, Zap, Globe, Shield, Star, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
+import { ProductCard } from "@/components/ProductCard";
 import heroImage from "@/assets/hero-marketplace.jpg";
 import iconProducts from "@/assets/icon-products.png";
 import iconPayment from "@/assets/icon-payment.png";
@@ -75,44 +75,7 @@ const Home = () => {
     },
   });
 
-  const ProductCard = ({ product }: { product: any }) => (
-    <Link to={`/products/${product.id}`}>
-      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
-        <div className="aspect-video overflow-hidden bg-muted">
-          {product.thumbnail_url ? (
-            <img
-              src={product.thumbnail_url}
-              alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-muted">
-              <span className="text-4xl">📦</span>
-            </div>
-          )}
-        </div>
-        <CardContent className="p-4">
-          <Badge variant="secondary" className="mb-2">
-            {product.category}
-          </Badge>
-          <h3 className="font-bold text-lg mb-2 line-clamp-2">
-            {product.title}
-          </h3>
-          <div className="text-2xl font-bold text-primary">
-            ${Number(product.price_usd).toFixed(2)}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            Rp {Number(product.price_idr).toLocaleString('id-ID')}
-          </div>
-        </CardContent>
-        <CardFooter className="p-4 pt-0">
-          <Button variant="outline" className="w-full">
-            View Details
-          </Button>
-        </CardFooter>
-      </Card>
-    </Link>
-  );
+  // ProductCard is now imported from @/components/ProductCard
 
   const ProductSkeleton = () => (
     <Card>
