@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, X } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
+import { ProductCard } from "@/components/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -187,42 +188,7 @@ const Products = () => {
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
-                  <Link key={product.id} to={`/products/${product.id}`}>
-                    <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
-                      <div className="aspect-video overflow-hidden bg-muted">
-                        {product.thumbnail_url ? (
-                          <img
-                            src={product.thumbnail_url}
-                            alt={product.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <span className="text-4xl">📦</span>
-                          </div>
-                        )}
-                      </div>
-                      <CardContent className="p-4">
-                        <Badge variant="secondary" className="mb-2">
-                          {product.category}
-                        </Badge>
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2">
-                          {product.title}
-                        </h3>
-                        <div className="text-2xl font-bold text-primary">
-                          ${Number(product.price_usd).toFixed(2)}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          Rp {Number(product.price_idr).toLocaleString('id-ID')}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0">
-                        <Button variant="outline" className="w-full">
-                          View Details
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
+                  <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             </>
