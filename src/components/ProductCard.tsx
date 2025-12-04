@@ -16,9 +16,10 @@ interface ProductCardProps {
     thumbnail_url: string | null;
     seller_id: string;
   };
+  compact?: boolean;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, compact = false }: ProductCardProps) => {
   const { data: sellerRating } = useQuery({
     queryKey: ["seller-rating", product.seller_id],
     queryFn: async () => {
@@ -34,10 +35,59 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       const average = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
       return { average: parseFloat(average.toFixed(1)), count: data.length };
     },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const isTopRated = sellerRating && sellerRating.average >= 4.5 && sellerRating.count >= 3;
+
+  if (compact) {
+    return (
+      <Link to={`/products/${product.id}`}>
+        <Card className="group hover:shadow-md transition-all duration-300 hover:scale-[1.02] overflow-hidden h-full relative">
+          {isTopRated && (
+            <div className="absolute top-1 right-1 z-10">
+              <Badge className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0 shadow-sm gap-0.5 text-[10px] px-1.5 py-0.5">
+                <Star className="h-2.5 w-2.5 fill-white" />
+                Top
+              </Badge>
+            </div>
+          )}
+          <div className="aspect-[4/3] overflow-hidden bg-muted">
+            {product.thumbnail_url ? (
+              <img
+                src={product.thumbnail_url}
+                alt={product.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-muted">
+                <span className="text-2xl">📦</span>
+              </div>
+            )}
+          </div>
+          <CardContent className="p-2 sm:p-3">
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 truncate">
+                {product.category}
+              </Badge>
+              {sellerRating && (
+                <div className="flex items-center gap-0.5 text-xs shrink-0">
+                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  <span className="font-medium">{sellerRating.average}</span>
+                </div>
+              )}
+            </div>
+            <h3 className="font-semibold text-xs sm:text-sm mb-1 line-clamp-2 leading-tight">
+              {product.title}
+            </h3>
+            <div className="text-sm sm:text-base font-bold text-primary">
+              ${Number(product.price_usd).toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    );
+  }
 
   return (
     <Link to={`/products/${product.id}`}>
