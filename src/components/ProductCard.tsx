@@ -37,9 +37,19 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
+  const isTopRated = sellerRating && sellerRating.average >= 4.5 && sellerRating.count >= 3;
+
   return (
     <Link to={`/products/${product.id}`}>
-      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
+      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full relative">
+        {isTopRated && (
+          <div className="absolute top-2 right-2 z-10">
+            <Badge className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0 shadow-md gap-1">
+              <Star className="h-3 w-3 fill-white" />
+              Top Rated
+            </Badge>
+          </div>
+        )}
         <div className="aspect-video overflow-hidden bg-muted">
           {product.thumbnail_url ? (
             <img
