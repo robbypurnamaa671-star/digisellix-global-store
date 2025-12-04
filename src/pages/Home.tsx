@@ -149,80 +149,60 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
+      <section className="py-8 sm:py-10 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">How It Works</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              Start selling your digital products in 4 easy steps
+          <div className="text-center mb-6 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">How It Works</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Start selling in 4 easy steps
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { step: "01", title: "Create Account", desc: "Sign up free in seconds" },
-              { step: "02", title: "Upload Product", desc: "Add file or download link" },
-              { step: "03", title: "Receive Payment", desc: "Automatic & secure payment" },
-              { step: "04", title: "Buyer Downloads", desc: "Instant access for buyers" },
+              { step: "01", title: "Create Account", desc: "Sign up free" },
+              { step: "02", title: "Upload Product", desc: "Add file or link" },
+              { step: "03", title: "Receive Payment", desc: "Secure payment" },
+              { step: "04", title: "Buyer Downloads", desc: "Instant access" },
             ].map((item, idx) => (
-              <Card
+              <div
                 key={idx}
-                className="relative overflow-hidden group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105"
+                className="flex-shrink-0 w-[140px] sm:w-auto sm:flex-1 bg-card rounded-lg p-3 sm:p-4 border border-border hover:shadow-md transition-all"
               >
-                <CardContent className="p-8">
-                  <div className="text-6xl font-bold text-primary/10 mb-4">{item.step}</div>
-                  <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.desc}</p>
-                </CardContent>
-              </Card>
+                <div className="text-2xl sm:text-3xl font-bold text-primary/20 mb-1">{item.step}</div>
+                <h3 className="text-sm sm:text-base font-bold mb-1">{item.title}</h3>
+                <p className="text-xs text-muted-foreground">{item.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-12 sm:py-16 lg:py-20">
+      <section className="py-8 sm:py-10">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Digisellix Advantages</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              Trusted marketplace platform with complete features for creators
+          <div className="text-center mb-6 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">Digisellix Advantages</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Trusted marketplace for creators
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              {
-                icon: iconPayment,
-                title: "Fast Payments",
-                desc: "Receive payments from around the world securely",
-              },
-              {
-                icon: iconGlobal,
-                title: "Global Sellers",
-                desc: "Sell to customers in various countries",
-              },
-              {
-                icon: iconProducts,
-                title: "Upload File or Link",
-                desc: "Flexible to use file or external link",
-              },
-              {
-                icon: iconSecure,
-                title: "Modern Marketplace",
-                desc: "Responsive and user-friendly platform",
-              },
+              { icon: iconPayment, title: "Fast Payments", desc: "Secure global payments" },
+              { icon: iconGlobal, title: "Global Sellers", desc: "Worldwide reach" },
+              { icon: iconProducts, title: "Flexible Upload", desc: "File or link" },
+              { icon: iconSecure, title: "Modern Platform", desc: "User-friendly" },
             ].map((feature, idx) => (
-              <Card
+              <div
                 key={idx}
-                className="text-center group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105"
+                className="flex-shrink-0 w-[140px] sm:w-auto sm:flex-1 bg-card rounded-lg p-3 sm:p-4 border border-border hover:shadow-md transition-all text-center"
               >
-                <CardContent className="p-8 space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <img src={feature.icon} alt={feature.title} className="w-12 h-12" />
-                  </div>
-                  <h3 className="text-xl font-bold">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.desc}</p>
-                </CardContent>
-              </Card>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mb-2">
+                  <img src={feature.icon} alt={feature.title} className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                <h3 className="text-sm sm:text-base font-bold mb-1">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground">{feature.desc}</p>
+              </div>
             ))}
           </div>
         </div>
