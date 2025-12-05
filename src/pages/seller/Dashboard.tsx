@@ -16,6 +16,7 @@ import {
   MessageCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -82,6 +83,7 @@ const SellerDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   
   const [products, setProducts] = useState<Product[]>([]);
   const [stats, setStats] = useState<RevenueStats>({
@@ -311,28 +313,28 @@ const SellerDashboard = () => {
 
   const statsCards = [
     { 
-      title: "Total Sales", 
+      title: t('seller.totalSales'), 
       value: stats.totalSalesCount.toString(), 
       icon: TrendingUp,
-      description: "Orders completed"
+      description: t('seller.ordersCompleted')
     },
     { 
-      title: "Products", 
+      title: t('seller.products'), 
       value: stats.productsCount.toString(), 
       icon: Package,
-      description: "Active listings"
+      description: t('seller.activeListings')
     },
     { 
-      title: "Revenue (USD)", 
+      title: t('seller.revenueUSD'), 
       value: formatCurrency(stats.totalRevenueUSD, "USD"), 
       icon: DollarSign,
-      description: "Total earnings"
+      description: t('seller.totalEarnings')
     },
     { 
-      title: "Revenue (IDR)", 
+      title: t('seller.revenueIDR'), 
       value: formatCurrency(stats.totalRevenueIDR, "IDR"), 
       icon: DollarSign,
-      description: "Total earnings"
+      description: t('seller.totalEarnings')
     },
   ];
 
@@ -349,9 +351,9 @@ const SellerDashboard = () => {
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">
-              <Button variant="ghost">Browse</Button>
+              <Button variant="ghost">{t('seller.browse')}</Button>
             </Link>
-            <Button variant="outline" onClick={signOut}>Logout</Button>
+            <Button variant="outline" onClick={signOut}>{t('seller.logout')}</Button>
           </div>
         </div>
       </nav>
@@ -361,13 +363,12 @@ const SellerDashboard = () => {
         {sellerProfile?.is_limited && (
           <Alert variant="destructive" className="mb-6">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Account Limited</AlertTitle>
+            <AlertTitle>{t('seller.accountLimited')}</AlertTitle>
             <AlertDescription className="mt-2">
-              Your seller account has been limited due to receiving a low rating from a buyer. 
-              Your products are still visible, but buyers will see a warning on your seller page. 
+              {t('seller.accountLimitedDesc')}{' '}
               <Link to="/chat" className="underline font-medium ml-1 inline-flex items-center gap-1">
                 <MessageCircle className="h-3 w-3" />
-                Contact admin to resolve this issue
+                {t('seller.contactAdmin')}
               </Link>
             </AlertDescription>
           </Alert>
@@ -376,23 +377,23 @@ const SellerDashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Seller Dashboard</h1>
-            <p className="text-muted-foreground">Manage your products and track your sales</p>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2">{t('seller.dashboard')}</h1>
+            <p className="text-muted-foreground">{t('seller.manageProducts')}</p>
             <p className="text-sm text-primary font-medium mt-1">
-              ✨ No limits - upload unlimited products!
+              {t('seller.noLimits')}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to="/seller/custom-order">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <DollarSign className="mr-2 h-5 w-5" />
-                Custom Order
+                {t('seller.customOrder')}
               </Button>
             </Link>
             <Link to="/seller/add-product">
               <Button variant="hero" size="lg" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-5 w-5" />
-                Add Product
+                {t('seller.addProduct')}
               </Button>
             </Link>
           </div>
@@ -419,16 +420,16 @@ const SellerDashboard = () => {
         {/* Tabs for Products and Analytics */}
         <Tabs defaultValue="products" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="products">{t('seller.productsTab')}</TabsTrigger>
+            <TabsTrigger value="analytics">{t('seller.analyticsTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products" className="space-y-6">
             {/* Products Table */}
         <Card className="shadow-[var(--shadow-card-hover)]">
           <CardHeader>
-            <CardTitle className="text-2xl">Your Products</CardTitle>
-            <p className="text-muted-foreground">Manage and track all your digital products</p>
+            <CardTitle className="text-2xl">{t('seller.yourProducts')}</CardTitle>
+            <p className="text-muted-foreground">{t('seller.manageTrack')}</p>
           </CardHeader>
           <CardContent>
             {loading ? (

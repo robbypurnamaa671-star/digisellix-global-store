@@ -15,6 +15,7 @@ import {
   User
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -44,6 +45,7 @@ const Chat = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const conversationId = searchParams.get("conversation");
 
@@ -244,9 +246,9 @@ const Chat = () => {
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">
-              <Button variant="ghost">Browse</Button>
+              <Button variant="ghost">{t('seller.browse')}</Button>
             </Link>
-            <Button variant="outline" onClick={signOut}>Logout</Button>
+            <Button variant="outline" onClick={signOut}>{t('seller.logout')}</Button>
           </div>
         </div>
       </nav>
@@ -257,8 +259,8 @@ const Chat = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Messages</h1>
-            <p className="text-muted-foreground text-sm">Chat with buyers and sellers</p>
+            <h1 className="text-2xl font-bold">{t('chat.messages')}</h1>
+            <p className="text-muted-foreground text-sm">{t('chat.chatWithBuyersSellers')}</p>
           </div>
         </div>
 
@@ -268,18 +270,18 @@ const Chat = () => {
             <div className="p-4 border-b border-border">
               <h2 className="font-semibold flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
-                Conversations
+                {t('chat.conversations')}
               </h2>
             </div>
             <ScrollArea className="flex-1">
               {loading ? (
-                <div className="p-4 text-center text-muted-foreground">Loading...</div>
+                <div className="p-4 text-center text-muted-foreground">{t('chat.loading')}</div>
               ) : conversations.length === 0 ? (
                 <div className="p-8 text-center">
                   <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">No conversations yet</p>
+                  <p className="text-muted-foreground">{t('chat.noConversations')}</p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Start a chat from a product page
+                    {t('chat.startFromProduct')}
                   </p>
                 </div>
               ) : (
@@ -383,7 +385,7 @@ const Chat = () => {
                 <div className="p-4 border-t border-border">
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Type a message..."
+                      placeholder={t('chat.typeMessage')}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
@@ -403,9 +405,9 @@ const Chat = () => {
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Select a conversation</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('chat.selectConversation')}</h3>
                   <p className="text-muted-foreground">
-                    Choose a conversation from the list to start chatting
+                    {t('chat.chooseConversation')}
                   </p>
                 </div>
               </div>

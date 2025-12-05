@@ -9,11 +9,13 @@ import { ArrowLeft, CreditCard } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const Checkout = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", orderId],
@@ -43,11 +45,11 @@ const Checkout = () => {
     try {
       if (!order) return;
 
-      toast.loading("Creating payment...");
+      toast.loading(t('checkout.creatingPayment'));
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("Please sign in to continue");
+        toast.error(t('checkout.pleaseSignIn'));
         navigate("/auth");
         return;
       }
@@ -66,7 +68,7 @@ const Checkout = () => {
       if (error) throw error;
 
       toast.dismiss();
-      toast.success("Redirecting to PayPal...");
+      toast.success(t('checkout.redirectingPaypal'));
 
       if (data.approvalUrl) {
         window.location.href = data.approvalUrl;
@@ -99,9 +101,9 @@ const Checkout = () => {
         <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Order not found</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('checkout.orderNotFound')}</h2>
             <Button onClick={() => navigate("/products")}>
-              Browse Products
+              {t('checkout.browseProducts')}
             </Button>
           </div>
         </div>
@@ -122,16 +124,16 @@ const Checkout = () => {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
+          {t('checkout.back')}
         </button>
 
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold mb-8">{t('checkout.title')}</h1>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Order Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>{t('checkout.orderSummary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
@@ -155,7 +157,7 @@ const Checkout = () => {
                     {isCustomOrder ? order.custom_order_title : product?.title}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {isCustomOrder ? "Custom Order" : "Digital Product"}
+                    {isCustomOrder ? t('checkout.customOrder') : t('checkout.digitalProduct')}
                   </p>
                 </div>
               </div>
@@ -168,19 +170,19 @@ const Checkout = () => {
 
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Price (USD)</span>
+                  <span className="text-muted-foreground">{t('checkout.priceUSD')}</span>
                   <span className="font-semibold">
                     ${Number(order.amount_usd).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Price (IDR)</span>
+                  <span className="text-muted-foreground">{t('checkout.priceIDR')}</span>
                   <span className="font-semibold">
                     Rp {Number(order.amount_idr).toLocaleString("id-ID")}
                   </span>
                 </div>
                 <div className="border-t pt-2 flex justify-between text-lg font-bold">
-                  <span>Total</span>
+                  <span>{t('checkout.total')}</span>
                   <span className="text-primary">
                     ${Number(order.amount_usd).toFixed(2)}
                   </span>
@@ -192,19 +194,19 @@ const Checkout = () => {
           {/* Payment Method */}
           <Card>
             <CardHeader>
-              <CardTitle>Payment Method</CardTitle>
+              <CardTitle>{t('checkout.paymentMethod')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-sm text-muted-foreground mb-4">
-                Secure payment processing powered by PayPal
+                {t('checkout.securePayment')}
               </div>
 
               <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
-                <h4 className="font-semibold text-sm">PayPal Payment Options:</h4>
+                <h4 className="font-semibold text-sm">{t('checkout.paypalOptions')}</h4>
                 <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• PayPal Balance</li>
-                  <li>• Credit/Debit Cards (Visa, Mastercard, Amex)</li>
-                  <li>• Bank Accounts (linked to PayPal)</li>
+                  <li>• {t('checkout.paypalBalance')}</li>
+                  <li>• {t('checkout.creditDebit')}</li>
+                  <li>• {t('checkout.bankAccounts')}</li>
                 </ul>
               </div>
 
@@ -214,12 +216,11 @@ const Checkout = () => {
                 onClick={handlePayment}
               >
                 <CreditCard className="mr-2 h-5 w-5" />
-                Continue with PayPal
+                {t('checkout.continuePaypal')}
               </Button>
 
               <div className="text-xs text-muted-foreground text-center">
-                Your payment information is encrypted and secure. You will get instant
-                access to your purchase after payment is confirmed.
+                {t('checkout.secureInfo')}
               </div>
             </CardContent>
           </Card>
