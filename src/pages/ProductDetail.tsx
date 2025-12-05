@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslatedText } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -16,7 +17,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [startingChat, setStartingChat] = useState(false);
 
   // Track product view
@@ -93,6 +94,11 @@ const ProductDetail = () => {
     },
     enabled: !!product?.category,
   });
+
+  // Translate description when language is Indonesian
+  const { text: translatedDescription, isTranslating: isTranslatingDesc } = useTranslatedText(
+    language === "id" ? product?.description : null
+  );
 
   const handleBuyNow = async () => {
     if (!user) {
@@ -320,9 +326,17 @@ const ProductDetail = () => {
 
             <div>
               <h2 className="text-2xl font-bold mb-4">{t('productDetail.description')}</h2>
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                {product.description}
-              </p>
+              {isTranslatingDesc ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ) : (
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {language === "id" && translatedDescription ? translatedDescription : product.description}
+                </p>
+              )}
             </div>
 
             <div>
