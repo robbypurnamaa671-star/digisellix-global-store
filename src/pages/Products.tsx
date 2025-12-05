@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Pagination,
   PaginationContent,
@@ -21,6 +22,7 @@ import {
 const PRODUCTS_PER_PAGE = 20;
 
 const Products = () => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -108,9 +110,9 @@ const Products = () => {
       {/* Header */}
       <section className="bg-gradient-to-br from-primary/10 to-accent/10 py-6 sm:py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Browse Products</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{t('products.title')}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Discover amazing digital products from creators worldwide
+            {t('products.subtitle')}
           </p>
         </div>
       </section>
@@ -124,7 +126,7 @@ const Products = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder={t('products.searchPlaceholder')}
                   className="pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -141,7 +143,7 @@ const Products = () => {
                   className="whitespace-nowrap h-7 text-xs px-2"
                   onClick={() => setSelectedCategory(null)}
                 >
-                  All
+                  {t('products.allCategories')}
                 </Button>
                 {categories.map((category) => (
                   <Button
@@ -203,10 +205,10 @@ const Products = () => {
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-12">
-              <h3 className="text-xl font-bold mb-2">No products found</h3>
+              <h3 className="text-xl font-bold mb-2">{t('products.noProducts')}</h3>
               <p className="text-muted-foreground mb-4 text-sm">
                 {searchQuery || selectedCategory
-                  ? "Try adjusting your filters or search terms"
+                  ? t('products.tryAdjusting')
                   : "Check back later for new products"}
               </p>
               {(searchQuery || selectedCategory) && (
