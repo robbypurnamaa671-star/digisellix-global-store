@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles, MessageCircle } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -370,6 +370,17 @@ const Home = () => {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-primary">{t('footer.about')}</a></li>
                 <li><a href="#" className="hover:text-primary">{t('footer.contact')}</a></li>
+                <li>
+                  <a 
+                    href="https://wa.me/6283822199640?text=Hello!%20I%20need%20assistance%20with%20Digisellix." 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-primary inline-flex items-center gap-1"
+                  >
+                    <MessageCircle className="h-3 w-3" />
+                    {t('footer.contactAdmin')}
+                  </a>
+                </li>
               </ul>
             </div>
             <div>

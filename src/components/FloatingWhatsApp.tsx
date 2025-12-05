@@ -1,10 +1,25 @@
-import { MessageCircle, X } from "lucide-react";
-import { useState } from "react";
+import { MessageCircle, X, MinusCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const FloatingWhatsApp = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
   const [message, setMessage] = useState("");
   const whatsappNumber = "6283822199640"; // Admin WhatsApp number
+
+  // Check if user previously dismissed the button
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem("whatsapp-dismissed");
+    if (dismissed === "true") {
+      setIsDismissed(true);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    setIsOpen(false);
+    sessionStorage.setItem("whatsapp-dismissed", "true");
+  };
 
   const handleSendMessage = () => {
     const encodedMessage = encodeURIComponent(
@@ -12,7 +27,6 @@ const FloatingWhatsApp = () => {
     );
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
     
-    // Create temporary anchor and click it
     const link = document.createElement('a');
     link.href = whatsappUrl;
     link.target = '_blank';
@@ -23,20 +37,35 @@ const FloatingWhatsApp = () => {
     setMessage("");
   };
 
+  // Don't render if dismissed
+  if (isDismissed) return null;
+
   return (
     <>
       {/* Floating WhatsApp Button */}
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center group"
-          aria-label="Contact us on WhatsApp"
-        >
-          <MessageCircle className="h-6 w-6" />
-          <span className="absolute right-full mr-3 bg-background text-foreground px-3 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
-            Need help? Chat with us!
-          </span>
-        </button>
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+          {/* Dismiss button */}
+          <button
+            onClick={handleDismiss}
+            className="bg-muted hover:bg-muted/80 text-muted-foreground rounded-full p-2 shadow-md transition-all duration-300 hover:scale-110"
+            aria-label="Dismiss WhatsApp button"
+            title="Dismiss"
+          >
+            <MinusCircle className="h-4 w-4" />
+          </button>
+          {/* Main WhatsApp button */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center group"
+            aria-label="Contact us on WhatsApp"
+          >
+            <MessageCircle className="h-6 w-6" />
+            <span className="absolute right-full mr-3 bg-background text-foreground px-3 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-sm font-medium">
+              Need help? Chat with us!
+            </span>
+          </button>
+        </div>
       )}
 
       {/* WhatsApp Chat Widget */}
