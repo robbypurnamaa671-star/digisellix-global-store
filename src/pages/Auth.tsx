@@ -7,12 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingBag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState<("seller" | "buyer")[]>(["buyer"]);
   const { user, userRoles, hasRole, signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Redirect authenticated users to their dashboard
   useEffect(() => {
@@ -84,22 +86,22 @@ const Auth = () => {
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+            <TabsTrigger value="signup">{t('auth.signup')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
             <Card className="shadow-[var(--shadow-card-hover)]">
               <CardHeader>
-                <CardTitle>Welcome Back</CardTitle>
+                <CardTitle>{t('auth.welcomeBack')}</CardTitle>
                 <CardDescription>
-                  Enter your credentials to access your account
+                  {t('auth.enterCredentials')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-email">{t('auth.email')}</Label>
                     <Input
                       id="login-email"
                       name="email"
@@ -109,7 +111,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
+                    <Label htmlFor="login-password">{t('auth.password')}</Label>
                     <Input
                       id="login-password"
                       name="password"
@@ -124,7 +126,7 @@ const Auth = () => {
                     variant="hero"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Loading..." : "Login"}
+                    {isLoading ? t('auth.loading') : t('auth.login')}
                   </Button>
                 </form>
               </CardContent>
@@ -134,15 +136,15 @@ const Auth = () => {
           <TabsContent value="signup">
             <Card className="shadow-[var(--shadow-card-hover)]">
               <CardHeader>
-                <CardTitle>Create Account</CardTitle>
+                <CardTitle>{t('auth.createAccount')}</CardTitle>
                 <CardDescription>
-                  Start selling your digital products today
+                  {t('auth.startSelling')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
+                    <Label htmlFor="signup-name">{t('auth.fullName')}</Label>
                     <Input
                       id="signup-name"
                       name="name"
@@ -152,7 +154,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">{t('auth.email')}</Label>
                     <Input
                       id="signup-email"
                       name="email"
@@ -162,7 +164,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">{t('auth.password')}</Label>
                     <Input
                       id="signup-password"
                       name="password"
@@ -173,7 +175,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label>I want to</Label>
+                    <Label>{t('auth.iWantTo')}</Label>
                     <div className="space-y-2">
                       <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                         <input
@@ -183,9 +185,9 @@ const Auth = () => {
                           className="w-4 h-4"
                         />
                         <div>
-                          <div className="font-medium">Buy Products</div>
+                          <div className="font-medium">{t('auth.buyProducts')}</div>
                           <div className="text-xs text-muted-foreground">
-                            Purchase and download digital products
+                            {t('auth.buyProductsDesc')}
                           </div>
                         </div>
                       </label>
@@ -197,15 +199,15 @@ const Auth = () => {
                           className="w-4 h-4"
                         />
                         <div>
-                          <div className="font-medium">Sell Products</div>
+                          <div className="font-medium">{t('auth.sellProducts')}</div>
                           <div className="text-xs text-muted-foreground">
-                            Upload and sell your digital products
+                            {t('auth.sellProductsDesc')}
                           </div>
                         </div>
                       </label>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      You can select both options to buy and sell
+                      {t('auth.selectBoth')}
                     </p>
                   </div>
                   <Button
@@ -214,7 +216,7 @@ const Auth = () => {
                     variant="hero"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Loading..." : "Create Account"}
+                    {isLoading ? t('auth.loading') : t('auth.createAccount')}
                   </Button>
                 </form>
               </CardContent>
@@ -224,7 +226,7 @@ const Auth = () => {
 
         <div className="text-center mt-6">
           <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
-            ← Back to Home
+            {t('auth.backToHome')}
           </Link>
         </div>
       </div>

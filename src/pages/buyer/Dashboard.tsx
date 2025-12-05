@@ -21,6 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingBag, Package, Download, Clock, CheckCircle, XCircle, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +32,7 @@ const BuyerDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
@@ -163,21 +165,21 @@ const BuyerDashboard = () => {
         return (
           <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
             <CheckCircle className="h-3 w-3 mr-1" />
-            Paid
+            {t('paymentSuccess.paid')}
           </Badge>
         );
       case "pending":
         return (
           <Badge variant="secondary">
             <Clock className="h-3 w-3 mr-1" />
-            Pending
+            {t('paymentSuccess.pending')}
           </Badge>
         );
       case "failed":
         return (
           <Badge variant="destructive">
             <XCircle className="h-3 w-3 mr-1" />
-            Failed
+            {t('paymentSuccess.failed')}
           </Badge>
         );
       default:
@@ -198,25 +200,25 @@ const BuyerDashboard = () => {
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">
-              <Button variant="ghost">Browse Products</Button>
+              <Button variant="ghost">{t('checkout.browseProducts')}</Button>
             </Link>
-            <Button variant="outline" onClick={signOut}>Logout</Button>
+            <Button variant="outline" onClick={signOut}>{t('seller.logout')}</Button>
           </div>
         </div>
       </nav>
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Dashboard</h1>
+          <h1 className="text-4xl font-bold mb-2">{t('buyer.dashboard')}</h1>
           <p className="text-muted-foreground">
-            Manage your purchases and view order history
+            {t('buyer.managePurchases')}
           </p>
         </div>
 
         <Tabs defaultValue="purchases" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="purchases">My Purchases</TabsTrigger>
-            <TabsTrigger value="orders">Order History</TabsTrigger>
+            <TabsTrigger value="purchases">{t('buyer.myPurchases')}</TabsTrigger>
+            <TabsTrigger value="orders">{t('buyer.orderHistory')}</TabsTrigger>
           </TabsList>
 
           {/* Purchases Tab */}
@@ -241,12 +243,12 @@ const BuyerDashboard = () => {
             ) : !purchases || purchases.length === 0 ? (
               <Card className="text-center p-12">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">No purchases yet</h3>
+                <h3 className="text-xl font-bold mb-2">{t('buyer.noPurchases')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Start exploring our marketplace to find amazing digital products
+                  {t('buyer.startExploring')}
                 </p>
                 <Link to="/products">
-                  <Button variant="hero">Browse Products</Button>
+                  <Button variant="hero">{t('checkout.browseProducts')}</Button>
                 </Link>
               </Card>
             ) : (
@@ -281,13 +283,13 @@ const BuyerDashboard = () => {
                             <div className="flex flex-wrap items-center gap-4 text-sm">
                               <Badge variant="secondary">{product?.category}</Badge>
                               <span className="text-muted-foreground">
-                                Downloaded {purchase.download_count} times
+                                {t('buyer.downloaded')} {purchase.download_count} {t('buyer.times')}
                               </span>
                               {purchase.last_downloaded_at && (
                                 <>
                                   <span className="text-muted-foreground">•</span>
                                   <span className="text-muted-foreground">
-                                    Last: {new Date(purchase.last_downloaded_at).toLocaleDateString()}
+                                    {t('buyer.last')}: {new Date(purchase.last_downloaded_at).toLocaleDateString()}
                                   </span>
                                 </>
                               )}
@@ -307,13 +309,13 @@ const BuyerDashboard = () => {
                                 }}
                               >
                                 <Star className="mr-2 h-4 w-4" />
-                                Leave Review
+                                {t('buyer.leaveReview')}
                               </Button>
                             )}
                             {hasReviewed && (
                               <Badge variant="secondary" className="h-10 px-4 flex items-center">
                                 <Star className="mr-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                Reviewed
+                                {t('buyer.reviewed')}
                               </Badge>
                             )}
                             <Button
@@ -322,7 +324,7 @@ const BuyerDashboard = () => {
                               disabled={downloadMutation.isPending}
                             >
                               <Download className="mr-2 h-4 w-4" />
-                              Download
+                              {t('buyer.download')}
                             </Button>
                           </div>
                         </div>
@@ -345,12 +347,12 @@ const BuyerDashboard = () => {
             ) : !orders || orders.length === 0 ? (
               <Card className="text-center p-12">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">No orders yet</h3>
+                <h3 className="text-xl font-bold mb-2">{t('buyer.noOrders')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Your order history will appear here once you make a purchase
+                  {t('buyer.orderHistoryDesc')}
                 </p>
                 <Link to="/products">
-                  <Button variant="hero">Browse Products</Button>
+                  <Button variant="hero">{t('checkout.browseProducts')}</Button>
                 </Link>
               </Card>
             ) : (
@@ -359,11 +361,11 @@ const BuyerDashboard = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead>{t('seller.product')}</TableHead>
+                        <TableHead>{t('buyer.date')}</TableHead>
+                        <TableHead>{t('buyer.amount')}</TableHead>
+                        <TableHead>{t('seller.status')}</TableHead>
+                        <TableHead className="text-right">{t('buyer.action')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -414,12 +416,12 @@ const BuyerDashboard = () => {
                                   size="sm"
                                   onClick={() => window.open(order.ipaymu_payment_url, "_blank")}
                                 >
-                                  Pay Now
+                                  {t('buyer.payNow')}
                                 </Button>
                               ) : order.payment_status === "paid" ? (
                                 <Link to={`/products/${product?.id}`}>
                                   <Button variant="ghost" size="sm">
-                                    View Product
+                                    {t('buyer.viewProduct')}
                                   </Button>
                                 </Link>
                               ) : null}
@@ -441,7 +443,7 @@ const BuyerDashboard = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Leave a Review for {selectedOrder?.productTitle}
+              {t('buyer.leaveReviewFor')} {selectedOrder?.productTitle}
             </DialogTitle>
           </DialogHeader>
           {selectedOrder && user && (

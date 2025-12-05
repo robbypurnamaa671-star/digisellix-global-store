@@ -8,11 +8,13 @@ import { CheckCircle, XCircle, Clock, Download, ArrowLeft } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   
   const orderId = searchParams.get("orderId");
@@ -139,12 +141,12 @@ const PaymentSuccess = () => {
         <div className="container mx-auto px-4 py-8 max-w-3xl">
           <div className="text-center py-12">
             <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4">Order Not Found</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('paymentSuccess.orderNotFound')}</h2>
             <p className="text-muted-foreground mb-6">
-              We couldn't find the order you're looking for.
+              {t('paymentSuccess.orderNotFoundDesc')}
             </p>
             <Button onClick={() => navigate("/products")}>
-              Browse Products
+              {t('checkout.browseProducts')}
             </Button>
           </div>
         </div>
@@ -167,7 +169,7 @@ const PaymentSuccess = () => {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
+          {t('paymentSuccess.backToDashboard')}
         </button>
 
         {/* Status Header */}
@@ -178,12 +180,12 @@ const PaymentSuccess = () => {
                 <>
                   <CheckCircle className="h-16 w-16 text-green-500" />
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">Payment Successful!</h1>
+                    <h1 className="text-3xl font-bold mb-2">{t('paymentSuccess.paymentSuccessful')}</h1>
                     <p className="text-muted-foreground">
-                      Your order has been confirmed and is ready for download.
+                      {t('paymentSuccess.orderConfirmed')}
                     </p>
                   </div>
-                  <Badge variant="default" className="bg-green-500">Paid</Badge>
+                  <Badge variant="default" className="bg-green-500">{t('paymentSuccess.paid')}</Badge>
                 </>
               )}
               
@@ -191,13 +193,13 @@ const PaymentSuccess = () => {
                 <>
                   <Clock className="h-16 w-16 text-yellow-500" />
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">Payment Pending</h1>
+                    <h1 className="text-3xl font-bold mb-2">{t('paymentSuccess.paymentPending')}</h1>
                     <p className="text-muted-foreground">
-                      We're waiting for payment confirmation. This page will update automatically.
+                      {t('paymentSuccess.waitingConfirmation')}
                     </p>
                   </div>
                   <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-700">
-                    Pending
+                    {t('paymentSuccess.pending')}
                   </Badge>
                 </>
               )}
@@ -206,12 +208,12 @@ const PaymentSuccess = () => {
                 <>
                   <XCircle className="h-16 w-16 text-destructive" />
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">Payment Failed</h1>
+                    <h1 className="text-3xl font-bold mb-2">{t('paymentSuccess.paymentFailed')}</h1>
                     <p className="text-muted-foreground">
-                      Your payment could not be processed. Please try again.
+                      {t('paymentSuccess.couldNotProcess')}
                     </p>
                   </div>
-                  <Badge variant="destructive">Failed</Badge>
+                  <Badge variant="destructive">{t('paymentSuccess.failed')}</Badge>
                 </>
               )}
             </div>
@@ -221,7 +223,7 @@ const PaymentSuccess = () => {
         {/* Order Details */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Order Details</CardTitle>
+            <CardTitle>{t('paymentSuccess.orderDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-4">
@@ -246,22 +248,22 @@ const PaymentSuccess = () => {
 
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Order ID</span>
+                <span className="text-muted-foreground">{t('paymentSuccess.orderId')}</span>
                 <span className="font-mono text-xs">{order.id}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Payment Method</span>
+                <span className="text-muted-foreground">{t('paymentSuccess.paymentMethod')}</span>
                 <span className="font-medium capitalize">{order.payment_method || "PayPal"}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Amount</span>
+                <span className="text-muted-foreground">{t('paymentSuccess.amount')}</span>
                 <span className="font-semibold">
                   ${Number(order.amount_usd).toFixed(2)}
                 </span>
               </div>
               {order.paid_at && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Paid At</span>
+                  <span className="text-muted-foreground">{t('paymentSuccess.paidAt')}</span>
                   <span>{new Date(order.paid_at).toLocaleString()}</span>
                 </div>
               )}
@@ -273,35 +275,35 @@ const PaymentSuccess = () => {
         {isPaid && downloadAccess && (
           <Card>
             <CardHeader>
-              <CardTitle>Download Your Product</CardTitle>
+              <CardTitle>{t('paymentSuccess.downloadProduct')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Your purchase is ready! Click the button below to download your digital product.
+                {t('paymentSuccess.purchaseReady')}
               </p>
               
               <Button size="lg" className="w-full" onClick={handleDownload}>
                 <Download className="mr-2 h-5 w-5" />
-                Download Now
+                {t('paymentSuccess.downloadNow')}
               </Button>
 
               {downloadAccess.download_count > 0 && (
                 <p className="text-xs text-center text-muted-foreground">
-                  Downloaded {downloadAccess.download_count} time(s)
+                  {t('paymentSuccess.downloadedTimes').replace('{count}', downloadAccess.download_count.toString())}
                   {downloadAccess.last_downloaded_at && (
-                    <> · Last downloaded {new Date(downloadAccess.last_downloaded_at).toLocaleDateString()}</>
+                    <> · {t('paymentSuccess.lastDownloaded')} {new Date(downloadAccess.last_downloaded_at).toLocaleDateString()}</>
                   )}
                 </p>
               )}
 
               <div className="border-t pt-4">
                 <p className="text-xs text-muted-foreground">
-                  You can access your downloads anytime from your{" "}
+                  {t('paymentSuccess.accessDownloads')}{" "}
                   <button
                     onClick={() => navigate("/buyer/dashboard")}
                     className="text-primary hover:underline"
                   >
-                    buyer dashboard
+                    {t('paymentSuccess.buyerDashboard')}
                   </button>
                   .
                 </p>
@@ -318,13 +320,13 @@ const PaymentSuccess = () => {
               onClick={() => navigate("/products")}
               className="flex-1"
             >
-              Browse Products
+              {t('checkout.browseProducts')}
             </Button>
             <Button
               onClick={() => navigate(`/checkout/${order.id}`)}
               className="flex-1"
             >
-              Try Again
+              {t('paymentSuccess.tryAgain')}
             </Button>
           </div>
         )}

@@ -8,6 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [startingChat, setStartingChat] = useState(false);
 
   // Track product view
@@ -94,13 +96,13 @@ const ProductDetail = () => {
 
   const handleBuyNow = async () => {
     if (!user) {
-      toast.error("Please sign in to purchase");
+      toast.error(t('productDetail.pleaseSignIn'));
       navigate("/auth");
       return;
     }
 
     if (user.id === product?.seller_id) {
-      toast.error("You cannot buy your own product");
+      toast.error(t('productDetail.cannotBuyOwn'));
       return;
     }
 
@@ -122,7 +124,7 @@ const ProductDetail = () => {
 
     if (error) throw error;
 
-      toast.success("Order created! Redirecting to checkout...");
+      toast.success(t('productDetail.orderCreated'));
       // Navigate to checkout page (to be created)
       navigate(`/checkout/${order.id}`);
     } catch (error: any) {
@@ -132,13 +134,13 @@ const ProductDetail = () => {
 
   const handleChatWithSeller = async () => {
     if (!user) {
-      toast.error("Please sign in to chat with seller");
+      toast.error(t('productDetail.pleaseSignInChat'));
       navigate("/auth");
       return;
     }
 
     if (user.id === product?.seller_id) {
-      toast.error("This is your own product");
+      toast.error(t('productDetail.ownProduct'));
       return;
     }
 
@@ -205,12 +207,12 @@ const ProductDetail = () => {
         <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Product not found</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('productDetail.notFound')}</h2>
             <p className="text-muted-foreground mb-6">
-              The product you're looking for doesn't exist or has been removed.
+              {t('productDetail.notFoundDesc')}
             </p>
             <Button onClick={() => navigate("/products")}>
-              Browse Products
+              {t('checkout.browseProducts')}
             </Button>
           </div>
         </div>
@@ -228,7 +230,7 @@ const ProductDetail = () => {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Products
+          {t('productDetail.backToProducts')}
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 lg:mb-16">
@@ -260,7 +262,7 @@ const ProductDetail = () => {
               <div className="flex items-center gap-3 mb-4">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <div className="text-sm text-muted-foreground">
-                  By{" "}
+                  {t('productDetail.by')}{" "}
                   <Link 
                     to={`/seller/${product.seller_id}`}
                     className="font-semibold text-foreground hover:text-primary transition-colors"
@@ -270,7 +272,7 @@ const ProductDetail = () => {
                 </div>
                 {product.total_sales > 0 && (
                   <div className="text-sm text-muted-foreground">
-                    • {product.total_sales} sales
+                    • {product.total_sales} {t('productDetail.sales')}
                   </div>
                 )}
               </div>
@@ -289,10 +291,10 @@ const ProductDetail = () => {
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">Secure Purchase</span>
+                  <span className="font-semibold">{t('productDetail.securePurchase')}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Instant access after payment. All files are scanned and verified.
+                  {t('productDetail.instantAccess')}
                 </p>
                 <Button
                   variant="hero"
@@ -301,7 +303,7 @@ const ProductDetail = () => {
                   onClick={handleBuyNow}
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  Buy Now
+                  {t('productDetail.buyNow')}
                 </Button>
                 <Button
                   variant="outline"
@@ -311,31 +313,31 @@ const ProductDetail = () => {
                   disabled={startingChat || user?.id === product.seller_id}
                 >
                   <MessageCircle className="mr-2 h-5 w-5" />
-                  {startingChat ? "Starting..." : "Chat with Seller"}
+                  {startingChat ? t('productDetail.starting') : t('productDetail.chatWithSeller')}
                 </Button>
               </CardContent>
             </Card>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Description</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('productDetail.description')}</h2>
               <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                 {product.description}
               </p>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Product Details</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('productDetail.productDetails')}</h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category</span>
+                  <span className="text-muted-foreground">{t('productDetail.category')}</span>
                   <span className="font-medium">{product.category}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Sales</span>
+                  <span className="text-muted-foreground">{t('productDetail.totalSales')}</span>
                   <span className="font-medium">{product.total_sales}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Listed on</span>
+                  <span className="text-muted-foreground">{t('productDetail.listedOn')}</span>
                   <span className="font-medium">
                     {new Date(product.created_at).toLocaleDateString()}
                   </span>
@@ -348,7 +350,7 @@ const ProductDetail = () => {
         {/* Related Products */}
         {relatedProducts && relatedProducts.length > 0 && (
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Related Products</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">{t('productDetail.relatedProducts')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {relatedProducts.map((relatedProduct) => (
                 <Link key={relatedProduct.id} to={`/products/${relatedProduct.id}`}>
@@ -376,7 +378,7 @@ const ProductDetail = () => {
                     </CardContent>
                     <CardFooter className="p-4 pt-0">
                       <Button variant="outline" className="w-full" size="sm">
-                        View Details
+                        {t('product.viewDetails')}
                       </Button>
                     </CardFooter>
                   </Card>
