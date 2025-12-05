@@ -13,17 +13,17 @@ export function LanguageSwitcher() {
           variant={language === 'en' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setLanguage('en')}
-          className={`rounded-none w-24 ${language === 'en' ? '' : 'hover:bg-muted'}`}
+          className={`rounded-none w-28 ${language === 'en' ? '' : 'hover:bg-muted'}`}
         >
-          {t('language.english')}
+          🇺🇸 {t('language.english')}
         </Button>
         <Button
           variant={language === 'id' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setLanguage('id')}
-          className={`rounded-none w-24 ${language === 'id' ? '' : 'hover:bg-muted'}`}
+          className={`rounded-none w-28 ${language === 'id' ? '' : 'hover:bg-muted'}`}
         >
-          {t('language.indonesian')}
+          🇮🇩 {t('language.indonesian')}
         </Button>
       </div>
     </div>
