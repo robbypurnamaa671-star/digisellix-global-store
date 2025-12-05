@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, User, Shield, Menu, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 export const Navigation = () => {
   const { user, userRoles, hasRole, signOut } = useAuth();
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   const isAdmin = hasRole("admin");
@@ -27,14 +29,14 @@ export const Navigation = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2 lg:gap-4">
           <Link to="/products">
-            <Button variant="ghost" size="sm">Products</Button>
+            <Button variant="ghost" size="sm">{t('nav.products')}</Button>
           </Link>
           
           {isAdmin && (
             <Link to="/admin/dashboard">
               <Button variant="outline" size="sm" className="gap-2">
                 <Shield className="h-4 w-4" />
-                <span className="hidden lg:inline">Admin</span>
+                <span className="hidden lg:inline">{t('nav.admin')}</span>
                 <Badge variant="secondary" className="ml-1 hidden lg:inline">Panel</Badge>
               </Button>
             </Link>
@@ -44,7 +46,7 @@ export const Navigation = () => {
             <Link to="/chat">
               <Button variant="ghost" size="sm" className="gap-2">
                 <MessageCircle className="h-4 w-4" />
-                <span className="hidden lg:inline">Messages</span>
+                <span className="hidden lg:inline">{t('nav.messages')}</span>
               </Button>
             </Link>
           )}
@@ -54,23 +56,23 @@ export const Navigation = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <User className="h-4 w-4" />
-                  <span className="hidden lg:inline">Account</span>
+                  <span className="hidden lg:inline">{t('nav.dashboard')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('nav.dashboard')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
                 {isSeller && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link to="/seller/dashboard">Seller Dashboard</Link>
+                      <Link to="/seller/dashboard">{t('nav.sellerDashboard')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/seller/add-product">Add Product</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/chat">Messages</Link>
+                      <Link to="/chat">{t('nav.messages')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
@@ -79,10 +81,10 @@ export const Navigation = () => {
                 {isBuyer && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link to="/buyer/dashboard">My Purchases</Link>
+                      <Link to="/buyer/dashboard">{t('nav.buyerDashboard')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/chat">Messages</Link>
+                      <Link to="/chat">{t('nav.messages')}</Link>
                     </DropdownMenuItem>
                     {isSeller && <DropdownMenuSeparator />}
                   </>
@@ -97,17 +99,17 @@ export const Navigation = () => {
                   </>
                 )}
                 
-                <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>
+                <DropdownMenuItem onClick={signOut}>{t('nav.signOut')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Link to="/auth">
-                <Button variant="outline" size="sm">Login</Button>
+                <Button variant="outline" size="sm">{t('nav.login')}</Button>
               </Link>
               <Link to="/auth">
                 <Button variant="hero" size="sm" className="hidden lg:inline-flex">
-                  Start Selling
+                  {t('nav.startSelling')}
                 </Button>
               </Link>
             </>
@@ -125,7 +127,7 @@ export const Navigation = () => {
             <nav className="flex flex-col gap-4 mt-8">
               <Link to="/products" onClick={() => setOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
-                  Products
+                  {t('nav.products')}
                 </Button>
               </Link>
 
@@ -133,7 +135,7 @@ export const Navigation = () => {
                 <Link to="/admin/dashboard" onClick={() => setOpen(false)}>
                   <Button variant="outline" className="w-full justify-start gap-2">
                     <Shield className="h-4 w-4" />
-                    Admin Panel
+                    {t('nav.admin')} Panel
                   </Button>
                 </Link>
               )}
@@ -142,14 +144,14 @@ export const Navigation = () => {
                 <>
                   <div className="border-t pt-4">
                     <p className="text-sm font-semibold text-muted-foreground mb-2 px-2">
-                      My Account
+                      {t('nav.dashboard')}
                     </p>
                     
                     {isSeller && (
                       <>
                         <Link to="/seller/dashboard" onClick={() => setOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start">
-                            Seller Dashboard
+                            {t('nav.sellerDashboard')}
                           </Button>
                         </Link>
                         <Link to="/seller/add-product" onClick={() => setOpen(false)}>
@@ -160,7 +162,7 @@ export const Navigation = () => {
                         <Link to="/chat" onClick={() => setOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start gap-2">
                             <MessageCircle className="h-4 w-4" />
-                            Messages
+                            {t('nav.messages')}
                           </Button>
                         </Link>
                       </>
@@ -170,13 +172,13 @@ export const Navigation = () => {
                       <>
                         <Link to="/buyer/dashboard" onClick={() => setOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start">
-                            My Purchases
+                            {t('nav.buyerDashboard')}
                           </Button>
                         </Link>
                         <Link to="/chat" onClick={() => setOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start gap-2">
                             <MessageCircle className="h-4 w-4" />
-                            Messages
+                            {t('nav.messages')}
                           </Button>
                         </Link>
                       </>
@@ -198,19 +200,19 @@ export const Navigation = () => {
                       setOpen(false);
                     }}
                   >
-                    Sign Out
+                    {t('nav.signOut')}
                   </Button>
                 </>
               ) : (
                 <>
                   <Link to="/auth" onClick={() => setOpen(false)}>
                     <Button variant="outline" className="w-full">
-                      Login
+                      {t('nav.login')}
                     </Button>
                   </Link>
                   <Link to="/auth" onClick={() => setOpen(false)}>
                     <Button variant="hero" className="w-full">
-                      Start Selling
+                      {t('nav.startSelling')}
                     </Button>
                   </Link>
                 </>
