@@ -105,7 +105,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Language Switcher
     'language.english': 'English',
-    'language.indonesian': 'Bahasa Indonesia',
+    'language.indonesian': 'Indonesia',
 
     // Auth Page
     'auth.login': 'Login',
@@ -363,7 +363,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Language Switcher
     'language.english': 'English',
-    'language.indonesian': 'Bahasa Indonesia',
+    'language.indonesian': 'Indonesia',
 
     // Auth Page
     'auth.login': 'Masuk',
