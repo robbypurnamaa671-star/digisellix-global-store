@@ -17,14 +17,21 @@ export const Navigation = () => {
   const isBuyer = hasRole("buyer");
 
   return (
-    <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          <span className="font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-sm sm:text-base">
-            Digisellix
-          </span>
-        </Link>
+    <>
+      {/* Scrolling notification marquee */}
+      <div className="bg-primary/10 border-b border-primary/20 overflow-hidden">
+        <div className="animate-marquee whitespace-nowrap py-1 text-xs text-primary font-medium">
+          🔔 {t('footer.notification')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 🛒 {t('footer.notificationSales')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; ⭐ {t('footer.notificationTrust')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 🔔 {t('footer.notification')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 🛒 {t('footer.notificationSales')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; ⭐ {t('footer.notificationTrust')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
+        </div>
+      </div>
+      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <span className="font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-sm sm:text-base">
+              Digisellix
+            </span>
+          </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2 lg:gap-4">
@@ -220,7 +227,8 @@ export const Navigation = () => {
             </nav>
           </SheetContent>
         </Sheet>
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </>
   );
 };
