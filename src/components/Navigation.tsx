@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu, MessageCircle } from "lucide-react";
+import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -50,12 +50,20 @@ export const Navigation = () => {
           )}
 
           {user && (
-            <Link to="/chat">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <MessageCircle className="h-4 w-4" />
-                <span className="hidden lg:inline">{t('nav.messages')}</span>
-              </Button>
-            </Link>
+            <>
+              <Link to="/wishlist">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Heart className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('nav.wishlist')}</span>
+                </Button>
+              </Link>
+              <Link to="/chat">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('nav.messages')}</span>
+                </Button>
+              </Link>
+            </>
           )}
           
           {user ? (

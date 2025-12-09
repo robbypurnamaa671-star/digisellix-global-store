@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface ProductCardProps {
   product: {
@@ -20,6 +21,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, compact = false }: ProductCardProps) => {
+  const { isInWishlist, isLoading: wishlistLoading, toggleWishlist } = useWishlist(product.id);
+  
   const { data: sellerRating } = useQuery({
     queryKey: ["seller-rating", product.seller_id],
     queryFn: async () => {
@@ -40,6 +43,12 @@ export const ProductCard = ({ product, compact = false }: ProductCardProps) => {
 
   const isTopRated = sellerRating && sellerRating.average >= 4.5 && sellerRating.count >= 3;
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist();
+  };
+
   if (compact) {
     return (
       <Link to={`/products/${product.id}`}>
@@ -52,6 +61,18 @@ export const ProductCard = ({ product, compact = false }: ProductCardProps) => {
               </Badge>
             </div>
           )}
+          {/* Wishlist button */}
+          <button
+            onClick={handleWishlistClick}
+            disabled={wishlistLoading}
+            className="absolute top-1 left-1 z-10 p-1 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
+          >
+            <Heart 
+              className={`h-3.5 w-3.5 transition-colors ${
+                isInWishlist ? "fill-red-500 text-red-500" : "text-muted-foreground hover:text-red-500"
+              }`} 
+            />
+          </button>
           <div className="aspect-[4/3] overflow-hidden bg-muted">
             {product.thumbnail_url ? (
               <img
@@ -100,6 +121,18 @@ export const ProductCard = ({ product, compact = false }: ProductCardProps) => {
             </Badge>
           </div>
         )}
+        {/* Wishlist button */}
+        <button
+          onClick={handleWishlistClick}
+          disabled={wishlistLoading}
+          className="absolute top-2 left-2 z-10 p-1.5 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
+        >
+          <Heart 
+            className={`h-5 w-5 transition-colors ${
+              isInWishlist ? "fill-red-500 text-red-500" : "text-muted-foreground hover:text-red-500"
+            }`} 
+          />
+        </button>
         <div className="aspect-video overflow-hidden bg-muted">
           {product.thumbnail_url ? (
             <img

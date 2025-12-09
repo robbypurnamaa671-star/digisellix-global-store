@@ -22,6 +22,7 @@ import BuyerDashboard from "./pages/buyer/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import Chat from "./pages/Chat";
 import SellerPage from "./pages/SellerPage";
+import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/seller/:id" element={<SellerPage />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
