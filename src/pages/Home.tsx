@@ -357,12 +357,6 @@ const Home = () => {
               <p className="text-sm text-muted-foreground">
                 {t('footer.tagline')}
               </p>
-              {/* Scrolling notification marquee */}
-              <div className="overflow-hidden relative mt-3">
-                <div className="animate-marquee whitespace-nowrap text-xs text-primary font-medium">
-                  🔔 {t('footer.notification')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 🛒 {t('footer.notificationSales')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; ⭐ {t('footer.notificationTrust')} &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
-                </div>
-              </div>
             </div>
             <div>
               <h4 className="font-bold mb-4">{t('footer.product')}</h4>
