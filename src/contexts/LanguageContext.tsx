@@ -106,6 +106,14 @@ const translations: Record<Language, Record<string, string>> = {
     'product.topRated': 'Top',
     'product.reviews': 'reviews',
     
+    // Wishlist
+    'wishlist.title': 'My Wishlist',
+    'wishlist.subtitle': 'Products you saved for later',
+    'wishlist.empty': 'Your wishlist is empty',
+    'wishlist.emptyDesc': 'Start adding products you love to your wishlist',
+    'wishlist.browseProducts': 'Browse Products',
+    'nav.wishlist': 'Wishlist',
+    
     // Language Switcher
     'language.english': 'English',
     'language.indonesian': 'Indonesia',
@@ -366,6 +374,14 @@ const translations: Record<Language, Record<string, string>> = {
     'product.viewDetails': 'Lihat Detail',
     'product.topRated': 'Top',
     'product.reviews': 'ulasan',
+    
+    // Wishlist
+    'wishlist.title': 'Wishlist Saya',
+    'wishlist.subtitle': 'Produk yang disimpan untuk nanti',
+    'wishlist.empty': 'Wishlist Anda kosong',
+    'wishlist.emptyDesc': 'Mulai tambahkan produk favorit ke wishlist Anda',
+    'wishlist.browseProducts': 'Jelajahi Produk',
+    'nav.wishlist': 'Wishlist',
     
     // Language Switcher
     'language.english': 'English',
