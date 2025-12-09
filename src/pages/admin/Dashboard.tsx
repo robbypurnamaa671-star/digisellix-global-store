@@ -22,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ShoppingBag,
   Users,
@@ -35,6 +36,10 @@ import {
   Star,
   AlertTriangle,
   ShieldCheck,
+  MessageSquare,
+  BarChart3,
+  UserPlus,
+  Activity,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -42,6 +47,24 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 
 const AdminDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
@@ -52,6 +75,7 @@ const AdminDashboard = () => {
     id: null,
     type: null,
   });
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || !hasRole("admin")) {
@@ -114,6 +138,61 @@ const AdminDashboard = () => {
     enabled: hasRole("admin"),
   });
 
+  // Fetch all conversations for admin
+  const { data: conversations, isLoading: conversationsLoading } = useQuery({
+    queryKey: ["admin-conversations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("conversations")
+        .select(`
+          *,
+          buyer:profiles!conversations_buyer_id_fkey (id, full_name),
+          seller:profiles!conversations_seller_id_fkey (id, full_name),
+          products (title)
+        `)
+        .order("updated_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: hasRole("admin"),
+  });
+
+  // Fetch messages for selected conversation
+  const { data: messages, isLoading: messagesLoading } = useQuery({
+    queryKey: ["admin-messages", selectedConversation],
+    queryFn: async () => {
+      if (!selectedConversation) return [];
+      const { data, error } = await supabase
+        .from("messages")
+        .select(`
+          *,
+          sender:profiles!messages_sender_id_fkey (id, full_name)
+        `)
+        .eq("conversation_id", selectedConversation)
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: hasRole("admin") && !!selectedConversation,
+  });
+
+  // Fetch product views for analytics
+  const { data: productViews } = useQuery({
+    queryKey: ["admin-product-views"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_views")
+        .select("*")
+        .order("viewed_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: hasRole("admin"),
+  });
+
   // Calculate stats
   const stats = {
     totalUsers: users?.length || 0,
@@ -123,7 +202,80 @@ const AdminDashboard = () => {
       .reduce((sum, o) => sum + Number(o.amount_usd), 0) || 0,
     pendingProducts: products?.filter((p) => p.status === "pending")?.length || 0,
     limitedSellers: users?.filter((u) => u.is_limited)?.length || 0,
+    totalConversations: conversations?.length || 0,
+    totalOrders: orders?.length || 0,
+    paidOrders: orders?.filter((o) => o.payment_status === "paid")?.length || 0,
   };
+
+  // Calculate analytics data
+  const getLast7DaysData = () => {
+    const days = eachDayOfInterval({
+      start: subDays(new Date(), 6),
+      end: new Date(),
+    });
+
+    return days.map((day) => {
+      const dayStart = startOfDay(day);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+
+      const dayUsers = users?.filter((u) => {
+        const created = new Date(u.created_at);
+        return created >= dayStart && created < dayEnd;
+      }).length || 0;
+
+      const dayOrders = orders?.filter((o) => {
+        const created = new Date(o.created_at);
+        return created >= dayStart && created < dayEnd;
+      }).length || 0;
+
+      const dayProducts = products?.filter((p) => {
+        const created = new Date(p.created_at);
+        return created >= dayStart && created < dayEnd;
+      }).length || 0;
+
+      const dayViews = productViews?.filter((v) => {
+        const viewed = new Date(v.viewed_at);
+        return viewed >= dayStart && viewed < dayEnd;
+      }).length || 0;
+
+      const dayRevenue = orders
+        ?.filter((o) => {
+          const created = new Date(o.created_at);
+          return created >= dayStart && created < dayEnd && o.payment_status === "paid";
+        })
+        .reduce((sum, o) => sum + Number(o.amount_usd), 0) || 0;
+
+      return {
+        date: format(day, "MMM dd"),
+        users: dayUsers,
+        orders: dayOrders,
+        products: dayProducts,
+        views: dayViews,
+        revenue: dayRevenue,
+      };
+    });
+  };
+
+  const getRoleDistribution = () => {
+    const roleCount: Record<string, number> = { admin: 0, seller: 0, buyer: 0 };
+    users?.forEach((u) => {
+      const roles = u.user_roles as any[];
+      roles?.forEach((r) => {
+        if (roleCount[r.role] !== undefined) {
+          roleCount[r.role]++;
+        }
+      });
+    });
+    return [
+      { name: "Admins", value: roleCount.admin, color: "hsl(var(--primary))" },
+      { name: "Sellers", value: roleCount.seller, color: "hsl(var(--accent))" },
+      { name: "Buyers", value: roleCount.buyer, color: "hsl(var(--success))" },
+    ];
+  };
+
+  const chartData = getLast7DaysData();
+  const roleData = getRoleDistribution();
 
   // Remove seller limitation mutation
   const removeLimitationMutation = useMutation({
@@ -242,6 +394,10 @@ const AdminDashboard = () => {
     }
   };
 
+  const formatTime = (dateString: string) => {
+    return format(new Date(dateString), "MMM dd, HH:mm");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -306,24 +462,32 @@ const AdminDashboard = () => {
           <Card className="hover:shadow-[var(--shadow-card-hover)] transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Pending Review
+                Total Conversations
               </CardTitle>
-              <TrendingUp className="h-5 w-5 text-primary" />
+              <MessageSquare className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {productsLoading ? "..." : stats.pendingProducts}
+                {conversationsLoading ? "..." : stats.totalConversations}
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList>
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="flex-wrap">
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="chats" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Chat Monitor
+            </TabsTrigger>
             <TabsTrigger value="limited" className="relative">
               Limited Sellers
               {stats.limitedSellers > 0 && (
@@ -333,6 +497,211 @@ const AdminDashboard = () => {
               )}
             </TabsTrigger>
           </TabsList>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
+            <div className="grid gap-6">
+              {/* Overview Cards */}
+              <div className="grid md:grid-cols-4 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <UserPlus className="h-4 w-4" />
+                      New Users (7d)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {chartData.reduce((sum, d) => sum + d.users, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      New Products (7d)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {chartData.reduce((sum, d) => sum + d.products, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <Activity className="h-4 w-4" />
+                      Orders (7d)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {chartData.reduce((sum, d) => sum + d.orders, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Product Views (7d)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {chartData.reduce((sum, d) => sum + d.views, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Charts */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Activity Overview (Last 7 Days)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer
+                      config={{
+                        users: { label: "Users", color: "hsl(var(--primary))" },
+                        orders: { label: "Orders", color: "hsl(var(--accent))" },
+                        products: { label: "Products", color: "hsl(var(--success))" },
+                      }}
+                      className="h-[300px]"
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData}>
+                          <XAxis dataKey="date" fontSize={12} tickLine={false} axisLine={false} />
+                          <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Bar dataKey="users" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="orders" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="products" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer
+                      config={{
+                        revenue: { label: "Revenue ($)", color: "hsl(var(--success))" },
+                      }}
+                      className="h-[300px]"
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={chartData}>
+                          <XAxis dataKey="date" fontSize={12} tickLine={false} axisLine={false} />
+                          <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Line
+                            type="monotone"
+                            dataKey="revenue"
+                            stroke="hsl(var(--success))"
+                            strokeWidth={2}
+                            dot={{ fill: "hsl(var(--success))" }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Role Distribution */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>User Role Distribution</CardTitle>
+                </CardHeader>
+                <CardContent className="flex items-center justify-center">
+                  <div className="flex items-center gap-8 flex-wrap justify-center">
+                    <div className="h-[200px] w-[200px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={roleData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={80}
+                            dataKey="value"
+                            label={({ name, value }) => `${name}: ${value}`}
+                          >
+                            {roleData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {roleData.map((role, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: role.color }}
+                          />
+                          <span>{role.name}: {role.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Activity */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users?.slice(0, 3).map((u) => (
+                      <div key={u.id} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                        <UserPlus className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="font-medium">New user: {u.full_name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Joined {format(new Date(u.created_at), "MMM dd, yyyy HH:mm")}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {products?.slice(0, 3).map((p) => (
+                      <div key={p.id} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                        <Package className="h-5 w-5 text-accent" />
+                        <div>
+                          <p className="font-medium">New product: {p.title}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Added {format(new Date(p.created_at), "MMM dd, yyyy HH:mm")}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {orders?.filter(o => o.payment_status === 'paid').slice(0, 3).map((o) => (
+                      <div key={o.id} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                        <DollarSign className="h-5 w-5 text-success" />
+                        <div>
+                          <p className="font-medium">New sale: ${Number(o.amount_usd).toFixed(2)}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {format(new Date(o.created_at), "MMM dd, yyyy HH:mm")}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
           {/* Products Tab */}
           <TabsContent value="products">
@@ -569,6 +938,142 @@ const AdminDashboard = () => {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Chat Monitor Tab */}
+          <TabsContent value="chats">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Chat Monitor
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  View all conversations between buyers and sellers to monitor activity and resolve disputes.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid lg:grid-cols-3 gap-6">
+                  {/* Conversation List */}
+                  <div className="lg:col-span-1 border rounded-lg">
+                    <div className="p-3 border-b bg-muted/50">
+                      <h3 className="font-medium">Conversations ({conversations?.length || 0})</h3>
+                    </div>
+                    <ScrollArea className="h-[500px]">
+                      {conversationsLoading ? (
+                        <div className="p-4">
+                          <Skeleton className="h-16 w-full mb-2" />
+                          <Skeleton className="h-16 w-full mb-2" />
+                          <Skeleton className="h-16 w-full" />
+                        </div>
+                      ) : !conversations || conversations.length === 0 ? (
+                        <div className="p-8 text-center text-muted-foreground">
+                          No conversations yet
+                        </div>
+                      ) : (
+                        <div className="divide-y">
+                          {conversations.map((conv) => {
+                            const buyer = conv.buyer as any;
+                            const seller = conv.seller as any;
+                            const product = conv.products as any;
+                            
+                            return (
+                              <button
+                                key={conv.id}
+                                onClick={() => setSelectedConversation(conv.id)}
+                                className={`w-full p-4 text-left hover:bg-muted/50 transition-colors ${
+                                  selectedConversation === conv.id ? "bg-muted" : ""
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <p className="font-medium text-sm truncate">
+                                      {buyer?.full_name || "Unknown"} ↔ {seller?.full_name || "Unknown"}
+                                    </p>
+                                    {product && (
+                                      <p className="text-xs text-muted-foreground truncate">
+                                        Re: {product.title}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                    {formatTime(conv.updated_at)}
+                                  </span>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </div>
+
+                  {/* Messages View */}
+                  <div className="lg:col-span-2 border rounded-lg">
+                    <div className="p-3 border-b bg-muted/50">
+                      <h3 className="font-medium">
+                        {selectedConversation ? "Message History" : "Select a conversation"}
+                      </h3>
+                    </div>
+                    <ScrollArea className="h-[500px]">
+                      {!selectedConversation ? (
+                        <div className="p-8 text-center text-muted-foreground">
+                          <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>Select a conversation to view messages</p>
+                        </div>
+                      ) : messagesLoading ? (
+                        <div className="p-4 space-y-3">
+                          <Skeleton className="h-12 w-3/4" />
+                          <Skeleton className="h-12 w-2/3 ml-auto" />
+                          <Skeleton className="h-12 w-3/4" />
+                        </div>
+                      ) : !messages || messages.length === 0 ? (
+                        <div className="p-8 text-center text-muted-foreground">
+                          No messages in this conversation
+                        </div>
+                      ) : (
+                        <div className="p-4 space-y-3">
+                          {messages.map((msg) => {
+                            const sender = msg.sender as any;
+                            const selectedConv = conversations?.find(c => c.id === selectedConversation);
+                            const isBuyer = selectedConv && msg.sender_id === (selectedConv.buyer as any)?.id;
+                            
+                            return (
+                              <div
+                                key={msg.id}
+                                className={`flex ${isBuyer ? "justify-start" : "justify-end"}`}
+                              >
+                                <div
+                                  className={`max-w-[80%] rounded-lg p-3 ${
+                                    isBuyer
+                                      ? "bg-muted"
+                                      : "bg-primary text-primary-foreground"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={`text-xs font-medium ${
+                                      isBuyer ? "text-muted-foreground" : "text-primary-foreground/70"
+                                    }`}>
+                                      {sender?.full_name || "Unknown"} ({isBuyer ? "Buyer" : "Seller"})
+                                    </span>
+                                  </div>
+                                  <p className="text-sm">{msg.content}</p>
+                                  <span className={`text-xs ${
+                                    isBuyer ? "text-muted-foreground" : "text-primary-foreground/70"
+                                  }`}>
+                                    {formatTime(msg.created_at)}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
