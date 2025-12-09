@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle } from "lucide-react";
+import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle, Heart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedText } from "@/hooks/useTranslation";
+import { useWishlist } from "@/hooks/useWishlist";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const { user } = useAuth();
   const { t, language } = useLanguage();
   const [startingChat, setStartingChat] = useState(false);
+  const { isInWishlist, isLoading: wishlistLoading, toggleWishlist } = useWishlist(id);
 
   // Track product view
   useEffect(() => {
@@ -311,16 +313,31 @@ const ProductDetail = () => {
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   {t('productDetail.buyNow')}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full"
-                  onClick={handleChatWithSeller}
-                  disabled={startingChat || user?.id === product.seller_id}
-                >
-                  <MessageCircle className="mr-2 h-5 w-5" />
-                  {startingChat ? t('productDetail.starting') : t('productDetail.chatWithSeller')}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="flex-1"
+                    onClick={handleChatWithSeller}
+                    disabled={startingChat || user?.id === product.seller_id}
+                  >
+                    <MessageCircle className="mr-2 h-5 w-5" />
+                    {startingChat ? t('productDetail.starting') : t('productDetail.chatWithSeller')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={toggleWishlist}
+                    disabled={wishlistLoading}
+                    className="px-4"
+                  >
+                    <Heart 
+                      className={`h-5 w-5 transition-colors ${
+                        isInWishlist ? "fill-red-500 text-red-500" : ""
+                      }`} 
+                    />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
