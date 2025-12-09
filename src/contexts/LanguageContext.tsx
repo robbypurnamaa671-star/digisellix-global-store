@@ -87,6 +87,9 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.terms': 'Terms',
     'footer.privacy': 'Privacy',
     'footer.copyright': '© 2024 Digisellix. All rights reserved.',
+    'footer.notification': 'Welcome to Digisellix - Your trusted digital marketplace!',
+    'footer.notificationSales': 'New products added daily',
+    'footer.notificationTrust': 'Secure payments & instant downloads',
     
     // Products Page
     'products.title': 'Discover Products',
@@ -345,6 +348,9 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.terms': 'Syarat',
     'footer.privacy': 'Privasi',
     'footer.copyright': '© 2024 Digisellix. Hak cipta dilindungi.',
+    'footer.notification': 'Selamat datang di Digisellix - Marketplace digital terpercaya!',
+    'footer.notificationSales': 'Produk baru ditambahkan setiap hari',
+    'footer.notificationTrust': 'Pembayaran aman & unduhan instan',
     
     // Products Page
     'products.title': 'Temukan Produk',
