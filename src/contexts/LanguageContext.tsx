@@ -247,6 +247,25 @@ const translations: Record<Language, Record<string, string>> = {
     'seller.deleteConfirm': 'Are you sure you want to delete this product? This action cannot be undone.',
     'seller.cancel': 'Cancel',
     'seller.delete': 'Delete',
+    'seller.settings': 'Settings',
+
+    // Seller Settings Page
+    'sellerSettings.title': 'Seller Settings',
+    'sellerSettings.description': 'Customize your shop profile and appearance',
+    'sellerSettings.backToDashboard': 'Back to Dashboard',
+    'sellerSettings.shopAvatar': 'Shop Avatar',
+    'sellerSettings.avatarHint': 'Recommended: 200x200px, PNG or JPG, max 2MB',
+    'sellerSettings.uploadAvatar': 'Upload Avatar',
+    'sellerSettings.shopName': 'Shop Name',
+    'sellerSettings.shopNamePlaceholder': 'Enter your shop name',
+    'sellerSettings.shopDescription': 'Shop Description',
+    'sellerSettings.shopDescriptionPlaceholder': 'Tell buyers about your shop and what you sell...',
+    'sellerSettings.characters': 'characters',
+    'sellerSettings.saveChanges': 'Save Changes',
+    'sellerSettings.saveSuccess': 'Profile updated successfully!',
+    'sellerSettings.saveError': 'Failed to update profile. Please try again.',
+    'sellerSettings.invalidFileType': 'Only PNG and JPG files are allowed',
+    'sellerSettings.fileTooLarge': 'File size must be less than 2MB',
 
     // Buyer Dashboard
     'buyer.dashboard': 'My Dashboard',
@@ -516,6 +535,25 @@ const translations: Record<Language, Record<string, string>> = {
     'seller.deleteConfirm': 'Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.',
     'seller.cancel': 'Batal',
     'seller.delete': 'Hapus',
+    'seller.settings': 'Pengaturan',
+
+    // Seller Settings Page
+    'sellerSettings.title': 'Pengaturan Penjual',
+    'sellerSettings.description': 'Sesuaikan profil dan tampilan toko Anda',
+    'sellerSettings.backToDashboard': 'Kembali ke Dasbor',
+    'sellerSettings.shopAvatar': 'Avatar Toko',
+    'sellerSettings.avatarHint': 'Disarankan: 200x200px, PNG atau JPG, maks 2MB',
+    'sellerSettings.uploadAvatar': 'Unggah Avatar',
+    'sellerSettings.shopName': 'Nama Toko',
+    'sellerSettings.shopNamePlaceholder': 'Masukkan nama toko Anda',
+    'sellerSettings.shopDescription': 'Deskripsi Toko',
+    'sellerSettings.shopDescriptionPlaceholder': 'Ceritakan kepada pembeli tentang toko Anda dan apa yang Anda jual...',
+    'sellerSettings.characters': 'karakter',
+    'sellerSettings.saveChanges': 'Simpan Perubahan',
+    'sellerSettings.saveSuccess': 'Profil berhasil diperbarui!',
+    'sellerSettings.saveError': 'Gagal memperbarui profil. Silakan coba lagi.',
+    'sellerSettings.invalidFileType': 'Hanya file PNG dan JPG yang diperbolehkan',
+    'sellerSettings.fileTooLarge': 'Ukuran file harus kurang dari 2MB',
 
     // Buyer Dashboard
     'buyer.dashboard': 'Dasbor Saya',

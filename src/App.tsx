@@ -18,6 +18,7 @@ import AddProduct from "./pages/seller/AddProduct";
 import SalesHistory from "./pages/seller/Sales";
 import Wallet from "./pages/seller/Wallet";
 import CustomOrder from "./pages/seller/CustomOrder";
+import SellerSettings from "./pages/seller/Settings";
 import BuyerDashboard from "./pages/buyer/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import Chat from "./pages/Chat";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/seller/sales" element={<SalesHistory />} />
             <Route path="/seller/wallet" element={<Wallet />} />
             <Route path="/seller/custom-order" element={<CustomOrder />} />
+            <Route path="/seller/settings" element={<SellerSettings />} />
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/chat" element={<Chat />} />
