@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   ArrowLeft, 
@@ -202,6 +202,7 @@ const SellerPage = () => {
           <CardContent className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <Avatar className="h-24 w-24 md:h-32 md:w-32">
+                <AvatarImage src={(seller as any).avatar_url} alt={seller.full_name} />
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl md:text-3xl">
                   {getInitials(seller.full_name)}
                 </AvatarFallback>
@@ -216,6 +217,13 @@ const SellerPage = () => {
                     <Badge variant="destructive">Limited</Badge>
                   )}
                 </div>
+
+                {/* Seller Description */}
+                {(seller as any).description && (
+                  <p className="text-muted-foreground mb-4 max-w-2xl">
+                    {(seller as any).description}
+                  </p>
+                )}
                 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center gap-1">

@@ -13,7 +13,8 @@ import {
   ExternalLink,
   Eye,
   AlertTriangle,
-  MessageCircle
+  MessageCircle,
+  Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -384,6 +385,12 @@ const SellerDashboard = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
+            <Link to="/seller/settings">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                <Settings className="mr-2 h-5 w-5" />
+                {t('seller.settings')}
+              </Button>
+            </Link>
             <Link to="/seller/custom-order">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <DollarSign className="mr-2 h-5 w-5" />
