@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Search, X } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -105,6 +106,12 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Browse Digital Products | Design Bundles, Templates & Assets - Digisellix"
+        description="Explore our marketplace of premium digital products. Find editable design bundles, templates, PLR resources, software tools & creative assets for your projects."
+        canonicalUrl="https://digisellix.com/products"
+        keywords="digital products marketplace, buy design bundles, download templates, PLR resources, creative assets"
+      />
       <Navigation />
 
       {/* Header */}

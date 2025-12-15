@@ -1,8 +1,26 @@
+# Digisellix - Digital Product Marketplace
+# https://digisellix.com
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /seller/
+Disallow: /buyer/
+Disallow: /checkout
+Disallow: /auth
+Disallow: /chat
+
+# Allow specific crawlers full access to public content
 User-agent: Googlebot
 Allow: /
+Allow: /products
+Allow: /product/
+Allow: /seller/
 
 User-agent: Bingbot
 Allow: /
+Allow: /products
+Allow: /product/
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +28,8 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Sitemap location
+Sitemap: https://digisellix.com/sitemap.xml
+
+# Crawl-delay for rate limiting (optional, honored by some bots)
+Crawl-delay: 1

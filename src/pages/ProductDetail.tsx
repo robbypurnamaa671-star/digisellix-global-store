@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle, Heart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
+import { SEOHead, generateProductSchema, generateBreadcrumbSchema } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedText } from "@/hooks/useTranslation";
 import { useWishlist } from "@/hooks/useWishlist";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -101,6 +102,27 @@ const ProductDetail = () => {
   const { text: translatedDescription, isTranslating: isTranslatingDesc } = useTranslatedText(
     language === "id" ? product?.description : null
   );
+
+  // Generate structured data for product
+  const structuredData = useMemo(() => {
+    if (!product) return undefined;
+    return {
+      ...generateProductSchema({
+        name: product.title,
+        description: product.description.slice(0, 160),
+        image: product.thumbnail_url || 'https://digisellix.com/placeholder.svg',
+        price: product.price_usd,
+        currency: 'USD',
+        seller: seller?.full_name || 'Digisellix Seller',
+        url: `https://digisellix.com/products/${product.id}`,
+      }),
+      ...generateBreadcrumbSchema([
+        { name: 'Home', url: 'https://digisellix.com/' },
+        { name: 'Products', url: 'https://digisellix.com/products' },
+        { name: product.title, url: `https://digisellix.com/products/${product.id}` },
+      ]),
+    };
+  }, [product, seller]);
 
   const handleBuyNow = async () => {
     if (!user) {
@@ -230,6 +252,15 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${product.title} - Buy on Digisellix | Digital Product Marketplace`}
+        description={product.description.slice(0, 155) + '...'}
+        canonicalUrl={`https://digisellix.com/products/${product.id}`}
+        ogType="product"
+        ogImage={product.thumbnail_url || undefined}
+        keywords={`${product.category}, digital product, ${product.title.toLowerCase()}, buy online`}
+        structuredData={structuredData}
+      />
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">

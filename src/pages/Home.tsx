@@ -6,6 +6,7 @@ import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles, MessageCircle } fr
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SEOHead } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import heroImage from "@/assets/hero-marketplace.jpg";
 import iconProducts from "@/assets/icon-products.png";
@@ -120,6 +121,12 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Digisellix - Buy & Sell Digital Products | Templates, Design Assets & More"
+        description="Discover premium digital products on Digisellix. Buy editable design bundles, templates, PLR resources, software & creative assets. Start selling your digital products today."
+        canonicalUrl="https://digisellix.com/"
+        keywords="buy digital products, sell digital products online, design bundles download, PLR design resources, digital assets for creators"
+      />
       <Navigation />
 
       {/* Hero Section */}
