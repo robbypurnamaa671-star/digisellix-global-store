@@ -5,7 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle, Heart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { SEOHead, generateProductSchema, generateBreadcrumbSchema } from "@/components/SEOHead";
+import { SEOHead, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from "@/components/SEOHead";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
@@ -103,26 +109,57 @@ const ProductDetail = () => {
     language === "id" ? product?.description : null
   );
 
+  // FAQ data for product pages
+  const productFAQs = useMemo(() => {
+    if (!product) return [];
+    return [
+      {
+        question: `What is included in "${product.title}"?`,
+        answer: `This digital product includes all files and resources as described in the product description. You'll receive instant download access after your purchase is complete.`,
+      },
+      {
+        question: "How do I download this product after purchase?",
+        answer: "After completing your payment, you'll be redirected to your downloads page where you can instantly access and download all product files. You can also access your purchases anytime from your Buyer Dashboard.",
+      },
+      {
+        question: "What is the refund policy?",
+        answer: "Due to the digital nature of our products, we generally do not offer refunds once the product has been downloaded. However, if you experience technical issues, please contact the seller or our support team for assistance.",
+      },
+      {
+        question: "Can I use this product for commercial projects?",
+        answer: "Usage rights depend on the specific license provided by the seller. Please review the product description for licensing details or contact the seller directly to clarify commercial usage terms.",
+      },
+      {
+        question: "How can I contact the seller?",
+        answer: "You can use the 'Chat with Seller' button on this page to send a direct message to the seller. They'll receive your message and respond as soon as possible.",
+      },
+    ];
+  }, [product]);
+
   // Generate structured data for product
   const structuredData = useMemo(() => {
     if (!product) return undefined;
-    return {
-      ...generateProductSchema({
-        name: product.title,
-        description: product.description.slice(0, 160),
-        image: product.thumbnail_url || 'https://digisellix.com/placeholder.svg',
-        price: product.price_usd,
-        currency: 'USD',
-        seller: seller?.full_name || 'Digisellix Seller',
-        url: `https://digisellix.com/products/${product.id}`,
-      }),
-      ...generateBreadcrumbSchema([
-        { name: 'Home', url: 'https://digisellix.com/' },
-        { name: 'Products', url: 'https://digisellix.com/products' },
-        { name: product.title, url: `https://digisellix.com/products/${product.id}` },
-      ]),
-    };
-  }, [product, seller]);
+    
+    const productSchema = generateProductSchema({
+      name: product.title,
+      description: product.description.slice(0, 160),
+      image: product.thumbnail_url || 'https://digisellix.com/placeholder.svg',
+      price: product.price_usd,
+      currency: 'USD',
+      seller: seller?.full_name || 'Digisellix Seller',
+      url: `https://digisellix.com/products/${product.id}`,
+    });
+    
+    const breadcrumbSchema = generateBreadcrumbSchema([
+      { name: 'Home', url: 'https://digisellix.com/' },
+      { name: 'Products', url: 'https://digisellix.com/products' },
+      { name: product.title, url: `https://digisellix.com/products/${product.id}` },
+    ]);
+    
+    const faqSchema = generateFAQSchema(productFAQs);
+    
+    return [productSchema, breadcrumbSchema, faqSchema];
+  }, [product, seller, productFAQs]);
 
   const handleBuyNow = async () => {
     if (!user) {
@@ -407,6 +444,27 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('productDetail.faq') || 'Frequently Asked Questions'}</h2>
+          <Card>
+            <CardContent className="p-0">
+              <Accordion type="single" collapsible className="w-full">
+                {productFAQs.map((faq, index) => (
+                  <AccordionItem key={index} value={`faq-${index}`} className="border-b last:border-b-0">
+                    <AccordionTrigger className="px-6 py-4 text-left hover:no-underline hover:bg-muted/50">
+                      <span className="font-medium pr-4">{faq.question}</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-4 text-muted-foreground">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Related Products */}
