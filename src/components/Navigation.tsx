@@ -38,6 +38,9 @@ export const Navigation = () => {
           <Link to="/products">
             <Button variant="ghost" size="sm">{t('nav.products')}</Button>
           </Link>
+          <Link to="/blog">
+            <Button variant="ghost" size="sm">{t('nav.blog') || 'Blog'}</Button>
+          </Link>
           
           {isAdmin && (
             <Link to="/admin/dashboard">
@@ -143,6 +146,11 @@ export const Navigation = () => {
               <Link to="/products" onClick={() => setOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
                   {t('nav.products')}
+                </Button>
+              </Link>
+              <Link to="/blog" onClick={() => setOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  {t('nav.blog') || 'Blog'}
                 </Button>
               </Link>
 

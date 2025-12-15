@@ -23,6 +23,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.sellerDashboard': 'Seller Dashboard',
     'nav.buyerDashboard': 'Buyer Dashboard',
     'nav.signOut': 'Sign Out',
+    'nav.blog': 'Blog',
     
     // Hero Section
     'hero.badge': 'Global Digital Marketplace',
@@ -113,6 +114,10 @@ const translations: Record<Language, Record<string, string>> = {
     'wishlist.emptyDesc': 'Start adding products you love to your wishlist',
     'wishlist.browseProducts': 'Browse Products',
     'nav.wishlist': 'Wishlist',
+    
+    // Blog
+    'blog.title': 'Digisellix Blog',
+    'blog.subtitle': 'Tips, guides, and resources for digital creators and sellers',
     
     // Language Switcher
     'language.english': 'English',
@@ -404,6 +409,11 @@ const translations: Record<Language, Record<string, string>> = {
     'wishlist.emptyDesc': 'Mulai tambahkan produk favorit ke wishlist Anda',
     'wishlist.browseProducts': 'Jelajahi Produk',
     'nav.wishlist': 'Wishlist',
+    
+    // Blog
+    'blog.title': 'Blog Digisellix',
+    'blog.subtitle': 'Tips, panduan, dan sumber daya untuk kreator dan penjual digital',
+    'nav.blog': 'Blog',
     
     // Language Switcher
     'language.english': 'English',
