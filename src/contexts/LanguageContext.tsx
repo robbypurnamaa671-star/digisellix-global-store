@@ -167,6 +167,7 @@ const translations: Record<Language, Record<string, string>> = {
     'productDetail.orderCreated': 'Order created! Redirecting to checkout...',
     'productDetail.pleaseSignInChat': 'Please sign in to chat with seller',
     'productDetail.ownProduct': 'This is your own product',
+    'productDetail.faq': 'Frequently Asked Questions',
 
     // Checkout Page
     'checkout.title': 'Checkout',
@@ -463,6 +464,7 @@ const translations: Record<Language, Record<string, string>> = {
     'productDetail.orderCreated': 'Pesanan dibuat! Mengalihkan ke checkout...',
     'productDetail.pleaseSignInChat': 'Silakan masuk untuk chat dengan penjual',
     'productDetail.ownProduct': 'Ini adalah produk Anda sendiri',
+    'productDetail.faq': 'Pertanyaan yang Sering Diajukan',
 
     // Checkout Page
     'checkout.title': 'Checkout',
