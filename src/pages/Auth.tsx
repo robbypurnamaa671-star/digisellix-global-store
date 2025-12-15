@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,8 +96,21 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <>
+      {/* Google OAuth Loading Overlay */}
+      {isGoogleLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4 p-8 rounded-lg bg-card shadow-lg">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <p className="text-lg font-medium text-foreground">
+              {t('auth.redirectingToGoogle') || "Redirecting to Google..."}
+            </p>
+          </div>
+        </div>
+      )}
+      
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
             <ShoppingBag className="h-10 w-10 text-primary" />
@@ -286,13 +299,12 @@ const Auth = () => {
           </TabsContent>
         </Tabs>
 
-        <div className="text-center mt-6">
           <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
             {t('auth.backToHome')}
           </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

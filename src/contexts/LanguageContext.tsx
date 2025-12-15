@@ -137,6 +137,7 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.selectBoth': 'You can select both options to buy and sell',
     'auth.orContinueWith': 'Or continue with',
     'auth.googleLoginFailed': 'Google login failed',
+    'auth.redirectingToGoogle': 'Redirecting to Google...',
     'auth.backToHome': '← Back to Home',
 
     // Product Detail Page
@@ -427,6 +428,7 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.selectBoth': 'Anda dapat memilih kedua opsi untuk membeli dan menjual',
     'auth.orContinueWith': 'Atau lanjutkan dengan',
     'auth.googleLoginFailed': 'Login Google gagal',
+    'auth.redirectingToGoogle': 'Mengalihkan ke Google...',
     'auth.backToHome': '← Kembali ke Beranda',
 
     // Product Detail Page
