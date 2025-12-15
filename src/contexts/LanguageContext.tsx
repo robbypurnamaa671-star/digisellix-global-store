@@ -135,6 +135,8 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.sellProducts': 'Sell Products',
     'auth.sellProductsDesc': 'Upload and sell your digital products',
     'auth.selectBoth': 'You can select both options to buy and sell',
+    'auth.orContinueWith': 'Or continue with',
+    'auth.googleLoginFailed': 'Google login failed',
     'auth.backToHome': '← Back to Home',
 
     // Product Detail Page
@@ -423,6 +425,8 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.sellProducts': 'Jual Produk',
     'auth.sellProductsDesc': 'Unggah dan jual produk digital Anda',
     'auth.selectBoth': 'Anda dapat memilih kedua opsi untuk membeli dan menjual',
+    'auth.orContinueWith': 'Atau lanjutkan dengan',
+    'auth.googleLoginFailed': 'Login Google gagal',
     'auth.backToHome': '← Kembali ke Beranda',
 
     // Product Detail Page
