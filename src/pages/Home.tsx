@@ -375,8 +375,8 @@ const Home = () => {
             <div>
               <h4 className="font-bold mb-4">{t('footer.company')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">{t('footer.about')}</a></li>
-                <li><a href="#" className="hover:text-primary">{t('footer.contact')}</a></li>
+                <li><Link to="/about" className="hover:text-primary">{t('footer.about')}</Link></li>
+                <li><Link to="/blog" className="hover:text-primary">{t('nav.blog') || 'Blog'}</Link></li>
                 <li>
                   <a 
                     href="https://wa.me/6283822199640?text=Hello!%20I%20need%20assistance%20with%20Digisellix." 
@@ -393,8 +393,8 @@ const Home = () => {
             <div>
               <h4 className="font-bold mb-4">{t('footer.legal')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">{t('footer.terms')}</a></li>
-                <li><a href="#" className="hover:text-primary">{t('footer.privacy')}</a></li>
+                <li><Link to="/terms" className="hover:text-primary">{t('footer.terms')}</Link></li>
+                <li><Link to="/privacy" className="hover:text-primary">{t('footer.privacy')}</Link></li>
               </ul>
             </div>
           </div>
