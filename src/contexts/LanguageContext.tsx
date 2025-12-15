@@ -664,7 +664,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    // Fallback to a safe default to avoid runtime crashes if the provider
+    // is temporarily missing in some render tree (e.g. during HMR).
+    return {
+      language: 'en' as Language,
+      setLanguage: () => {},
+      t: (key: string) => translations.en[key] || key,
+    } satisfies LanguageContextType;
   }
   return context;
 }
+
