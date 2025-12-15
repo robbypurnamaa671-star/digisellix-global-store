@@ -376,6 +376,7 @@ const Home = () => {
               <h4 className="font-bold mb-4">{t('footer.company')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link to="/about" className="hover:text-primary">{t('footer.about')}</Link></li>
+                <li><Link to="/contact" className="hover:text-primary">{t('footer.contact')}</Link></li>
                 <li><Link to="/blog" className="hover:text-primary">{t('nav.blog') || 'Blog'}</Link></li>
                 <li>
                   <a 
