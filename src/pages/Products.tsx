@@ -3,7 +3,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, X } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Search, X, DollarSign } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { SEOHead } from "@/components/SEOHead";
@@ -21,12 +22,14 @@ import {
 } from "@/components/ui/pagination";
 
 const PRODUCTS_PER_PAGE = 20;
+const MAX_PRICE = 500;
 
 const Products = () => {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
@@ -54,7 +57,7 @@ const Products = () => {
     },
   });
 
-  // Filter products based on search and category
+  // Filter products based on search, category, and price range
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     
@@ -68,14 +71,20 @@ const Products = () => {
         selectedCategory === null || 
         product.category === selectedCategory;
       
-      return matchesSearch && matchesCategory;
+      const matchesPrice = 
+        product.price_usd >= priceRange[0] && 
+        (priceRange[1] >= MAX_PRICE ? true : product.price_usd <= priceRange[1]);
+      
+      return matchesSearch && matchesCategory && matchesPrice;
     });
-  }, [products, searchQuery, selectedCategory]);
+  }, [products, searchQuery, selectedCategory, priceRange]);
 
   // Reset to page 1 when filters change
   useMemo(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, priceRange]);
+
+  const isPriceFiltered = priceRange[0] > 0 || priceRange[1] < MAX_PRICE;
 
   // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
@@ -165,10 +174,32 @@ const Products = () => {
                 ))}
               </div>
             )}
+
+            {/* Price Range Filter */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2 border-t border-border/50">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <DollarSign className="h-4 w-4" />
+                <span>{t('products.priceRange')}</span>
+              </div>
+              <div className="flex-1 max-w-md flex items-center gap-4">
+                <span className="text-xs text-muted-foreground min-w-[40px]">${priceRange[0]}</span>
+                <Slider
+                  value={priceRange}
+                  onValueChange={(value) => setPriceRange(value as [number, number])}
+                  max={MAX_PRICE}
+                  min={0}
+                  step={5}
+                  className="flex-1"
+                />
+                <span className="text-xs text-muted-foreground min-w-[50px]">
+                  ${priceRange[1]}{priceRange[1] >= MAX_PRICE ? '+' : ''}
+                </span>
+              </div>
+            </div>
             
             {/* Active Filters */}
-            {(searchQuery || selectedCategory) && (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {(searchQuery || selectedCategory || isPriceFiltered) && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
                 <span>Filters:</span>
                 {searchQuery && (
                   <Badge variant="secondary" className="gap-1 text-xs py-0">
@@ -185,6 +216,15 @@ const Products = () => {
                     <X 
                       className="h-3 w-3 cursor-pointer" 
                       onClick={() => setSelectedCategory(null)}
+                    />
+                  </Badge>
+                )}
+                {isPriceFiltered && (
+                  <Badge variant="secondary" className="gap-1 text-xs py-0">
+                    ${priceRange[0]} - ${priceRange[1]}{priceRange[1] >= MAX_PRICE ? '+' : ''}
+                    <X 
+                      className="h-3 w-3 cursor-pointer" 
+                      onClick={() => setPriceRange([0, MAX_PRICE])}
                     />
                   </Badge>
                 )}
@@ -214,16 +254,17 @@ const Products = () => {
             <div className="text-center py-12">
               <h3 className="text-xl font-bold mb-2">{t('products.noProducts')}</h3>
               <p className="text-muted-foreground mb-4 text-sm">
-                {searchQuery || selectedCategory
+                {searchQuery || selectedCategory || isPriceFiltered
                   ? t('products.tryAdjusting')
                   : "Check back later for new products"}
               </p>
-              {(searchQuery || selectedCategory) && (
+              {(searchQuery || selectedCategory || isPriceFiltered) && (
                 <Button
                   size="sm"
                   onClick={() => {
                     setSearchQuery("");
                     setSelectedCategory(null);
+                    setPriceRange([0, MAX_PRICE]);
                   }}
                 >
                   Clear Filters
