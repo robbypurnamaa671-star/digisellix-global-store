@@ -40,6 +40,7 @@ import {
   BarChart3,
   UserPlus,
   Activity,
+  MessagesSquare,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -65,6 +66,7 @@ import {
   Cell,
 } from "recharts";
 import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
+import { AdminForumManagement } from "@/components/admin/AdminForumManagement";
 
 const AdminDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
@@ -495,6 +497,10 @@ const AdminDashboard = () => {
                   {stats.limitedSellers}
                 </span>
               )}
+            </TabsTrigger>
+            <TabsTrigger value="forum" className="flex items-center gap-2">
+              <MessagesSquare className="h-4 w-4" />
+              Forum
             </TabsTrigger>
           </TabsList>
 
@@ -1149,6 +1155,21 @@ const AdminDashboard = () => {
                     </Table>
                   );
                 })()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Forum Tab */}
+          <TabsContent value="forum">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessagesSquare className="h-5 w-5" />
+                  Forum Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminForumManagement />
               </CardContent>
             </Card>
           </TabsContent>
