@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Download, Shield, ArrowLeft, User, ShoppingCart, MessageCircle, Heart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { SEOHead, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from "@/components/SEOHead";
+import { ShareButtons } from "@/components/ShareButtons";
 import {
   Accordion,
   AccordionContent,
@@ -329,37 +330,44 @@ const ProductDetail = () => {
 
           {/* Product Details */}
           <div className="space-y-4 sm:space-y-6">
-            <div>
-              <Badge variant="secondary" className="mb-2 sm:mb-3">
-                {product.category}
-              </Badge>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">{product.title}</h1>
-              
-              <div className="flex items-center gap-3 mb-4">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <div className="text-sm text-muted-foreground">
-                  {t('productDetail.by')}{" "}
-                  <Link 
-                    to={`/seller/${product.seller_id}`}
-                    className="font-semibold text-foreground hover:text-primary transition-colors"
-                  >
-                    {seller?.full_name || "Seller"}
-                  </Link>
-                </div>
-                {product.total_sales > 0 && (
-                  <div className="text-sm text-muted-foreground">
-                    • {product.total_sales} {t('productDetail.sales')}
-                  </div>
-                )}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <Badge variant="secondary" className="mb-2 sm:mb-3">
+                  {product.category}
+                </Badge>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">{product.title}</h1>
               </div>
-              
-              <div className="space-y-1 sm:space-y-2">
-                <div className="text-3xl sm:text-4xl font-bold text-primary">
-                  ${Number(product.price_usd).toFixed(2)}
+              <ShareButtons 
+                url={`https://digisellix.com/products/${product.id}`}
+                title={product.title}
+                description={product.description.slice(0, 100)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 mb-4">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <div className="text-sm text-muted-foreground">
+                {t('productDetail.by')}{" "}
+                <Link 
+                  to={`/seller/${product.seller_id}`}
+                  className="font-semibold text-foreground hover:text-primary transition-colors"
+                >
+                  {seller?.full_name || "Seller"}
+                </Link>
+              </div>
+              {product.total_sales > 0 && (
+                <div className="text-sm text-muted-foreground">
+                  • {product.total_sales} {t('productDetail.sales')}
                 </div>
-                <div className="text-lg sm:text-xl text-muted-foreground">
-                  Rp {Number(product.price_idr).toLocaleString("id-ID")}
-                </div>
+              )}
+            </div>
+            
+            <div className="space-y-1 sm:space-y-2">
+              <div className="text-3xl sm:text-4xl font-bold text-primary">
+                ${Number(product.price_usd).toFixed(2)}
+              </div>
+              <div className="text-lg sm:text-xl text-muted-foreground">
+                Rp {Number(product.price_idr).toLocaleString("id-ID")}
               </div>
             </div>
 

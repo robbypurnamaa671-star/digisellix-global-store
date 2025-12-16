@@ -197,6 +197,15 @@ const translations: Record<Language, Record<string, string>> = {
     'productDetail.ownProduct': 'This is your own product',
     'productDetail.faq': 'Frequently Asked Questions',
 
+    // Share
+    'share.title': 'Share',
+    'share.shareVia': 'Share via',
+    'share.copyLink': 'Copy link',
+    'share.copied': 'Copied!',
+    'share.linkCopied': 'Link copied to clipboard',
+    'share.copyFailed': 'Failed to copy link',
+    'share.more': 'More options',
+
     // Checkout Page
     'checkout.title': 'Checkout',
     'checkout.back': 'Back',
@@ -521,6 +530,15 @@ const translations: Record<Language, Record<string, string>> = {
     'productDetail.pleaseSignInChat': 'Silakan masuk untuk chat dengan penjual',
     'productDetail.ownProduct': 'Ini adalah produk Anda sendiri',
     'productDetail.faq': 'Pertanyaan yang Sering Diajukan',
+
+    // Share
+    'share.title': 'Bagikan',
+    'share.shareVia': 'Bagikan via',
+    'share.copyLink': 'Salin tautan',
+    'share.copied': 'Tersalin!',
+    'share.linkCopied': 'Tautan disalin ke clipboard',
+    'share.copyFailed': 'Gagal menyalin tautan',
+    'share.more': 'Opsi lainnya',
 
     // Checkout Page
     'checkout.title': 'Checkout',
