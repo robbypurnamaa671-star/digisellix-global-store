@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles, MessageCircle } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ArrowRight, ShoppingBag, Star, TrendingUp, Sparkles, MessageCircle, Quote } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -77,6 +78,54 @@ const Home = () => {
         .limit(20);
       if (error) throw error;
       return data;
+    },
+  });
+
+  // Fetch latest reviews with product and buyer info
+  const { data: latestReviews, isLoading: loadingReviews } = useQuery({
+    queryKey: ["latest-reviews"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select(`
+          id,
+          rating,
+          comment,
+          created_at,
+          buyer_id,
+          order_id
+        `)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+
+      // Fetch buyer profiles and orders with products for each review
+      const reviewsWithDetails = await Promise.all(
+        (data || []).map(async (review) => {
+          const [buyerResult, orderResult] = await Promise.all([
+            supabase.from("profiles").select("full_name").eq("id", review.buyer_id).maybeSingle(),
+            supabase.from("orders").select("product_id").eq("id", review.order_id).maybeSingle()
+          ]);
+
+          let product = null;
+          if (orderResult.data?.product_id) {
+            const productResult = await supabase
+              .from("products")
+              .select("id, title, thumbnail_url")
+              .eq("id", orderResult.data.product_id)
+              .maybeSingle();
+            product = productResult.data;
+          }
+
+          return {
+            ...review,
+            buyer_name: buyerResult.data?.full_name || "Anonymous",
+            product
+          };
+        })
+      );
+
+      return reviewsWithDetails;
     },
   });
 
@@ -290,6 +339,78 @@ const Home = () => {
                 ? [...Array(5)].map((_, i) => <ProductSkeletonCompact key={i} />)
                 : newestProducts.map((product) => (
                     <ProductCard key={product.id} product={product} compact />
+                  ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Latest Reviews */}
+      {latestReviews && latestReviews.length > 0 && (
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 space-y-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
+                <Quote className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-primary">{t('reviews.badge')}</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold">{t('reviews.title')}</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                {t('reviews.subtitle')}
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {loadingReviews
+                ? [...Array(5)].map((_, i) => (
+                    <Card key={i} className="p-4">
+                      <Skeleton className="h-4 w-20 mb-3" />
+                      <Skeleton className="h-16 w-full mb-3" />
+                      <Skeleton className="h-4 w-32" />
+                    </Card>
+                  ))
+                : latestReviews.map((review) => (
+                    <Card key={review.id} className="p-4 hover:shadow-lg transition-shadow">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < review.rating
+                                ? "text-yellow-500 fill-yellow-500"
+                                : "text-muted-foreground"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                        "{review.comment || t('reviews.noComment')}"
+                      </p>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {review.buyer_name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">{review.buyer_name}</span>
+                      </div>
+                      {review.product && (
+                        <Link
+                          to={`/products/${review.product.id}`}
+                          className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                        >
+                          {review.product.thumbnail_url && (
+                            <img
+                              src={review.product.thumbnail_url}
+                              alt={review.product.title}
+                              className="w-10 h-10 rounded object-cover"
+                            />
+                          )}
+                          <span className="text-xs font-medium line-clamp-2 flex-1">
+                            {review.product.title}
+                          </span>
+                        </Link>
+                      )}
+                    </Card>
                   ))}
             </div>
           </div>
