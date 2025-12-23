@@ -33,6 +33,7 @@ import Contact from "./pages/Contact";
 import Forum from "./pages/Forum";
 import ForumTopic from "./pages/ForumTopic";
 import ForumNewTopic from "./pages/ForumNewTopic";
+import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/forum" element={<Forum />} />
             <Route path="/forum/new" element={<ForumNewTopic />} />
             <Route path="/forum/:id" element={<ForumTopic />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

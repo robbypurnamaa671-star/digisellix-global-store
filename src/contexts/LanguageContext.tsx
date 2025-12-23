@@ -24,6 +24,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.buyerDashboard': 'Buyer Dashboard',
     'nav.signOut': 'Sign Out',
     'nav.blog': 'Blog',
+    'nav.leaderboard': 'Leaderboard',
     
     // Hero Section
     'hero.badge': 'Global Digital Marketplace',
@@ -85,6 +86,25 @@ const translations: Record<Language, Record<string, string>> = {
     'cta.title': 'Ready to Start Your Digital Business?',
     'cta.subtitle': 'Join thousands of creators who trust Digisellix',
     'cta.button': 'Start Free Now',
+    
+    // Leaderboard
+    'leaderboard.pageTitle': 'Seller Leaderboard',
+    'leaderboard.pageDescription': 'Discover top performing sellers on Digisellix marketplace with monthly and all-time rankings',
+    'leaderboard.badge': 'Seller Rankings',
+    'leaderboard.title': 'Top Sellers Leaderboard',
+    'leaderboard.subtitle': 'Discover the best performing sellers on our marketplace',
+    'leaderboard.thisMonth': 'This Month',
+    'leaderboard.allTime': 'All Time',
+    'leaderboard.noSellers': 'No Sellers Yet',
+    'leaderboard.noSellersDesc': 'Be the first to make a sale and appear on the leaderboard!',
+    'leaderboard.noRatings': 'No ratings yet',
+    'leaderboard.sales': 'sales',
+    'leaderboard.products': 'products',
+    'leaderboard.viewStore': 'View Store',
+    'leaderboard.otherSellers': 'Other Top Sellers',
+    'leaderboard.gold': 'Gold',
+    'leaderboard.silver': 'Silver',
+    'leaderboard.bronze': 'Bronze',
     
     // Footer
     'footer.tagline': 'Global marketplace for digital products',
@@ -418,6 +438,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.sellerDashboard': 'Dasbor Penjual',
     'nav.buyerDashboard': 'Dasbor Pembeli',
     'nav.signOut': 'Keluar',
+    'nav.leaderboard': 'Peringkat',
     
     // Hero Section
     'hero.badge': 'Marketplace Digital Global',
@@ -479,6 +500,25 @@ const translations: Record<Language, Record<string, string>> = {
     'cta.title': 'Siap Memulai Bisnis Digital Anda?',
     'cta.subtitle': 'Bergabung dengan ribuan kreator yang mempercayai Digisellix',
     'cta.button': 'Mulai Gratis Sekarang',
+    
+    // Leaderboard
+    'leaderboard.pageTitle': 'Peringkat Penjual',
+    'leaderboard.pageDescription': 'Temukan penjual terbaik di marketplace Digisellix dengan peringkat bulanan dan sepanjang masa',
+    'leaderboard.badge': 'Peringkat Penjual',
+    'leaderboard.title': 'Papan Peringkat Penjual',
+    'leaderboard.subtitle': 'Temukan penjual dengan performa terbaik di marketplace kami',
+    'leaderboard.thisMonth': 'Bulan Ini',
+    'leaderboard.allTime': 'Sepanjang Masa',
+    'leaderboard.noSellers': 'Belum Ada Penjual',
+    'leaderboard.noSellersDesc': 'Jadilah yang pertama melakukan penjualan dan muncul di papan peringkat!',
+    'leaderboard.noRatings': 'Belum ada rating',
+    'leaderboard.sales': 'penjualan',
+    'leaderboard.products': 'produk',
+    'leaderboard.viewStore': 'Lihat Toko',
+    'leaderboard.otherSellers': 'Penjual Top Lainnya',
+    'leaderboard.gold': 'Emas',
+    'leaderboard.silver': 'Perak',
+    'leaderboard.bronze': 'Perunggu',
     
     // Footer
     'footer.tagline': 'Marketplace global untuk produk digital',
