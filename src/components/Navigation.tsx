@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare } from "lucide-react";
+import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare, Trophy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -45,6 +45,12 @@ export const Navigation = () => {
             <Button variant="ghost" size="sm" className="gap-2">
               <MessagesSquare className="h-4 w-4" />
               <span className="hidden lg:inline">{t('nav.forum')}</span>
+            </Button>
+          </Link>
+          <Link to="/leaderboard">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Trophy className="h-4 w-4" />
+              <span className="hidden lg:inline">{t('nav.leaderboard')}</span>
             </Button>
           </Link>
           {isAdmin && (
@@ -162,6 +168,12 @@ export const Navigation = () => {
                 <Button variant="ghost" className="w-full justify-start gap-2">
                   <MessagesSquare className="h-4 w-4" />
                   {t('nav.forum')}
+                </Button>
+              </Link>
+              <Link to="/leaderboard" onClick={() => setOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start gap-2">
+                  <Trophy className="h-4 w-4" />
+                  {t('nav.leaderboard')}
                 </Button>
               </Link>
 
