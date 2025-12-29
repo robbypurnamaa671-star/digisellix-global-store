@@ -103,6 +103,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "affiliate_commissions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_safe"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "affiliate_commissions_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -358,6 +365,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: true
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "downloads_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_safe"
             referencedColumns: ["id"]
           },
           {
@@ -838,6 +852,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_roles: {
@@ -907,6 +928,109 @@ export type Database = {
       }
     }
     Views: {
+      orders_safe: {
+        Row: {
+          amount_idr: number | null
+          amount_usd: number | null
+          buyer_id: string | null
+          created_at: string | null
+          currency: string | null
+          custom_order_description: string | null
+          custom_order_title: string | null
+          expires_at: string | null
+          id: string | null
+          is_custom_order: boolean | null
+          paid_at: string | null
+          payment_method: string | null
+          payment_status: string | null
+          product_id: string | null
+          referred_by: string | null
+          seller_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount_idr?: number | null
+          amount_usd?: number | null
+          buyer_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          custom_order_description?: string | null
+          custom_order_title?: string | null
+          expires_at?: string | null
+          id?: string | null
+          is_custom_order?: boolean | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          product_id?: string | null
+          referred_by?: string | null
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount_idr?: number | null
+          amount_usd?: number | null
+          buyer_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          custom_order_description?: string | null
+          custom_order_title?: string | null
+          expires_at?: string | null
+          id?: string | null
+          is_custom_order?: boolean | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          product_id?: string | null
+          referred_by?: string | null
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews_public: {
         Row: {
           comment: string | null
@@ -938,6 +1062,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: true
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_safe"
             referencedColumns: ["id"]
           },
         ]
