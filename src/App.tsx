@@ -21,6 +21,7 @@ import CustomOrder from "./pages/seller/CustomOrder";
 import SellerSettings from "./pages/seller/Settings";
 import BuyerDashboard from "./pages/buyer/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminModeration from "./pages/admin/Moderation";
 import Chat from "./pages/Chat";
 import SellerPage from "./pages/SellerPage";
 import Wishlist from "./pages/Wishlist";
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/seller/settings" element={<SellerSettings />} />
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/moderation" element={<AdminModeration />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/seller/:id" element={<SellerPage />} />
             <Route path="/wishlist" element={<Wishlist />} />
