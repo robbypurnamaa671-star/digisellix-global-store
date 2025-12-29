@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.update-commissions]
 verify_jwt = false
+
+[functions.send-affiliate-notification]
+verify_jwt = false

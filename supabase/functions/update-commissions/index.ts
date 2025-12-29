@@ -40,6 +40,42 @@ serve(async (req) => {
     const count = updatedCommissions?.length || 0;
     console.log(`Updated ${count} commissions from pending to available`);
 
+    // Send email notifications for each updated commission
+    if (updatedCommissions && updatedCommissions.length > 0) {
+      // Group commissions by affiliate_id and sum amounts
+      const affiliateAmounts = updatedCommissions.reduce((acc: Record<string, number>, comm: any) => {
+        const id = comm.affiliate_id;
+        acc[id] = (acc[id] || 0) + Number(comm.commission_amount);
+        return acc;
+      }, {});
+
+      console.log(`Sending notifications to ${Object.keys(affiliateAmounts).length} affiliates`);
+
+      // Send notification to each affiliate
+      for (const [affiliateId, totalAmount] of Object.entries(affiliateAmounts)) {
+        try {
+          const notifyResponse = await fetch(
+            `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-affiliate-notification`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+              },
+              body: JSON.stringify({
+                type: 'commission_available',
+                affiliate_id: affiliateId,
+                amount: totalAmount,
+              }),
+            }
+          );
+          console.log(`Notification sent for affiliate ${affiliateId}:`, await notifyResponse.json());
+        } catch (notifyError) {
+          console.error(`Failed to send notification for affiliate ${affiliateId}:`, notifyError);
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
