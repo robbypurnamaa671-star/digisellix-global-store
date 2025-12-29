@@ -10,6 +10,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
+import DOMPurify from "dompurify";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -228,7 +229,7 @@ const BlogPost = () => {
         {/* Content */}
         <div 
           className="prose prose-lg dark:prose-invert max-w-none mb-12"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
         />
 
         {/* Back to Blog */}
