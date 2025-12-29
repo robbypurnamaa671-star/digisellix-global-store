@@ -19,6 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedText } from "@/hooks/useTranslation";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useAffiliateTracking, getStoredAffiliateCode } from "@/hooks/useAffiliateTracking";
 import { toast } from "sonner";
 import { useEffect, useState, useMemo } from "react";
 
@@ -29,6 +30,9 @@ const ProductDetail = () => {
   const { t, language } = useLanguage();
   const [startingChat, setStartingChat] = useState(false);
   const { isInWishlist, isLoading: wishlistLoading, toggleWishlist } = useWishlist(id);
+
+  // Track affiliate referral
+  useAffiliateTracking(id);
 
   // Track product view
   useEffect(() => {
@@ -176,6 +180,24 @@ const ProductDetail = () => {
 
     // Create order and navigate to checkout
     try {
+      // Check for affiliate referral
+      let referredBy: string | null = null;
+      const affiliateCode = getStoredAffiliateCode(product.id);
+      
+      if (affiliateCode) {
+        // Get affiliate ID from code
+        const { data: affiliate } = await supabase
+          .from("affiliates")
+          .select("id, user_id")
+          .eq("affiliate_code", affiliateCode)
+          .maybeSingle();
+        
+        // Prevent self-referral
+        if (affiliate && affiliate.user_id !== user.id && affiliate.user_id !== product.seller_id) {
+          referredBy = affiliate.id;
+        }
+      }
+
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
@@ -186,6 +208,7 @@ const ProductDetail = () => {
           amount_idr: product.price_idr,
           currency: "USD", // Default to USD, can be changed in checkout
           payment_status: "pending",
+          referred_by: referredBy,
         })
         .select()
         .single();
