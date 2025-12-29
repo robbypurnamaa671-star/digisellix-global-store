@@ -412,7 +412,15 @@ const AdminDashboard = () => {
               Digisellix Admin
             </span>
           </Link>
-          <Button variant="outline" onClick={signOut}>Logout</Button>
+          <div className="flex items-center gap-3">
+            <Link to="/admin/moderation">
+              <Button variant="default" className="gap-2">
+                <ShieldCheck className="h-4 w-4" />
+                Moderation
+              </Button>
+            </Link>
+            <Button variant="outline" onClick={signOut}>Logout</Button>
+          </div>
         </div>
       </nav>
 
