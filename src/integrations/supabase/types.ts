@@ -14,6 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          product_id: string
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          product_id: string
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_commissions: {
+        Row: {
+          affiliate_id: string
+          available_at: string | null
+          commission_amount: number
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string
+          status: string
+        }
+        Insert: {
+          affiliate_id: string
+          available_at?: string | null
+          commission_amount: number
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id: string
+          status?: string
+        }
+        Update: {
+          affiliate_id?: string
+          available_at?: string | null
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_commissions_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_commissions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_commissions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          affiliate_code: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          affiliate_code: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          affiliate_code?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -361,6 +476,7 @@ export type Database = {
           payment_method: string | null
           payment_status: string | null
           product_id: string | null
+          referred_by: string | null
           seller_id: string
           updated_at: string
         }
@@ -382,6 +498,7 @@ export type Database = {
           payment_method?: string | null
           payment_status?: string | null
           product_id?: string | null
+          referred_by?: string | null
           seller_id: string
           updated_at?: string
         }
@@ -403,6 +520,7 @@ export type Database = {
           payment_method?: string | null
           payment_status?: string | null
           product_id?: string | null
+          referred_by?: string | null
           seller_id?: string
           updated_at?: string
         }
@@ -422,10 +540,55 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payout_requests: {
+        Row: {
+          admin_notes: string | null
+          affiliate_id: string
+          amount: number
+          created_at: string
+          id: string
+          processed_at: string | null
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          affiliate_id: string
+          amount: number
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          affiliate_id?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_requests_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
             referencedColumns: ["id"]
           },
         ]
@@ -467,6 +630,8 @@ export type Database = {
       }
       products: {
         Row: {
+          affiliate_commission_percent: number | null
+          affiliate_enabled: boolean | null
           category: string
           created_at: string
           description: string
@@ -484,6 +649,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          affiliate_commission_percent?: number | null
+          affiliate_enabled?: boolean | null
           category: string
           created_at?: string
           description: string
@@ -501,6 +668,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          affiliate_commission_percent?: number | null
+          affiliate_enabled?: boolean | null
           category?: string
           created_at?: string
           description?: string
@@ -661,6 +830,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_affiliate_code: { Args: never; Returns: string }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -672,6 +842,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_available_commissions: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "seller" | "buyer"
