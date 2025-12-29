@@ -79,17 +79,33 @@ const AffiliatePayoutManagement = () => {
 
       if (error) throw error;
 
+      const request = payoutRequests?.find(r => r.id === requestId);
+      const affiliateId = (request?.affiliates as any)?.id;
+
       // If approved, update commission statuses to paid
-      if (status === "paid") {
-        const request = payoutRequests?.find(r => r.id === requestId);
-        if (request) {
-          const { error: commError } = await supabase
-            .from("affiliate_commissions")
-            .update({ status: "paid" })
-            .eq("affiliate_id", (request.affiliates as any)?.id)
-            .eq("status", "available");
-          
-          if (commError) console.error("Error updating commissions:", commError);
+      if (status === "paid" && request) {
+        const { error: commError } = await supabase
+          .from("affiliate_commissions")
+          .update({ status: "paid" })
+          .eq("affiliate_id", affiliateId)
+          .eq("status", "available");
+        
+        if (commError) console.error("Error updating commissions:", commError);
+      }
+
+      // Send email notification
+      if (affiliateId) {
+        try {
+          await supabase.functions.invoke("send-affiliate-notification", {
+            body: {
+              type: status === "paid" ? "payout_paid" : "payout_rejected",
+              affiliate_id: affiliateId,
+              amount: Number(request?.amount || 0),
+              admin_notes: notes,
+            },
+          });
+        } catch (notifyError) {
+          console.error("Failed to send notification:", notifyError);
         }
       }
     },
