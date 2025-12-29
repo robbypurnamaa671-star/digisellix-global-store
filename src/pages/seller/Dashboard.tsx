@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AnalyticsOverview } from "@/components/seller/AnalyticsOverview";
 import { ProductAnalyticsCard } from "@/components/seller/ProductAnalyticsCard";
+import AffiliateProductSettings from "@/components/seller/AffiliateProductSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Product = {
@@ -426,9 +427,10 @@ const SellerDashboard = () => {
 
         {/* Tabs for Products and Analytics */}
         <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="products">{t('seller.productsTab')}</TabsTrigger>
             <TabsTrigger value="analytics">{t('seller.analyticsTab')}</TabsTrigger>
+            <TabsTrigger value="affiliate">Affiliate</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products" className="space-y-6">
@@ -591,6 +593,10 @@ const SellerDashboard = () => {
                 </Card>
               </>
             )}
+          </TabsContent>
+
+          <TabsContent value="affiliate" className="space-y-6">
+            <AffiliateProductSettings />
           </TabsContent>
         </Tabs>
 
