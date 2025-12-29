@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
       affiliate_clicks: {
         Row: {
           affiliate_id: string
@@ -317,6 +347,69 @@ export type Database = {
           },
         ]
       }
+      disputes: {
+        Row: {
+          admin_decision: string | null
+          admin_id: string | null
+          admin_notes: string | null
+          buyer_id: string
+          buyer_message: string
+          created_at: string
+          id: string
+          order_id: string
+          resolved_at: string | null
+          seller_id: string
+          seller_response: string | null
+          status: Database["public"]["Enums"]["dispute_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_decision?: string | null
+          admin_id?: string | null
+          admin_notes?: string | null
+          buyer_id: string
+          buyer_message: string
+          created_at?: string
+          id?: string
+          order_id: string
+          resolved_at?: string | null
+          seller_id: string
+          seller_response?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_decision?: string | null
+          admin_id?: string | null
+          admin_notes?: string | null
+          buyer_id?: string
+          buyer_message?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          resolved_at?: string | null
+          seller_id?: string
+          seller_response?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disputes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       downloads: {
         Row: {
           buyer_id: string
@@ -527,11 +620,15 @@ export type Database = {
         Row: {
           amount_idr: number
           amount_usd: number
+          auto_release_at: string | null
+          buyer_confirmed_at: string | null
           buyer_id: string
           created_at: string
           currency: string
           custom_order_description: string | null
           custom_order_title: string | null
+          escrow_released_at: string | null
+          escrow_status: Database["public"]["Enums"]["escrow_status"]
           expires_at: string | null
           id: string
           ipaymu_payment_url: string | null
@@ -541,6 +638,7 @@ export type Database = {
           paid_at: string | null
           payment_method: string | null
           payment_status: string | null
+          platform_fee_percent: number
           product_id: string | null
           referred_by: string | null
           seller_id: string
@@ -549,11 +647,15 @@ export type Database = {
         Insert: {
           amount_idr: number
           amount_usd: number
+          auto_release_at?: string | null
+          buyer_confirmed_at?: string | null
           buyer_id: string
           created_at?: string
           currency: string
           custom_order_description?: string | null
           custom_order_title?: string | null
+          escrow_released_at?: string | null
+          escrow_status?: Database["public"]["Enums"]["escrow_status"]
           expires_at?: string | null
           id?: string
           ipaymu_payment_url?: string | null
@@ -563,6 +665,7 @@ export type Database = {
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
+          platform_fee_percent?: number
           product_id?: string | null
           referred_by?: string | null
           seller_id: string
@@ -571,11 +674,15 @@ export type Database = {
         Update: {
           amount_idr?: number
           amount_usd?: number
+          auto_release_at?: string | null
+          buyer_confirmed_at?: string | null
           buyer_id?: string
           created_at?: string
           currency?: string
           custom_order_description?: string | null
           custom_order_title?: string | null
+          escrow_released_at?: string | null
+          escrow_status?: Database["public"]["Enums"]["escrow_status"]
           expires_at?: string | null
           id?: string
           ipaymu_payment_url?: string | null
@@ -585,6 +692,7 @@ export type Database = {
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
+          platform_fee_percent?: number
           product_id?: string | null
           referred_by?: string | null
           seller_id?: string
@@ -673,6 +781,30 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       product_views: {
         Row: {
           id: string
@@ -717,10 +849,14 @@ export type Database = {
           description: string
           download_link: string | null
           file_url: string | null
+          flagged_at: string | null
+          flagged_reason: string | null
           id: string
           is_featured: boolean | null
+          moderation_notes: string | null
           price_idr: number
           price_usd: number
+          refund_allowed: boolean
           seller_id: string
           status: string | null
           thumbnail_url: string | null
@@ -736,10 +872,14 @@ export type Database = {
           description: string
           download_link?: string | null
           file_url?: string | null
+          flagged_at?: string | null
+          flagged_reason?: string | null
           id?: string
           is_featured?: boolean | null
+          moderation_notes?: string | null
           price_idr: number
           price_usd: number
+          refund_allowed?: boolean
           seller_id: string
           status?: string | null
           thumbnail_url?: string | null
@@ -755,10 +895,14 @@ export type Database = {
           description?: string
           download_link?: string | null
           file_url?: string | null
+          flagged_at?: string | null
+          flagged_reason?: string | null
           id?: string
           is_featured?: boolean | null
+          moderation_notes?: string | null
           price_idr?: number
           price_usd?: number
+          refund_allowed?: boolean
           seller_id?: string
           status?: string | null
           thumbnail_url?: string | null
@@ -786,6 +930,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string | null
           created_at: string
           description: string | null
           full_name: string
@@ -796,6 +941,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           description?: string | null
           full_name: string
@@ -806,6 +952,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           description?: string | null
           full_name?: string
@@ -856,6 +1003,120 @@ export type Database = {
             foreignKeyName: "reviews_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: true
+            referencedRelation: "orders_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_profiles: {
+        Row: {
+          abuse_count: number
+          bio: string | null
+          created_at: string
+          id: string
+          is_suspended: boolean
+          portfolio_url: string | null
+          suspended_at: string | null
+          suspended_reason: string | null
+          trust_score: number
+          updated_at: string
+          user_id: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
+        }
+        Insert: {
+          abuse_count?: number
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_suspended?: boolean
+          portfolio_url?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
+          trust_score?: number
+          updated_at?: string
+          user_id: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Update: {
+          abuse_count?: number
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_suspended?: boolean
+          portfolio_url?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
+          trust_score?: number
+          updated_at?: string
+          user_id?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          frozen_at: string | null
+          frozen_by: string | null
+          frozen_reason: string | null
+          id: string
+          order_id: string
+          payment_provider: string | null
+          payment_reference: string | null
+          payout_at: string | null
+          payout_reference: string | null
+          payout_status: Database["public"]["Enums"]["payout_status"]
+          platform_fee: number
+          seller_payout: number
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          frozen_reason?: string | null
+          id?: string
+          order_id: string
+          payment_provider?: string | null
+          payment_reference?: string | null
+          payout_at?: string | null
+          payout_reference?: string | null
+          payout_status?: Database["public"]["Enums"]["payout_status"]
+          platform_fee?: number
+          seller_payout?: number
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          frozen_reason?: string | null
+          id?: string
+          order_id?: string
+          payment_provider?: string | null
+          payment_reference?: string | null
+          payout_at?: string | null
+          payout_reference?: string | null
+          payout_status?: Database["public"]["Enums"]["payout_status"]
+          platform_fee?: number
+          seller_payout?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders_safe"
             referencedColumns: ["id"]
           },
@@ -1099,6 +1360,27 @@ export type Database = {
       }
     }
     Functions: {
+      admin_flag_product: {
+        Args: { p_product_id: string; p_reason: string }
+        Returns: boolean
+      }
+      admin_freeze_payout: {
+        Args: { p_reason: string; p_transaction_id: string }
+        Returns: boolean
+      }
+      admin_resolve_dispute: {
+        Args: {
+          p_decision: string
+          p_dispute_id: string
+          p_in_favor_of: string
+        }
+        Returns: boolean
+      }
+      admin_suspend_seller: {
+        Args: { p_reason: string; p_seller_id: string }
+        Returns: boolean
+      }
+      confirm_delivery: { Args: { p_order_id: string }; Returns: boolean }
       generate_affiliate_code: { Args: never; Returns: string }
       get_safe_order_fields: {
         Args: never
@@ -1130,10 +1412,30 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_admin_action: {
+        Args: {
+          p_action_type: string
+          p_details?: Json
+          p_target_id: string
+          p_target_type: string
+        }
+        Returns: string
+      }
+      process_auto_releases: { Args: never; Returns: number }
       update_available_commissions: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "seller" | "buyer"
+      dispute_status:
+        | "open"
+        | "under_review"
+        | "resolved_buyer"
+        | "resolved_seller"
+        | "closed"
+      escrow_status: "held" | "released" | "disputed" | "refunded"
+      payout_status: "pending" | "paid" | "frozen"
+      product_status: "draft" | "published" | "flagged" | "suspended"
+      verification_status: "unverified" | "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1262,6 +1564,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "seller", "buyer"],
+      dispute_status: [
+        "open",
+        "under_review",
+        "resolved_buyer",
+        "resolved_seller",
+        "closed",
+      ],
+      escrow_status: ["held", "released", "disputed", "refunded"],
+      payout_status: ["pending", "paid", "frozen"],
+      product_status: ["draft", "published", "flagged", "suspended"],
+      verification_status: ["unverified", "pending", "approved", "rejected"],
     },
   },
 } as const
