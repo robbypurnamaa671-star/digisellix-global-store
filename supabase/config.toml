@@ -14,3 +14,9 @@ verify_jwt = false
 
 [functions.send-contact-email]
 verify_jwt = false
+
+[functions.translate-text]
+verify_jwt = false
+
+[functions.update-commissions]
+verify_jwt = false
