@@ -23,3 +23,18 @@ verify_jwt = false
 
 [functions.send-affiliate-notification]
 verify_jwt = false
+
+[functions.process-auto-release]
+verify_jwt = false
+
+[functions.create-escrow-payment]
+verify_jwt = true
+
+[functions.handle-dispute]
+verify_jwt = true
+
+[functions.admin-actions]
+verify_jwt = true
+
+[functions.confirm-delivery]
+verify_jwt = true
