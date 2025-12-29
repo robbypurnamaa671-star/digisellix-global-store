@@ -67,6 +67,7 @@ import {
 } from "recharts";
 import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 import { AdminForumManagement } from "@/components/admin/AdminForumManagement";
+import AffiliatePayoutManagement from "@/components/admin/AffiliatePayoutManagement";
 
 const AdminDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
@@ -501,6 +502,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="forum" className="flex items-center gap-2">
               <MessagesSquare className="h-4 w-4" />
               Forum
+            </TabsTrigger>
+            <TabsTrigger value="payouts" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Payouts
             </TabsTrigger>
           </TabsList>
 
@@ -1172,6 +1177,11 @@ const AdminDashboard = () => {
                 <AdminForumManagement />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Payouts Tab */}
+          <TabsContent value="payouts">
+            <AffiliatePayoutManagement />
           </TabsContent>
         </Tabs>
       </div>
