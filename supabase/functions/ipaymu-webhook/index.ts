@@ -1,10 +1,51 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { encode as hexEncode } from "https://deno.land/std@0.168.0/encoding/hex.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Verify iPaymu webhook signature
+async function verifySignature(payload: string, signature: string | null, apiKey: string): Promise<boolean> {
+  if (!signature) {
+    console.error('Missing signature in webhook request');
+    return false;
+  }
+
+  try {
+    // iPaymu uses SHA256 HMAC with API key
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(apiKey),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signatureBytes = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(payload)
+    );
+    
+    const computedSignature = new TextDecoder().decode(hexEncode(new Uint8Array(signatureBytes)));
+    
+    // Compare signatures (case-insensitive)
+    const isValid = computedSignature.toLowerCase() === signature.toLowerCase();
+    
+    if (!isValid) {
+      console.error('Signature mismatch - computed:', computedSignature, 'received:', signature);
+    }
+    
+    return isValid;
+  } catch (error) {
+    console.error('Error verifying signature:', error);
+    return false;
+  }
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -24,8 +65,34 @@ serve(async (req) => {
       }
     );
 
-    const payload = await req.json();
-    console.log('Webhook payload:', payload);
+    // Get raw body for signature verification
+    const rawBody = await req.text();
+    console.log('Webhook raw body received');
+
+    // Get signature from header
+    const signature = req.headers.get('x-ipaymu-signature') || req.headers.get('X-IPAYMU-SIGNATURE');
+    const apiKey = Deno.env.get('IPAYMU_API_KEY') ?? '';
+
+    // Verify signature if API key is configured
+    if (apiKey) {
+      const isValid = await verifySignature(rawBody, signature, apiKey);
+      if (!isValid) {
+        console.error('Invalid webhook signature - rejecting request');
+        return new Response(
+          JSON.stringify({ error: 'Invalid signature' }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+      console.log('Webhook signature verified successfully');
+    } else {
+      console.warn('IPAYMU_API_KEY not configured - skipping signature verification');
+    }
+
+    const payload = JSON.parse(rawBody);
+    console.log('Webhook payload parsed:', payload);
 
     // iPaymu sends status_code to indicate payment status
     // 1 = Berhasil (Success)
