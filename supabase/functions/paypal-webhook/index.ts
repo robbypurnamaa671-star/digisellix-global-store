@@ -66,6 +66,38 @@ serve(async (req) => {
 
       console.log('Order updated successfully:', orders.id);
 
+      // Calculate and create affiliate commission if referred
+      if (orders.referred_by && orders.product_id) {
+        try {
+          // Get product commission rate
+          const { data: product } = await supabase
+            .from('products')
+            .select('affiliate_enabled, affiliate_commission_percent, price_usd')
+            .eq('id', orders.product_id)
+            .single();
+
+          if (product?.affiliate_enabled) {
+            const commissionPercent = product.affiliate_commission_percent || 10;
+            const commissionAmount = (Number(product.price_usd) * commissionPercent) / 100;
+            const availableAt = new Date();
+            availableAt.setDate(availableAt.getDate() + 7); // 7 day refund window
+
+            await supabase.from('affiliate_commissions').insert({
+              affiliate_id: orders.referred_by,
+              order_id: orders.id,
+              product_id: orders.product_id,
+              commission_amount: commissionAmount,
+              status: 'pending',
+              available_at: availableAt.toISOString(),
+            });
+
+            console.log('Affiliate commission created:', commissionAmount);
+          }
+        } catch (commError) {
+          console.error('Error creating affiliate commission:', commError);
+        }
+      }
+
       return new Response(
         JSON.stringify({ success: true, message: 'Payment processed' }),
         {

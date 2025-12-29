@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare, Trophy } from "lucide-react";
+import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare, Trophy, Link2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -65,6 +65,12 @@ export const Navigation = () => {
 
           {user && (
             <>
+              <Link to="/affiliate">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Link2 className="h-4 w-4" />
+                  <span className="hidden lg:inline">Affiliate</span>
+                </Button>
+              </Link>
               <Link to="/wishlist">
                 <Button variant="ghost" size="sm" className="gap-2">
                   <Heart className="h-4 w-4" />
