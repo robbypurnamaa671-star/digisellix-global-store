@@ -38,3 +38,12 @@ verify_jwt = true
 
 [functions.confirm-delivery]
 verify_jwt = true
+
+[functions.products-api]
+verify_jwt = false
+
+[functions.orders-api]
+verify_jwt = true
+
+[functions.disputes-api]
+verify_jwt = true
