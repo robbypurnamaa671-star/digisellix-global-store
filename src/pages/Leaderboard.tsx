@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Medal, Trophy, ShoppingBag, Package, Star, TrendingUp, Calendar } from "lucide-react";
+import { Crown, Medal, Trophy, ShoppingBag, Package, Star, TrendingUp, Calendar, Users, DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,17 @@ interface SellerStats {
   products_count: number;
   avg_rating: number;
   total_reviews: number;
+}
+
+interface AffiliateStats {
+  id: string;
+  user_id: string;
+  full_name: string;
+  avatar_url: string | null;
+  affiliate_code: string;
+  total_earnings: number;
+  total_conversions: number;
+  total_clicks: number;
 }
 
 const Leaderboard = () => {
@@ -145,6 +156,71 @@ const Leaderboard = () => {
       );
 
       return sellerProfiles;
+    },
+  });
+
+  // Fetch affiliate leaderboard
+  const { data: affiliateLeaders, isLoading: loadingAffiliates } = useQuery({
+    queryKey: ["leaderboard-affiliates"],
+    queryFn: async () => {
+      // Get all paid commissions grouped by affiliate
+      const { data: commissions, error } = await supabase
+        .from("affiliate_commissions")
+        .select(`
+          affiliate_id,
+          commission_amount,
+          affiliates (
+            id,
+            user_id,
+            affiliate_code
+          )
+        `)
+        .in("status", ["available", "paid"]);
+
+      if (error) throw error;
+
+      // Aggregate by affiliate
+      const affiliateEarnings: Record<string, { total: number; count: number; affiliate: any }> = {};
+      (commissions || []).forEach((comm) => {
+        const affId = comm.affiliate_id;
+        if (!affiliateEarnings[affId]) {
+          affiliateEarnings[affId] = { total: 0, count: 0, affiliate: comm.affiliates };
+        }
+        affiliateEarnings[affId].total += Number(comm.commission_amount);
+        affiliateEarnings[affId].count += 1;
+      });
+
+      // Sort by total earnings
+      const topAffiliates = Object.entries(affiliateEarnings)
+        .sort(([, a], [, b]) => b.total - a.total)
+        .slice(0, 20);
+
+      if (topAffiliates.length === 0) return [];
+
+      // Fetch profiles and click counts
+      const affiliateStats = await Promise.all(
+        topAffiliates.map(async ([affId, data]) => {
+          const userId = data.affiliate?.user_id;
+          
+          const [profileResult, clicksResult] = await Promise.all([
+            supabase.from("profiles").select("full_name, avatar_url").eq("id", userId).maybeSingle(),
+            supabase.from("affiliate_clicks").select("*", { count: "exact", head: true }).eq("affiliate_id", affId)
+          ]);
+
+          return {
+            id: affId,
+            user_id: userId,
+            full_name: profileResult.data?.full_name || "Anonymous Affiliate",
+            avatar_url: profileResult.data?.avatar_url,
+            affiliate_code: data.affiliate?.affiliate_code || "",
+            total_earnings: data.total,
+            total_conversions: data.count,
+            total_clicks: clicksResult.count || 0,
+          } as AffiliateStats;
+        })
+      );
+
+      return affiliateStats;
     },
   });
 
@@ -348,6 +424,144 @@ const Leaderboard = () => {
     </Card>
   );
 
+  const AffiliateTopThree = ({ affiliates, loading }: { affiliates: AffiliateStats[] | undefined; loading: boolean }) => {
+    if (loading) {
+      return (
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i} className="p-6">
+              <div className="flex flex-col items-center">
+                <Skeleton className="h-24 w-24 rounded-full mb-4" />
+                <Skeleton className="h-6 w-32 mb-2" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+
+    if (!affiliates || affiliates.length === 0) {
+      return (
+        <Card className="p-12 text-center mb-8">
+          <Users className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-xl font-semibold mb-2">{t('leaderboard.noAffiliates')}</h3>
+          <p className="text-muted-foreground">{t('leaderboard.noAffiliatesDesc')}</p>
+        </Card>
+      );
+    }
+
+    const podiumOrder = affiliates.length >= 3 
+      ? [affiliates[1], affiliates[0], affiliates[2]] 
+      : affiliates;
+
+    return (
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {podiumOrder.map((affiliate, index) => {
+          const actualRank = affiliates.length >= 3 
+            ? (index === 0 ? 2 : index === 1 ? 1 : 3) 
+            : index + 1;
+          const isFirst = actualRank === 1;
+          
+          return (
+            <Card 
+              key={affiliate.id} 
+              className={`p-6 transition-all hover:shadow-lg ${
+                isFirst ? 'md:-mt-4 ring-2 ring-green-500/50 bg-gradient-to-b from-green-50/50 to-background dark:from-green-950/20' : ''
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="relative mb-4">
+                  <Avatar className={`${isFirst ? 'h-24 w-24' : 'h-20 w-20'} border-4 ${
+                    actualRank === 1 ? 'border-green-500' : 
+                    actualRank === 2 ? 'border-gray-400' : 'border-amber-600'
+                  }`}>
+                    <AvatarImage src={affiliate.avatar_url || undefined} />
+                    <AvatarFallback className="text-2xl bg-primary/10 text-primary">
+                      {affiliate.full_name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center ${
+                    actualRank === 1 ? 'bg-green-500' : 
+                    actualRank === 2 ? 'bg-gray-400' : 'bg-amber-600'
+                  } text-white font-bold text-sm`}>
+                    {actualRank}
+                  </div>
+                </div>
+                
+                <h3 className="text-lg font-bold mb-1">{affiliate.full_name}</h3>
+                
+                <div className="flex items-center gap-1 mb-3">
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                  <span className="text-lg font-bold text-green-600">${affiliate.total_earnings.toFixed(2)}</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  <div className="text-center p-2 bg-muted/50 rounded-lg">
+                    <div className="flex items-center justify-center gap-1 text-primary">
+                      <ShoppingBag className="h-4 w-4" />
+                      <span className="font-bold">{affiliate.total_conversions}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{t('leaderboard.conversions')}</span>
+                  </div>
+                  <div className="text-center p-2 bg-muted/50 rounded-lg">
+                    <div className="flex items-center justify-center gap-1 text-primary">
+                      <TrendingUp className="h-4 w-4" />
+                      <span className="font-bold">{affiliate.total_clicks}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{t('leaderboard.clicks')}</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const AffiliateRow = ({ affiliate, rank }: { affiliate: AffiliateStats; rank: number }) => (
+    <Card className="p-4 hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-4">
+        <div className="w-10 flex justify-center">
+          {getRankIcon(rank)}
+        </div>
+        
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={affiliate.avatar_url || undefined} />
+          <AvatarFallback className="bg-primary/10 text-primary">
+            {affiliate.full_name.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold truncate">{affiliate.full_name}</h3>
+            {rank <= 3 && (
+              <Badge className={getRankBadgeColor(rank)}>
+                {rank === 1 ? t('leaderboard.gold') : rank === 2 ? t('leaderboard.silver') : t('leaderboard.bronze')}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+            <div className="flex items-center gap-1">
+              <DollarSign className="h-3 w-3 text-green-500" />
+              <span className="font-medium text-green-600">${affiliate.total_earnings.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <ShoppingBag className="h-3 w-3" />
+              <span>{affiliate.total_conversions} {t('leaderboard.conversions')}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <TrendingUp className="h-3 w-3" />
+              <span>{affiliate.total_clicks} {t('leaderboard.clicks')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
@@ -372,7 +586,7 @@ const Leaderboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="monthly" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+          <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 mb-8">
             <TabsTrigger value="monthly" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               {t('leaderboard.thisMonth')}
@@ -380,6 +594,10 @@ const Leaderboard = () => {
             <TabsTrigger value="alltime" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               {t('leaderboard.allTime')}
+            </TabsTrigger>
+            <TabsTrigger value="affiliates" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              {t('leaderboard.affiliates')}
             </TabsTrigger>
           </TabsList>
 
@@ -408,6 +626,21 @@ const Leaderboard = () => {
                   ? [...Array(5)].map((_, i) => <SellerSkeleton key={i} />)
                   : allTimeSellers.slice(3).map((seller, index) => (
                       <SellerRow key={seller.id} seller={seller} rank={index + 4} />
+                    ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="affiliates">
+            <AffiliateTopThree affiliates={affiliateLeaders?.slice(0, 3)} loading={loadingAffiliates} />
+            
+            {affiliateLeaders && affiliateLeaders.length > 3 && (
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold mb-4">{t('leaderboard.otherAffiliates')}</h3>
+                {loadingAffiliates
+                  ? [...Array(5)].map((_, i) => <SellerSkeleton key={i} />)
+                  : affiliateLeaders.slice(3).map((affiliate, index) => (
+                      <AffiliateRow key={affiliate.id} affiliate={affiliate} rank={index + 4} />
                     ))}
               </div>
             )}
