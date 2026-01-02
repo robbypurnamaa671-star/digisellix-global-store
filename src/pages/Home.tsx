@@ -269,6 +269,11 @@ const Home = () => {
                     {t('hero.viewProducts')}
                   </Button>
                 </Link>
+                <Link to="/products" className="w-full sm:w-auto">
+                  <Button variant="secondary" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
+                    {t('hero.escrow')}
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="relative animate-in fade-in slide-in-from-right duration-700 delay-300">
