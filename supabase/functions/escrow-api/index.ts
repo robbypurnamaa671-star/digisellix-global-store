@@ -205,8 +205,45 @@ Deno.serve(async (req) => {
 
         await addSystemMessage(escrow.id, `Escrow transaction created. Waiting for seller (${sellerEmail}) to accept.`);
 
+        // Check if seller is already registered and send in-site notification
+        const { data: sellerUser } = await supabase.auth.admin.listUsers();
+        const registeredSeller = sellerUser?.users?.find((u) => u.email === sellerEmail);
+        
+        if (registeredSeller) {
+          // Get buyer profile for notification message
+          const { data: buyerProfile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", user.id)
+            .single();
+          
+          const buyerName = buyerProfile?.full_name || "A buyer";
+          const amountDisplay = currency === 'IDR' 
+            ? `Rp ${amountIdr.toLocaleString('id-ID')}` 
+            : `$${amountUsd}`;
+          
+          // Create in-site notification for the seller
+          await supabase.from("notifications").insert({
+            user_id: registeredSeller.id,
+            type: "escrow_invitation",
+            title: "New Escrow Invitation",
+            message: `${buyerName} has invited you to an escrow transaction "${title}" for ${amountDisplay}`,
+            link: `/escrow/${escrow.id}`,
+            metadata: {
+              escrow_id: escrow.id,
+              buyer_id: user.id,
+              amount: currency === 'IDR' ? amountIdr : amountUsd,
+              currency,
+            },
+          });
+          
+          console.log(`In-site notification sent to registered seller: ${sellerEmail}`);
+        } else {
+          console.log(`Seller ${sellerEmail} not registered - would need email invitation`);
+        }
+
         return new Response(
-          JSON.stringify({ success: true, escrow }),
+          JSON.stringify({ success: true, escrow, sellerNotified: !!registeredSeller }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
