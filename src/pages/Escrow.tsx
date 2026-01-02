@@ -87,15 +87,15 @@ const Escrow = () => {
               {t('escrow.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/products">
+              <Link to="/auth">
                 <Button variant="hero" size="lg">
-                  {t('escrow.hero.browseProducts')}
+                  {t('escrow.hero.useService')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/contact">
                 <Button variant="outline" size="lg">
-                  {t('escrow.hero.startSelling')}
+                  {t('escrow.hero.contactUs')}
                 </Button>
               </Link>
             </div>
@@ -312,15 +312,15 @@ const Escrow = () => {
               {t('escrow.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/products">
+              <Link to="/auth">
                 <Button variant="hero" size="lg">
-                  {t('escrow.cta.browse')}
+                  {t('escrow.cta.useService')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/contact">
                 <Button variant="outline" size="lg">
-                  {t('escrow.cta.sell')}
+                  {t('escrow.cta.contact')}
                 </Button>
               </Link>
             </div>

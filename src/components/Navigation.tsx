@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare, Trophy, Link2 } from "lucide-react";
+import { ShoppingBag, User, Shield, Menu, MessageCircle, Heart, MessagesSquare, Trophy, Link2, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -51,6 +51,12 @@ export const Navigation = () => {
             <Button variant="ghost" size="sm" className="gap-2">
               <Trophy className="h-4 w-4" />
               <span className="hidden lg:inline">{t('nav.leaderboard')}</span>
+            </Button>
+          </Link>
+          <Link to="/escrow">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Handshake className="h-4 w-4" />
+              <span className="hidden lg:inline">{t('nav.escrow')}</span>
             </Button>
           </Link>
           {isAdmin && (
@@ -180,6 +186,12 @@ export const Navigation = () => {
                 <Button variant="ghost" className="w-full justify-start gap-2">
                   <Trophy className="h-4 w-4" />
                   {t('nav.leaderboard')}
+                </Button>
+              </Link>
+              <Link to="/escrow" onClick={() => setOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start gap-2">
+                  <Handshake className="h-4 w-4" />
+                  {t('nav.escrow')}
                 </Button>
               </Link>
 
