@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { NotificationBell } from "@/components/NotificationBell";
 export const Navigation = () => {
   const { user, userRoles, hasRole, signOut } = useAuth();
   const { t } = useLanguage();
@@ -89,6 +90,7 @@ export const Navigation = () => {
                   <span className="hidden lg:inline">{t('nav.messages')}</span>
                 </Button>
               </Link>
+              <NotificationBell />
             </>
           )}
           
