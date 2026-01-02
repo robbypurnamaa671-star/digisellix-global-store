@@ -126,8 +126,8 @@ const EscrowDetail = () => {
     if (!id) return;
 
     try {
-      const response = await supabase.functions.invoke(`escrow-api/get?id=${id}`, {
-        method: 'GET',
+      const response = await supabase.functions.invoke('escrow-api', {
+        body: { action: 'get', escrowId: id },
       });
 
       if (response.error || !response.data?.success) {
