@@ -155,45 +155,116 @@ serve(async (req) => {
       console.log('Processing payment for PayPal order:', paypalOrderId);
 
       // Find order by PayPal order ID (stored in ipaymu_session_id field)
-      const { data: orders, error: fetchError } = await supabase
+      const { data: order, error: fetchError } = await supabase
         .from('orders')
         .select('*')
         .eq('ipaymu_session_id', paypalOrderId)
         .single();
 
-      if (fetchError || !orders) {
+      if (fetchError || !order) {
         console.error('Order not found for PayPal ID:', paypalOrderId, fetchError);
         throw new Error('Order not found');
       }
 
-      // Capture transaction ID
+      // Get capture ID and custom data (includes feePayer)
       const captureId = resource.purchase_units?.[0]?.payments?.captures?.[0]?.id || resource.id;
+      const customIdRaw = resource.purchase_units?.[0]?.custom_id;
+      let feePayer = order.fee_payer || 'buyer';
+      
+      // Parse custom_id if available
+      if (customIdRaw) {
+        try {
+          const customData = JSON.parse(customIdRaw);
+          feePayer = customData.feePayer || feePayer;
+        } catch (e) {
+          console.log('Could not parse custom_id, using order fee_payer');
+        }
+      }
 
-      // Update order status
+      // Get platform fee from settings (default 5%)
+      const { data: feeSettings } = await supabase
+        .from('platform_settings')
+        .select('value')
+        .eq('key', 'platform_fee_percent')
+        .single();
+
+      const platformFeePercent = feeSettings?.value ? Number(feeSettings.value) : 5;
+      
+      // Calculate amounts based on fee_payer
+      const basePrice = Number(order.amount_usd);
+      const platformFee = Math.round((basePrice * platformFeePercent) / 100 * 100) / 100;
+
+      let escrowAmount: number;
+      let sellerPayout: number;
+
+      if (feePayer === 'buyer') {
+        escrowAmount = basePrice + platformFee;
+        sellerPayout = basePrice;
+      } else {
+        escrowAmount = basePrice;
+        sellerPayout = basePrice - platformFee;
+      }
+
+      console.log(`Escrow calculation - Fee payer: ${feePayer}, Base: $${basePrice}, Fee: $${platformFee}, Escrow: $${escrowAmount}, Seller payout: $${sellerPayout}`);
+
+      // Get auto-release days from settings
+      const { data: releaseSettings } = await supabase
+        .from('platform_settings')
+        .select('value')
+        .eq('key', 'auto_release_days')
+        .single();
+
+      const autoReleaseDays = releaseSettings?.value ? Number(releaseSettings.value) : 7;
+      const autoReleaseAt = new Date(Date.now() + autoReleaseDays * 24 * 60 * 60 * 1000).toISOString();
+
+      // Create transaction with escrow details
+      const { error: txError } = await supabase
+        .from('transactions')
+        .insert({
+          order_id: order.id,
+          payment_reference: captureId,
+          payment_provider: 'paypal',
+          amount: escrowAmount,
+          escrow_amount: escrowAmount,
+          platform_fee: platformFee,
+          seller_payout: sellerPayout,
+          fee_payer: feePayer,
+          payout_status: 'frozen', // Held in escrow
+        });
+
+      if (txError) {
+        console.error('Error creating transaction:', txError);
+      }
+
+      // Update order status with escrow info
       const { error: updateError } = await supabase
         .from('orders')
         .update({
           payment_status: 'paid',
           paid_at: new Date().toISOString(),
           ipaymu_transaction_id: captureId,
+          escrow_status: 'held',
+          fee_payer: feePayer,
+          platform_fee_percent: platformFeePercent,
+          auto_release_at: autoReleaseAt,
         })
-        .eq('id', orders.id);
+        .eq('id', order.id);
 
       if (updateError) {
         console.error('Error updating order:', updateError);
         throw updateError;
       }
 
-      console.log('Order updated successfully:', orders.id);
+      console.log(`Order ${order.id} updated - Escrow held, auto-release at ${autoReleaseAt}`);
 
       // Calculate and create affiliate commission if referred
-      if (orders.referred_by && orders.product_id) {
+      if (order.referred_by && order.product_id) {
         try {
           // Get product commission rate
           const { data: product } = await supabase
             .from('products')
             .select('affiliate_enabled, affiliate_commission_percent, price_usd')
-            .eq('id', orders.product_id)
+            .eq('id', order.product_id)
             .single();
 
           if (product?.affiliate_enabled) {
@@ -203,9 +274,9 @@ serve(async (req) => {
             availableAt.setDate(availableAt.getDate() + 7); // 7 day refund window
 
             await supabase.from('affiliate_commissions').insert({
-              affiliate_id: orders.referred_by,
-              order_id: orders.id,
-              product_id: orders.product_id,
+              affiliate_id: order.referred_by,
+              order_id: order.id,
+              product_id: order.product_id,
               commission_amount: commissionAmount,
               status: 'pending',
               available_at: availableAt.toISOString(),
@@ -219,7 +290,12 @@ serve(async (req) => {
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: 'Payment processed' }),
+        JSON.stringify({ 
+          success: true, 
+          message: 'Payment processed and held in escrow',
+          escrow_status: 'held',
+          fee_payer: feePayer,
+        }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
@@ -233,17 +309,17 @@ serve(async (req) => {
       const paypalOrderId = resource.id || resource.supplementary_data?.related_ids?.order_id;
 
       if (paypalOrderId) {
-        const { data: orders } = await supabase
+        const { data: order } = await supabase
           .from('orders')
           .select('*')
           .eq('ipaymu_session_id', paypalOrderId)
           .single();
 
-        if (orders) {
+        if (order) {
           await supabase
             .from('orders')
             .update({ payment_status: 'failed' })
-            .eq('id', orders.id);
+            .eq('id', order.id);
         }
       }
     }
