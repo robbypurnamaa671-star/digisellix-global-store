@@ -87,7 +87,7 @@ const Escrow = () => {
               {t('escrow.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth">
+              <Link to="/escrow/create">
                 <Button variant="hero" size="lg">
                   {t('escrow.hero.useService')}
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -312,7 +312,7 @@ const Escrow = () => {
               {t('escrow.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth">
+              <Link to="/escrow/create">
                 <Button variant="hero" size="lg">
                   {t('escrow.cta.useService')}
                   <ArrowRight className="ml-2 h-5 w-5" />
