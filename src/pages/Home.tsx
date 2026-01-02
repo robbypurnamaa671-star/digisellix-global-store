@@ -269,7 +269,7 @@ const Home = () => {
                     {t('hero.viewProducts')}
                   </Button>
                 </Link>
-                <Link to="/products" className="w-full sm:w-auto">
+                <Link to="/escrow" className="w-full sm:w-auto">
                   <Button variant="secondary" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
                     {t('hero.escrow')}
                   </Button>
