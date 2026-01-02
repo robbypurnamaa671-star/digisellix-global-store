@@ -64,6 +64,25 @@ Deno.serve(async (req) => {
       throw new Error("Order already paid");
     }
 
+    // CRITICAL: Check if seller is verified for escrow
+    const { data: sellerProfile, error: sellerError } = await supabase
+      .from("seller_profiles")
+      .select("escrow_enabled, verification_status")
+      .eq("user_id", order.seller_id)
+      .single();
+
+    if (sellerError || !sellerProfile) {
+      console.error("Seller profile not found:", sellerError);
+      throw new Error("Seller profile not found");
+    }
+
+    if (!sellerProfile.escrow_enabled || sellerProfile.verification_status !== "approved") {
+      console.error(`Seller ${order.seller_id} is not verified for escrow. Status: ${sellerProfile.verification_status}, Escrow enabled: ${sellerProfile.escrow_enabled}`);
+      throw new Error("Seller is not verified for escrow. Only verified sellers can use the escrow system.");
+    }
+
+    console.log(`Seller ${order.seller_id} is verified for escrow`);
+
     // Get platform fee from settings (default 5%)
     const { data: feeSettings } = await supabase
       .from("platform_settings")

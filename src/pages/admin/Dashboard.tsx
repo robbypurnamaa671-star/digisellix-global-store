@@ -68,6 +68,7 @@ import {
 import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 import { AdminForumManagement } from "@/components/admin/AdminForumManagement";
 import AffiliatePayoutManagement from "@/components/admin/AffiliatePayoutManagement";
+import AdminVerificationReview from "@/components/admin/AdminVerificationReview";
 
 const AdminDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
@@ -514,6 +515,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="payouts" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Payouts
+            </TabsTrigger>
+            <TabsTrigger value="verifications" className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4" />
+              Verifications
             </TabsTrigger>
           </TabsList>
 
@@ -1215,6 +1220,11 @@ const AdminDashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Verifications Tab Content - Add before closing div */}
+      <TabsContent value="verifications" className="space-y-6">
+        <AdminVerificationReview />
+      </TabsContent>
     </div>
   );
 };

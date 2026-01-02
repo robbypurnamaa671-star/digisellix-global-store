@@ -1,5 +1,11 @@
 project_id = "yrowmukralyijublgkuk"
 
+[functions.submit-seller-verification]
+verify_jwt = true
+
+[functions.admin-review-verification]
+verify_jwt = true
+
 [functions.create-ipaymu-payment]
 verify_jwt = true
 
