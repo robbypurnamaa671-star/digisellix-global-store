@@ -137,9 +137,11 @@ Deno.serve(async (req) => {
     }
 
     // Helper to get user role in escrow
-    async function getUserRole(escrow: { buyer_id: string; seller_id: string | null }) {
+    async function getUserRole(escrow: { buyer_id: string; seller_id: string | null; seller_email?: string | null }) {
       if (escrow.buyer_id === user.id) return "buyer";
       if (escrow.seller_id === user.id) return "seller";
+      // Check if user is invited seller (email matches but not yet accepted)
+      if (escrow.seller_email && user.email && escrow.seller_email === user.email) return "seller";
       if (isAdmin) return "admin";
       return null;
     }
