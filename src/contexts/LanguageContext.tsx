@@ -32,6 +32,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.subtitle': 'Global platform for creators to sell e-books, designs, music, software, templates, and much more.',
     'hero.startSelling': 'Start Selling Now',
     'hero.viewProducts': 'View Products',
+    'hero.escrow': 'Escrow',
     
     // How It Works
     'howItWorks.title': 'How It Works',
@@ -446,6 +447,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.subtitle': 'Platform global untuk kreator menjual e-book, desain, musik, perangkat lunak, template, dan banyak lagi.',
     'hero.startSelling': 'Mulai Jual Sekarang',
     'hero.viewProducts': 'Lihat Produk',
+    'hero.escrow': 'Rekber',
     
     // How It Works
     'howItWorks.title': 'Cara Kerja',
