@@ -7,12 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Upload, User, Save, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, Upload, User, Save, Loader2, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import SellerVerificationForm from "@/components/seller/SellerVerificationForm";
 
 const SellerSettings = () => {
   const navigate = useNavigate();
@@ -171,102 +173,121 @@ const SellerSettings = () => {
           {t('sellerSettings.backToDashboard')}
         </Button>
 
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                {t('sellerSettings.title')}
-              </CardTitle>
-              <CardDescription>
-                {t('sellerSettings.description')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {isLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              ) : (
-                <>
-                  {/* Avatar Section */}
-                  <div className="space-y-4">
-                    <Label>{t('sellerSettings.shopAvatar')}</Label>
-                    <div className="flex items-center gap-6">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={currentAvatarUrl} alt={fullName} />
-                        <AvatarFallback className="text-2xl">
-                          {getInitials(fullName || "U")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          {t('sellerSettings.avatarHint')}
-                        </p>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept=".png,.jpg,.jpeg"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <Upload className="mr-2 h-4 w-4" />
-                          {t('sellerSettings.uploadAvatar')}
-                        </Button>
-                      </div>
+        <div className="max-w-2xl mx-auto space-y-6">
+          <Tabs defaultValue="profile" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                {t('sellerSettings.profileTab')}
+              </TabsTrigger>
+              <TabsTrigger value="verification" className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4" />
+                {t('sellerSettings.verificationTab')}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="profile">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    {t('sellerSettings.title')}
+                  </CardTitle>
+                  <CardDescription>
+                    {t('sellerSettings.description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {isLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      {/* Avatar Section */}
+                      <div className="space-y-4">
+                        <Label>{t('sellerSettings.shopAvatar')}</Label>
+                        <div className="flex items-center gap-6">
+                          <Avatar className="h-24 w-24">
+                            <AvatarImage src={currentAvatarUrl} alt={fullName} />
+                            <AvatarFallback className="text-2xl">
+                              {getInitials(fullName || "U")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">
+                              {t('sellerSettings.avatarHint')}
+                            </p>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept=".png,.jpg,.jpeg"
+                              onChange={handleFileChange}
+                              className="hidden"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              <Upload className="mr-2 h-4 w-4" />
+                              {t('sellerSettings.uploadAvatar')}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* Shop Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">{t('sellerSettings.shopName')}</Label>
-                    <Input
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder={t('sellerSettings.shopNamePlaceholder')}
-                      maxLength={100}
-                    />
-                  </div>
+                      {/* Shop Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">{t('sellerSettings.shopName')}</Label>
+                        <Input
+                          id="fullName"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder={t('sellerSettings.shopNamePlaceholder')}
+                          maxLength={100}
+                        />
+                      </div>
 
-                  {/* Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description">{t('sellerSettings.shopDescription')}</Label>
-                    <Textarea
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder={t('sellerSettings.shopDescriptionPlaceholder')}
-                      rows={4}
-                      maxLength={500}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {description.length}/500 {t('sellerSettings.characters')}
-                    </p>
-                  </div>
+                      {/* Description */}
+                      <div className="space-y-2">
+                        <Label htmlFor="description">{t('sellerSettings.shopDescription')}</Label>
+                        <Textarea
+                          id="description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          placeholder={t('sellerSettings.shopDescriptionPlaceholder')}
+                          rows={4}
+                          maxLength={500}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          {description.length}/500 {t('sellerSettings.characters')}
+                        </p>
+                      </div>
 
-                  {/* Save Button */}
-                  <Button
-                    onClick={() => updateProfileMutation.mutate()}
-                    disabled={updateProfileMutation.isPending || uploading}
-                    className="w-full"
-                  >
-                    {(updateProfileMutation.isPending || uploading) ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Save className="mr-2 h-4 w-4" />
-                    )}
-                    {t('sellerSettings.saveChanges')}
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
+                      {/* Save Button */}
+                      <Button
+                        onClick={() => updateProfileMutation.mutate()}
+                        disabled={updateProfileMutation.isPending || uploading}
+                        className="w-full"
+                      >
+                        {(updateProfileMutation.isPending || uploading) ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Save className="mr-2 h-4 w-4" />
+                        )}
+                        {t('sellerSettings.saveChanges')}
+                      </Button>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="verification">
+              <SellerVerificationForm />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

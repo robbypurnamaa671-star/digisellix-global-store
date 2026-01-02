@@ -1016,6 +1016,7 @@ export type Database = {
           abuse_count: number
           bio: string | null
           created_at: string
+          escrow_enabled: boolean
           id: string
           is_suspended: boolean
           portfolio_url: string | null
@@ -1030,6 +1031,7 @@ export type Database = {
           abuse_count?: number
           bio?: string | null
           created_at?: string
+          escrow_enabled?: boolean
           id?: string
           is_suspended?: boolean
           portfolio_url?: string | null
@@ -1044,6 +1046,7 @@ export type Database = {
           abuse_count?: number
           bio?: string | null
           created_at?: string
+          escrow_enabled?: boolean
           id?: string
           is_suspended?: boolean
           portfolio_url?: string | null
@@ -1055,6 +1058,89 @@ export type Database = {
           verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Relationships: []
+      }
+      seller_verifications: {
+        Row: {
+          bank_account_name: string
+          bank_account_number: string
+          bank_name: string
+          created_at: string
+          id: string
+          ktp_image_url: string
+          ktp_name: string
+          ktp_number: string
+          rejection_reason: string | null
+          reviewed_by: string | null
+          selfie_image_url: string | null
+          seller_id: string
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["seller_verification_status"]
+          verified_at: string | null
+        }
+        Insert: {
+          bank_account_name: string
+          bank_account_number: string
+          bank_name: string
+          created_at?: string
+          id?: string
+          ktp_image_url: string
+          ktp_name: string
+          ktp_number: string
+          rejection_reason?: string | null
+          reviewed_by?: string | null
+          selfie_image_url?: string | null
+          seller_id: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["seller_verification_status"]
+          verified_at?: string | null
+        }
+        Update: {
+          bank_account_name?: string
+          bank_account_number?: string
+          bank_name?: string
+          created_at?: string
+          id?: string
+          ktp_image_url?: string
+          ktp_name?: string
+          ktp_number?: string
+          rejection_reason?: string | null
+          reviewed_by?: string | null
+          selfie_image_url?: string | null
+          seller_id?: string
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["seller_verification_status"]
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_verifications_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_verifications_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: true
+            referencedRelation: "seller_profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
@@ -1444,6 +1530,7 @@ export type Database = {
       escrow_status: "held" | "released" | "disputed" | "refunded"
       payout_status: "pending" | "paid" | "frozen"
       product_status: "draft" | "published" | "flagged" | "suspended"
+      seller_verification_status: "pending" | "approved" | "rejected"
       verification_status: "unverified" | "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -1583,6 +1670,7 @@ export const Constants = {
       escrow_status: ["held", "released", "disputed", "refunded"],
       payout_status: ["pending", "paid", "frozen"],
       product_status: ["draft", "published", "flagged", "suspended"],
+      seller_verification_status: ["pending", "approved", "rejected"],
       verification_status: ["unverified", "pending", "approved", "rejected"],
     },
   },
