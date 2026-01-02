@@ -361,22 +361,41 @@ const EscrowDetail = () => {
                       {language === 'id' ? 'Jumlah' : 'Amount'}
                     </div>
                     <div className="text-2xl font-bold">
-                      {escrow.currency === 'USD' ? '$' : 'Rp'}
+                      {escrow.currency === 'USD' ? '$' : 'Rp '}
                       {escrow.currency === 'USD' 
                         ? escrow.amount_usd.toLocaleString() 
-                        : escrow.amount_idr.toLocaleString()}
+                        : escrow.amount_idr.toLocaleString('id-ID')}
                     </div>
                   </div>
                   <div className="p-4 rounded-lg bg-muted/50">
                     <div className="text-sm text-muted-foreground">
-                      {language === 'id' ? 'Escrow Total' : 'Escrow Total'}
+                      {language === 'id' ? 'Biaya Platform' : 'Platform Fee'}
                     </div>
                     <div className="text-2xl font-bold text-primary">
-                      ${escrow.escrow_amount.toLocaleString()}
+                      {escrow.currency === 'USD' ? '$' : 'Rp '}
+                      {escrow.currency === 'USD' 
+                        ? escrow.platform_fee.toLocaleString() 
+                        : (escrow.amount_idr * escrow.platform_fee_percent / 100).toLocaleString('id-ID')}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {language === 'id' ? 'Termasuk biaya' : 'Including fee'} {escrow.platform_fee_percent}% (${escrow.platform_fee})
+                      {escrow.platform_fee_percent}% • {language === 'id' ? 'Dibayar oleh' : 'Paid by'} {escrow.fee_payer === 'buyer' ? (language === 'id' ? 'Pembeli' : 'Buyer') : (language === 'id' ? 'Penjual' : 'Seller')}
                     </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="text-sm text-muted-foreground">
+                    {language === 'id' ? 'Penjual Terima' : 'Seller Receives'}
+                  </div>
+                  <div className="text-2xl font-bold text-primary">
+                    {escrow.currency === 'USD' ? '$' : 'Rp '}
+                    {escrow.currency === 'USD' 
+                      ? (escrow.fee_payer === 'seller' 
+                          ? (escrow.amount_usd - escrow.platform_fee).toLocaleString() 
+                          : escrow.amount_usd.toLocaleString())
+                      : (escrow.fee_payer === 'seller' 
+                          ? (escrow.amount_idr - (escrow.amount_idr * escrow.platform_fee_percent / 100)).toLocaleString('id-ID') 
+                          : escrow.amount_idr.toLocaleString('id-ID'))}
                   </div>
                 </div>
 

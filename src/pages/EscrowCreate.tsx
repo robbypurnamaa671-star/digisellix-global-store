@@ -43,7 +43,6 @@ const EscrowCreate = () => {
     itemDescription: "",
     amountUSD: "",
     amountIDR: "",
-    currency: "USD",
     feePayer: "buyer",
   });
 
@@ -63,6 +62,9 @@ const EscrowCreate = () => {
       return;
     }
 
+    // Determine currency based on which field has value
+    const currency = amountIdr > 0 ? 'IDR' : 'USD';
+
     setLoading(true);
     try {
       const { data: session } = await supabase.auth.getSession();
@@ -77,7 +79,7 @@ const EscrowCreate = () => {
           description: formData.itemDescription,
           amountUsd,
           amountIdr,
-          currency: formData.currency,
+          currency,
           feePayer: formData.feePayer,
         },
       });
