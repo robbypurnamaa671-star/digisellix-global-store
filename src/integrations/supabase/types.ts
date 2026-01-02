@@ -476,6 +476,196 @@ export type Database = {
           },
         ]
       }
+      escrow_messages: {
+        Row: {
+          attachment_url: string | null
+          created_at: string
+          escrow_id: string
+          id: string
+          is_system_message: boolean | null
+          message: string
+          sender_id: string
+          sender_role: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          created_at?: string
+          escrow_id: string
+          id?: string
+          is_system_message?: boolean | null
+          message: string
+          sender_id: string
+          sender_role: string
+        }
+        Update: {
+          attachment_url?: string | null
+          created_at?: string
+          escrow_id?: string
+          id?: string
+          is_system_message?: boolean | null
+          message?: string
+          sender_id?: string
+          sender_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_messages_escrow_id_fkey"
+            columns: ["escrow_id"]
+            isOneToOne: false
+            referencedRelation: "escrow_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      escrow_timeline: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          escrow_id: string
+          event_description: string
+          event_type: string
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          escrow_id: string
+          event_description: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          escrow_id?: string
+          event_description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_timeline_escrow_id_fkey"
+            columns: ["escrow_id"]
+            isOneToOne: false
+            referencedRelation: "escrow_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      escrow_transactions: {
+        Row: {
+          accepted_at: string | null
+          amount_idr: number
+          amount_usd: number
+          auto_release_at: string | null
+          buyer_id: string
+          completed_at: string | null
+          created_at: string
+          currency: string
+          delivered_at: string | null
+          description: string | null
+          dispute_by: string | null
+          dispute_reason: string | null
+          disputed_at: string | null
+          escrow_amount: number | null
+          expires_at: string | null
+          fee_payer: string
+          funded_at: string | null
+          id: string
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
+          platform_fee: number
+          platform_fee_percent: number
+          resolution_in_favor: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          seller_email: string | null
+          seller_id: string | null
+          seller_payout: number | null
+          status: string
+          title: string
+          transaction_code: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          amount_idr: number
+          amount_usd: number
+          auto_release_at?: string | null
+          buyer_id: string
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          description?: string | null
+          dispute_by?: string | null
+          dispute_reason?: string | null
+          disputed_at?: string | null
+          escrow_amount?: number | null
+          expires_at?: string | null
+          fee_payer?: string
+          funded_at?: string | null
+          id?: string
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          platform_fee?: number
+          platform_fee_percent?: number
+          resolution_in_favor?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          seller_email?: string | null
+          seller_id?: string | null
+          seller_payout?: number | null
+          status?: string
+          title: string
+          transaction_code?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          amount_idr?: number
+          amount_usd?: number
+          auto_release_at?: string | null
+          buyer_id?: string
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          description?: string | null
+          dispute_by?: string | null
+          dispute_reason?: string | null
+          disputed_at?: string | null
+          escrow_amount?: number | null
+          expires_at?: string | null
+          fee_payer?: string
+          funded_at?: string | null
+          id?: string
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          platform_fee?: number
+          platform_fee_percent?: number
+          resolution_in_favor?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          seller_email?: string | null
+          seller_id?: string | null
+          seller_payout?: number | null
+          status?: string
+          title?: string
+          transaction_code?: string
+        }
+        Relationships: []
+      }
       forum_comments: {
         Row: {
           author_id: string
