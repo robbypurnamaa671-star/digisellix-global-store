@@ -55,16 +55,48 @@ const EscrowCreate = () => {
       return;
     }
 
+    const amountUsd = parseFloat(formData.amountUSD) || 0;
+    const amountIdr = parseFloat(formData.amountIDR) || 0;
+
+    if (amountUsd <= 0 && amountIdr <= 0) {
+      toast.error(language === 'id' ? 'Masukkan jumlah yang valid' : 'Enter a valid amount');
+      return;
+    }
+
     setLoading(true);
     try {
-      // For now, redirect to contact as this needs backend implementation
-      toast.info(language === 'id' 
-        ? 'Fitur escrow akan segera tersedia. Hubungi admin untuk transaksi manual.' 
-        : 'Escrow feature coming soon. Contact admin for manual transactions.');
-      navigate('/contact');
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await supabase.functions.invoke('escrow-api/create', {
+        body: {
+          sellerEmail: formData.counterpartyEmail,
+          title: formData.itemTitle,
+          description: formData.itemDescription,
+          amountUsd,
+          amountIdr,
+          currency: formData.currency,
+          feePayer: formData.feePayer,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to create escrow');
+      }
+
+      if (!response.data?.success) {
+        throw new Error(response.data?.error || 'Failed to create escrow');
+      }
+
+      toast.success(language === 'id' 
+        ? 'Transaksi escrow berhasil dibuat!' 
+        : 'Escrow transaction created successfully!');
+      navigate(`/escrow/${response.data.escrow.id}`);
     } catch (error) {
       console.error('Error:', error);
-      toast.error(language === 'id' ? 'Terjadi kesalahan' : 'An error occurred');
+      toast.error(error instanceof Error ? error.message : (language === 'id' ? 'Terjadi kesalahan' : 'An error occurred'));
     } finally {
       setLoading(false);
     }
