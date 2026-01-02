@@ -321,6 +321,11 @@ const EscrowCreate = () => {
                   {/* Amount */}
                   <div className="space-y-4">
                     <Label>{language === 'id' ? 'Jumlah Pembayaran' : 'Payment Amount'}</Label>
+                    <p className="text-sm text-muted-foreground">
+                      {language === 'id' 
+                        ? 'Masukkan jumlah dalam USD atau IDR. Konversi otomatis ditampilkan.'
+                        : 'Enter amount in USD or IDR. Automatic conversion is displayed.'}
+                    </p>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="amountUSD" className="text-sm text-muted-foreground">USD</Label>
@@ -328,9 +333,16 @@ const EscrowCreate = () => {
                           id="amountUSD"
                           type="number"
                           placeholder="0.00"
+                          step="0.01"
                           value={formData.amountUSD}
-                          onChange={(e) => setFormData({ ...formData, amountUSD: e.target.value })}
+                          onChange={(e) => setFormData({ ...formData, amountUSD: e.target.value, amountIDR: "" })}
                         />
+                        {parseFloat(formData.amountUSD) > 0 && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            ≈ Rp {(parseFloat(formData.amountUSD) * 16000).toLocaleString('id-ID')}
+                            <span className="text-[10px]">(1 USD = Rp 16.000)</span>
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="amountIDR" className="text-sm text-muted-foreground">IDR</Label>
@@ -339,10 +351,28 @@ const EscrowCreate = () => {
                           type="number"
                           placeholder="0"
                           value={formData.amountIDR}
-                          onChange={(e) => setFormData({ ...formData, amountIDR: e.target.value })}
+                          onChange={(e) => setFormData({ ...formData, amountIDR: e.target.value, amountUSD: "" })}
                         />
+                        {parseFloat(formData.amountIDR) > 0 && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            ≈ ${(parseFloat(formData.amountIDR) / 16000).toFixed(2)}
+                            <span className="text-[10px]">(1 USD = Rp 16.000)</span>
+                          </p>
+                        )}
                       </div>
                     </div>
+                    {(parseFloat(formData.amountUSD) > 0 || parseFloat(formData.amountIDR) > 0) && (
+                      <div className="p-3 rounded-lg bg-muted/50 border">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">
+                            {language === 'id' ? 'Mata uang yang dipilih:' : 'Selected currency:'}
+                          </span>
+                          <Badge variant="outline">
+                            {parseFloat(formData.amountIDR) > 0 ? 'IDR (Rupiah)' : 'USD (Dollar)'}
+                          </Badge>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Fee Payer */}
