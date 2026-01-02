@@ -76,8 +76,11 @@ Deno.serve(async (req) => {
     const user = authData.user;
 
     const url = new URL(req.url);
-    const action = url.pathname.split("/").pop();
+    const pathAction = url.pathname.split("/").pop();
     const body = req.method !== "GET" ? await req.json() : {};
+    
+    // Support action from body or path
+    const action = body.action || pathAction;
 
     console.log(`Escrow API action: ${action}, user: ${user.id}`);
 
@@ -660,7 +663,8 @@ Deno.serve(async (req) => {
       }
 
       case "get": {
-        const escrowId = url.searchParams.get("id");
+        // Support escrowId from body or URL params
+        const escrowId = body.escrowId || url.searchParams.get("id");
         if (!escrowId) {
           throw new Error("Escrow ID required");
         }
