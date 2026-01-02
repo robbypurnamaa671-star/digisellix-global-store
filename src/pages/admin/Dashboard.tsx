@@ -1203,6 +1203,11 @@ const AdminDashboard = () => {
             <AffiliatePayoutManagement />
           </TabsContent>
 
+          {/* Verifications Tab */}
+          <TabsContent value="verifications" className="space-y-6">
+            <AdminVerificationReview />
+          </TabsContent>
+
           {/* Escrow Tab */}
           <TabsContent value="escrow">
             <AdminEscrowManagement />
@@ -1232,10 +1237,6 @@ const AdminDashboard = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Verifications Tab Content - Add before closing div */}
-      <TabsContent value="verifications" className="space-y-6">
-        <AdminVerificationReview />
-      </TabsContent>
     </div>
   );
 };
