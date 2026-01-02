@@ -12,6 +12,7 @@ interface PaymentRequest {
   currency: string;
   returnUrl: string;
   cancelUrl: string;
+  feePayer?: "buyer" | "seller";
 }
 
 serve(async (req) => {
@@ -35,9 +36,9 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { orderId, amount, currency, returnUrl, cancelUrl }: PaymentRequest = await req.json();
+    const { orderId, amount, currency, returnUrl, cancelUrl, feePayer = "buyer" }: PaymentRequest = await req.json();
 
-    console.log('Creating PayPal payment for order:', orderId);
+    console.log(`Creating PayPal payment for order: ${orderId}, amount: ${amount}, feePayer: ${feePayer}`);
 
     const clientId = Deno.env.get('PAYPAL_CLIENT_ID');
     const secretKey = Deno.env.get('PAYPAL_SECRET_KEY');
@@ -66,7 +67,7 @@ serve(async (req) => {
     const authData = await authResponse.json();
     const accessToken = authData.access_token;
 
-    // Create PayPal order
+    // Create PayPal order with the calculated amount
     const orderResponse = await fetch(`${paypalApiUrl}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
@@ -77,10 +78,12 @@ serve(async (req) => {
         intent: 'CAPTURE',
         purchase_units: [{
           reference_id: orderId,
+          custom_id: JSON.stringify({ orderId, feePayer }), // Store feePayer info
           amount: {
             currency_code: currency,
             value: amount.toFixed(2),
           },
+          description: `Digisellix Order - Escrow Payment (Fee paid by ${feePayer})`,
         }],
         application_context: {
           return_url: returnUrl,
@@ -101,13 +104,14 @@ serve(async (req) => {
     const orderData = await orderResponse.json();
     console.log('PayPal order created:', orderData.id);
 
-    // Update order with PayPal details
+    // Update order with PayPal details and fee_payer
     const { error: updateError } = await supabase
       .from('orders')
       .update({
         payment_method: 'paypal',
         ipaymu_session_id: orderData.id, // Reusing this field for PayPal order ID
         payment_status: 'pending',
+        fee_payer: feePayer,
       })
       .eq('id', orderId);
 
@@ -124,6 +128,7 @@ serve(async (req) => {
         success: true,
         paypalOrderId: orderData.id,
         approvalUrl: approvalUrl,
+        feePayer: feePayer,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

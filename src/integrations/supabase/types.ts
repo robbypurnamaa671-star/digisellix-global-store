@@ -630,6 +630,7 @@ export type Database = {
           escrow_released_at: string | null
           escrow_status: Database["public"]["Enums"]["escrow_status"]
           expires_at: string | null
+          fee_payer: string
           id: string
           ipaymu_payment_url: string | null
           ipaymu_session_id: string | null
@@ -657,6 +658,7 @@ export type Database = {
           escrow_released_at?: string | null
           escrow_status?: Database["public"]["Enums"]["escrow_status"]
           expires_at?: string | null
+          fee_payer?: string
           id?: string
           ipaymu_payment_url?: string | null
           ipaymu_session_id?: string | null
@@ -684,6 +686,7 @@ export type Database = {
           escrow_released_at?: string | null
           escrow_status?: Database["public"]["Enums"]["escrow_status"]
           expires_at?: string | null
+          fee_payer?: string
           id?: string
           ipaymu_payment_url?: string | null
           ipaymu_session_id?: string | null
@@ -1057,6 +1060,8 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          escrow_amount: number | null
+          fee_payer: string | null
           frozen_at: string | null
           frozen_by: string | null
           frozen_reason: string | null
@@ -1074,6 +1079,8 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          escrow_amount?: number | null
+          fee_payer?: string | null
           frozen_at?: string | null
           frozen_by?: string | null
           frozen_reason?: string | null
@@ -1091,6 +1098,8 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          escrow_amount?: number | null
+          fee_payer?: string | null
           frozen_at?: string | null
           frozen_by?: string | null
           frozen_reason?: string | null

@@ -7,10 +7,11 @@ const corsHeaders = {
 
 interface PaymentRequest {
   orderId: string;
-  paymentProvider: string; // 'paypal' | 'stripe' | 'ipaymu'
+  paymentProvider: string;
   paymentReference: string;
   amount: number;
   currency: string;
+  feePayer: "buyer" | "seller";
 }
 
 Deno.serve(async (req) => {
@@ -35,14 +36,19 @@ Deno.serve(async (req) => {
     }
 
     const body: PaymentRequest = await req.json();
-    const { orderId, paymentProvider, paymentReference, amount, currency } = body;
+    const { orderId, paymentProvider, paymentReference, amount, currency, feePayer = "buyer" } = body;
 
-    console.log(`Processing escrow payment for order ${orderId}`);
+    // Validate fee_payer
+    if (!["buyer", "seller"].includes(feePayer)) {
+      throw new Error("Invalid fee_payer. Must be 'buyer' or 'seller'");
+    }
+
+    console.log(`Processing escrow payment for order ${orderId} with fee payer: ${feePayer}`);
 
     // Get the order and verify it belongs to the buyer
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("*, products(seller_id, title)")
+      .select("*, products(seller_id, title, price_usd)")
       .eq("id", orderId)
       .single();
 
@@ -58,16 +64,43 @@ Deno.serve(async (req) => {
       throw new Error("Order already paid");
     }
 
-    // Get platform fee from settings
+    // Get platform fee from settings (default 5%)
     const { data: feeSettings } = await supabase
       .from("platform_settings")
       .select("value")
       .eq("key", "platform_fee_percent")
       .single();
 
-    const platformFeePercent = feeSettings?.value ? Number(feeSettings.value) : 10;
-    const platformFee = (amount * platformFeePercent) / 100;
-    const sellerPayout = amount - platformFee;
+    const platformFeePercent = feeSettings?.value ? Number(feeSettings.value) : 5;
+    
+    // Base product price
+    const basePrice = Number(order.amount_usd);
+    const platformFee = Math.round((basePrice * platformFeePercent) / 100 * 100) / 100;
+
+    let escrowAmount: number;
+    let sellerPayout: number;
+
+    if (feePayer === "buyer") {
+      // Buyer pays: price + fee, seller receives full price
+      escrowAmount = basePrice + platformFee;
+      sellerPayout = basePrice;
+    } else {
+      // Seller pays: buyer pays price, seller receives price - fee
+      escrowAmount = basePrice;
+      sellerPayout = basePrice - platformFee;
+    }
+
+    console.log(`Escrow calculation - Fee payer: ${feePayer}, Base: $${basePrice}, Fee: $${platformFee}, Escrow: $${escrowAmount}, Seller payout: $${sellerPayout}`);
+
+    // Get auto-release days from settings
+    const { data: releaseSettings } = await supabase
+      .from("platform_settings")
+      .select("value")
+      .eq("key", "auto_release_days")
+      .single();
+
+    const autoReleaseDays = releaseSettings?.value ? Number(releaseSettings.value) : 7;
+    const autoReleaseAt = new Date(Date.now() + autoReleaseDays * 24 * 60 * 60 * 1000).toISOString();
 
     // Create transaction record with escrow
     const { data: transaction, error: txError } = await supabase
@@ -76,9 +109,11 @@ Deno.serve(async (req) => {
         order_id: orderId,
         payment_reference: paymentReference,
         payment_provider: paymentProvider,
-        amount: amount,
+        amount: escrowAmount,
+        escrow_amount: escrowAmount,
         platform_fee: platformFee,
         seller_payout: sellerPayout,
+        fee_payer: feePayer,
         payout_status: "frozen", // Held in escrow until release
       })
       .select()
@@ -97,6 +132,9 @@ Deno.serve(async (req) => {
         paid_at: new Date().toISOString(),
         escrow_status: "held",
         payment_method: paymentProvider,
+        fee_payer: feePayer,
+        platform_fee_percent: platformFeePercent,
+        auto_release_at: autoReleaseAt,
       })
       .eq("id", orderId);
 
@@ -112,8 +150,11 @@ Deno.serve(async (req) => {
         success: true,
         transaction_id: transaction.id,
         escrow_status: "held",
+        escrow_amount: escrowAmount,
         platform_fee: platformFee,
         seller_payout: sellerPayout,
+        fee_payer: feePayer,
+        auto_release_at: autoReleaseAt,
         message: "Payment received and held in escrow",
       }),
       {

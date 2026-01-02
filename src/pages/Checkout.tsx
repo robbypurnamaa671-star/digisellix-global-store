@@ -1,21 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CreditCard } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, CreditCard, Shield, Info } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
+const PLATFORM_FEE_PERCENT = 5;
+
 const Checkout = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [feePayer, setFeePayer] = useState<"buyer" | "seller">("buyer");
 
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", orderId],
@@ -41,9 +45,35 @@ const Checkout = () => {
     enabled: !!orderId,
   });
 
+  // Calculate amounts based on fee payer
+  const priceBreakdown = useMemo(() => {
+    if (!order) return null;
+
+    const basePrice = Number(order.amount_usd);
+    const platformFee = Math.round((basePrice * PLATFORM_FEE_PERCENT) / 100 * 100) / 100;
+
+    if (feePayer === "buyer") {
+      return {
+        productPrice: basePrice,
+        platformFee: platformFee,
+        buyerTotal: basePrice + platformFee,
+        sellerReceives: basePrice,
+        feePayerLabel: "You (Buyer)",
+      };
+    } else {
+      return {
+        productPrice: basePrice,
+        platformFee: platformFee,
+        buyerTotal: basePrice,
+        sellerReceives: basePrice - platformFee,
+        feePayerLabel: "Seller",
+      };
+    }
+  }, [order, feePayer]);
+
   const handlePayment = async () => {
     try {
-      if (!order) return;
+      if (!order || !priceBreakdown) return;
 
       toast.loading(t('checkout.creatingPayment'));
 
@@ -54,13 +84,14 @@ const Checkout = () => {
         return;
       }
 
-      // PayPal payment flow
+      // PayPal payment flow with escrow amount
       const { data, error } = await supabase.functions.invoke("create-paypal-payment", {
         body: {
           orderId: order.id,
-          amount: order.currency === "IDR" ? order.amount_idr : order.amount_usd,
-          currency: order.currency === "IDR" ? "IDR" : "USD",
-          returnUrl: `${window.location.origin}/payment-success?orderId=${order.id}`,
+          amount: priceBreakdown.buyerTotal,
+          currency: "USD",
+          feePayer: feePayer,
+          returnUrl: `${window.location.origin}/payment-success?orderId=${order.id}&feePayer=${feePayer}`,
           cancelUrl: window.location.href,
         },
       });
@@ -168,26 +199,68 @@ const Checkout = () => {
                 </div>
               )}
 
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('checkout.priceUSD')}</span>
-                  <span className="font-semibold">
-                    ${Number(order.amount_usd).toFixed(2)}
-                  </span>
+              {/* Fee Payer Selection */}
+              <div className="border-t pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Who pays the platform fee?</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('checkout.priceIDR')}</span>
-                  <span className="font-semibold">
-                    Rp {Number(order.amount_idr).toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <div className="border-t pt-2 flex justify-between text-lg font-bold">
-                  <span>{t('checkout.total')}</span>
-                  <span className="text-primary">
-                    ${Number(order.amount_usd).toFixed(2)}
-                  </span>
-                </div>
+                <RadioGroup
+                  value={feePayer}
+                  onValueChange={(value) => setFeePayer(value as "buyer" | "seller")}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center space-x-3 p-3 rounded-lg border hover:border-primary transition-colors">
+                    <RadioGroupItem value="buyer" id="buyer" />
+                    <Label htmlFor="buyer" className="flex-1 cursor-pointer">
+                      <div className="font-medium">I pay the fee</div>
+                      <div className="text-xs text-muted-foreground">
+                        You pay ${priceBreakdown?.buyerTotal.toFixed(2)} (product + 5% fee)
+                      </div>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 rounded-lg border hover:border-primary transition-colors">
+                    <RadioGroupItem value="seller" id="seller" />
+                    <Label htmlFor="seller" className="flex-1 cursor-pointer">
+                      <div className="font-medium">Seller pays the fee</div>
+                      <div className="text-xs text-muted-foreground">
+                        You pay ${Number(order.amount_usd).toFixed(2)} (product price only)
+                      </div>
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
+
+              {/* Price Breakdown */}
+              {priceBreakdown && (
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Product Price</span>
+                    <span>${priceBreakdown.productPrice.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Platform Fee ({PLATFORM_FEE_PERCENT}%)
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={feePayer === "buyer" ? "default" : "secondary"} className="text-xs">
+                        {priceBreakdown.feePayerLabel}
+                      </Badge>
+                      <span>${priceBreakdown.platformFee.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="border-t pt-2 flex justify-between text-lg font-bold">
+                    <span>You Pay</span>
+                    <span className="text-primary">
+                      ${priceBreakdown.buyerTotal.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Seller Receives</span>
+                    <span>${priceBreakdown.sellerReceives.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -197,6 +270,17 @@ const Checkout = () => {
               <CardTitle>{t('checkout.paymentMethod')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Escrow Badge */}
+              <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <Shield className="h-5 w-5 text-primary" />
+                <div>
+                  <div className="font-semibold text-sm">Protected by Digisellix Escrow</div>
+                  <div className="text-xs text-muted-foreground">
+                    Funds held securely until you confirm delivery
+                  </div>
+                </div>
+              </div>
+
               <div className="text-sm text-muted-foreground mb-4">
                 {t('checkout.securePayment')}
               </div>
@@ -216,11 +300,12 @@ const Checkout = () => {
                 onClick={handlePayment}
               >
                 <CreditCard className="mr-2 h-5 w-5" />
-                {t('checkout.continuePaypal')}
+                Pay ${priceBreakdown?.buyerTotal.toFixed(2)} with PayPal
               </Button>
 
-              <div className="text-xs text-muted-foreground text-center">
-                {t('checkout.secureInfo')}
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>{t('checkout.secureInfo')}</p>
+                <p className="text-primary">Auto-release after 7 days if no dispute</p>
               </div>
             </CardContent>
           </Card>
