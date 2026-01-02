@@ -150,22 +150,25 @@ Deno.serve(async (req) => {
       case "create": {
         const { sellerEmail, title, description, amountUsd, amountIdr, currency, feePayer } = body as CreateEscrowRequest;
 
+        // Use the correct amount based on currency
+        const baseAmount = currency === 'IDR' ? amountIdr : amountUsd;
+        
         // Calculate fees based on fee payer
-        const platformFee = Math.round((amountUsd * platformFeePercent) / 100 * 100) / 100;
+        const platformFee = Math.round((baseAmount * platformFeePercent) / 100 * 100) / 100;
         let escrowAmount: number;
         let sellerPayout: number;
 
         if (feePayer === "buyer") {
-          escrowAmount = amountUsd + platformFee;
-          sellerPayout = amountUsd;
+          escrowAmount = baseAmount + platformFee;
+          sellerPayout = baseAmount;
         } else if (feePayer === "seller") {
-          escrowAmount = amountUsd;
-          sellerPayout = amountUsd - platformFee;
+          escrowAmount = baseAmount;
+          sellerPayout = baseAmount - platformFee;
         } else {
           // Split fee
           const halfFee = platformFee / 2;
-          escrowAmount = amountUsd + halfFee;
-          sellerPayout = amountUsd - halfFee;
+          escrowAmount = baseAmount + halfFee;
+          sellerPayout = baseAmount - halfFee;
         }
 
         // Set expiry to 7 days from now
