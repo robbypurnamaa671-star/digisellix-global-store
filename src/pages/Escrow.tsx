@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const Escrow = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const escrowSteps = [
     {
@@ -93,9 +93,9 @@ const Escrow = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/contact">
+              <Link to="/escrow/transactions">
                 <Button variant="outline" size="lg">
-                  {t('escrow.hero.contactUs')}
+                  {language === 'id' ? 'Transaksi Saya' : 'My Transactions'}
                 </Button>
               </Link>
             </div>
