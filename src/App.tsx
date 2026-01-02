@@ -39,6 +39,7 @@ import AffiliateDashboard from "./pages/affiliate/Dashboard";
 import Escrow from "./pages/Escrow";
 import EscrowCreate from "./pages/EscrowCreate";
 import EscrowDetail from "./pages/EscrowDetail";
+import EscrowTransactions from "./pages/EscrowTransactions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/affiliate" element={<AffiliateDashboard />} />
             <Route path="/escrow" element={<Escrow />} />
+            <Route path="/escrow/transactions" element={<EscrowTransactions />} />
             <Route path="/escrow/create" element={<EscrowCreate />} />
             <Route path="/escrow/:id" element={<EscrowDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
