@@ -25,6 +25,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signOut': 'Sign Out',
     'nav.blog': 'Blog',
     'nav.leaderboard': 'Leaderboard',
+    'nav.escrow': 'Escrow',
     
     // Hero Section
     'hero.badge': 'Global Digital Marketplace',
@@ -91,11 +92,11 @@ const translations: Record<Language, Record<string, string>> = {
     // Escrow Page
     'escrow.seo.title': 'Escrow Protection - Secure Transactions | Digisellix',
     'escrow.seo.description': 'Learn how Digisellix escrow system protects buyers and sellers with secure payments, dispute resolution, and guaranteed transactions.',
-    'escrow.badge': 'Secure Escrow System',
-    'escrow.hero.title': 'Trade with Confidence Using Our Escrow Protection',
-    'escrow.hero.subtitle': 'Digisellix acts as a trusted third party, holding funds securely until both buyer and seller are satisfied.',
-    'escrow.hero.browseProducts': 'Browse Products',
-    'escrow.hero.startSelling': 'Start Selling',
+    'escrow.badge': 'Secure Escrow Service',
+    'escrow.hero.title': 'Safe Transactions with Trusted Escrow Service',
+    'escrow.hero.subtitle': 'Digisellix provides escrow/rekber service as a trusted third party for any online transaction. Protect your deals with our secure payment holding.',
+    'escrow.hero.useService': 'Use Escrow Service',
+    'escrow.hero.contactUs': 'Contact Us',
     'escrow.what.title': 'What is Escrow?',
     'escrow.what.description': 'Escrow is a financial arrangement where a third party holds and regulates payment until all conditions are met.',
     'escrow.what.trusted.title': 'Trusted Third Party',
@@ -144,10 +145,10 @@ const translations: Record<Language, Record<string, string>> = {
     'escrow.dispute.step2.desc': 'Our team reviews evidence from both parties.',
     'escrow.dispute.step3.title': 'Resolution',
     'escrow.dispute.step3.desc': 'Admin decides to refund buyer or release to seller.',
-    'escrow.cta.title': 'Ready to Trade Safely?',
-    'escrow.cta.subtitle': 'Join our marketplace with secure escrow protection for every transaction.',
-    'escrow.cta.browse': 'Browse Products',
-    'escrow.cta.sell': 'Start Selling',
+    'escrow.cta.title': 'Need a Trusted Escrow Service?',
+    'escrow.cta.subtitle': 'Use Digisellix as your trusted third party for any online transaction. Safe, secure, and reliable.',
+    'escrow.cta.useService': 'Start Using Escrow',
+    'escrow.cta.contact': 'Contact Admin',
     
     // Leaderboard
     'leaderboard.pageTitle': 'Seller Leaderboard',
@@ -501,6 +502,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.buyerDashboard': 'Dasbor Pembeli',
     'nav.signOut': 'Keluar',
     'nav.leaderboard': 'Peringkat',
+    'nav.escrow': 'Rekber',
     
     // Hero Section
     'hero.badge': 'Marketplace Digital Global',
@@ -567,11 +569,11 @@ const translations: Record<Language, Record<string, string>> = {
     // Escrow Page (Rekber)
     'escrow.seo.title': 'Perlindungan Rekber - Transaksi Aman | Digisellix',
     'escrow.seo.description': 'Pelajari bagaimana sistem rekber Digisellix melindungi pembeli dan penjual dengan pembayaran aman, penyelesaian sengketa, dan transaksi terjamin.',
-    'escrow.badge': 'Sistem Rekber Aman',
-    'escrow.hero.title': 'Bertransaksi dengan Percaya Diri Menggunakan Perlindungan Rekber',
-    'escrow.hero.subtitle': 'Digisellix bertindak sebagai pihak ketiga terpercaya, menyimpan dana dengan aman hingga pembeli dan penjual puas.',
-    'escrow.hero.browseProducts': 'Jelajahi Produk',
-    'escrow.hero.startSelling': 'Mulai Jual',
+    'escrow.badge': 'Layanan Rekber Aman',
+    'escrow.hero.title': 'Transaksi Aman dengan Layanan Rekber Terpercaya',
+    'escrow.hero.subtitle': 'Digisellix menyediakan layanan rekber sebagai pihak ketiga terpercaya untuk transaksi online apapun. Lindungi transaksi Anda dengan sistem penahanan dana aman kami.',
+    'escrow.hero.useService': 'Gunakan Layanan Rekber',
+    'escrow.hero.contactUs': 'Hubungi Kami',
     'escrow.what.title': 'Apa itu Rekber?',
     'escrow.what.description': 'Rekber (Rekening Bersama) adalah pengaturan keuangan dimana pihak ketiga menyimpan dan mengatur pembayaran hingga semua syarat terpenuhi.',
     'escrow.what.trusted.title': 'Pihak Ketiga Terpercaya',
@@ -620,10 +622,10 @@ const translations: Record<Language, Record<string, string>> = {
     'escrow.dispute.step2.desc': 'Tim kami meninjau bukti dari kedua pihak.',
     'escrow.dispute.step3.title': 'Resolusi',
     'escrow.dispute.step3.desc': 'Admin memutuskan refund ke pembeli atau lepas ke penjual.',
-    'escrow.cta.title': 'Siap Bertransaksi dengan Aman?',
-    'escrow.cta.subtitle': 'Bergabung dengan marketplace kami dengan perlindungan rekber untuk setiap transaksi.',
-    'escrow.cta.browse': 'Jelajahi Produk',
-    'escrow.cta.sell': 'Mulai Jual',
+    'escrow.cta.title': 'Butuh Layanan Rekber Terpercaya?',
+    'escrow.cta.subtitle': 'Gunakan Digisellix sebagai pihak ketiga terpercaya Anda untuk transaksi online apapun. Aman, terjamin, dan terpercaya.',
+    'escrow.cta.useService': 'Mulai Gunakan Rekber',
+    'escrow.cta.contact': 'Hubungi Admin',
     
     // Leaderboard
     'leaderboard.pageTitle': 'Peringkat Penjual',
