@@ -96,18 +96,23 @@ const EscrowTransactions = () => {
 
     setLoading(true);
     try {
+      // Get user email to check for pending invitations
+      const userEmail = user.email;
+
       let query = supabase
         .from("escrow_transactions")
         .select("id, transaction_code, buyer_id, seller_id, seller_email, title, amount_usd, amount_idr, currency, status, created_at, fee_payer")
         .order("created_at", { ascending: false });
 
-      // Role filter
+      // Role filter - also include pending transactions where seller_email matches
       if (roleFilter === "buyer") {
         query = query.eq("buyer_id", user.id);
       } else if (roleFilter === "seller") {
-        query = query.eq("seller_id", user.id);
+        // For seller filter: include where seller_id matches OR seller_email matches (for pending invitations)
+        query = query.or(`seller_id.eq.${user.id},seller_email.eq.${userEmail}`);
       } else {
-        query = query.or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`);
+        // For "all" filter: include where user is buyer, seller, or invited via email
+        query = query.or(`buyer_id.eq.${user.id},seller_id.eq.${user.id},seller_email.eq.${userEmail}`);
       }
 
       // Status filter

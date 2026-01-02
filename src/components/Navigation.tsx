@@ -117,6 +117,9 @@ export const Navigation = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/chat">{t('nav.messages')}</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/escrow/transactions">My Escrow Transactions</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 )}
@@ -128,6 +131,9 @@ export const Navigation = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/chat">{t('nav.messages')}</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/escrow/transactions">My Escrow Transactions</Link>
                     </DropdownMenuItem>
                     {isSeller && <DropdownMenuSeparator />}
                   </>
