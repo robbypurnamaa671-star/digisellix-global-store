@@ -36,6 +36,7 @@ import {
   Star,
   AlertTriangle,
   ShieldCheck,
+  Shield,
   MessageSquare,
   BarChart3,
   UserPlus,
@@ -69,6 +70,7 @@ import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 import { AdminForumManagement } from "@/components/admin/AdminForumManagement";
 import AffiliatePayoutManagement from "@/components/admin/AffiliatePayoutManagement";
 import AdminVerificationReview from "@/components/admin/AdminVerificationReview";
+import AdminEscrowManagement from "@/components/admin/AdminEscrowManagement";
 
 const AdminDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
@@ -519,6 +521,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="verifications" className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4" />
               Verifications
+            </TabsTrigger>
+            <TabsTrigger value="escrow" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Escrow
             </TabsTrigger>
           </TabsList>
 
@@ -1195,6 +1201,11 @@ const AdminDashboard = () => {
           {/* Payouts Tab */}
           <TabsContent value="payouts">
             <AffiliatePayoutManagement />
+          </TabsContent>
+
+          {/* Escrow Tab */}
+          <TabsContent value="escrow">
+            <AdminEscrowManagement />
           </TabsContent>
         </Tabs>
       </div>
