@@ -173,6 +173,14 @@ const EscrowTransactions = () => {
         </Badge>
       );
     }
+    // Check if user is invited seller (email matches but not yet accepted)
+    if (tx.seller_email === user.email && !tx.seller_id) {
+      return (
+        <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 border-0">
+          {language === "id" ? "Undangan Penjual" : "Invited Seller"}
+        </Badge>
+      );
+    }
     return null;
   };
 
