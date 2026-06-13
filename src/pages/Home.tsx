@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, ShoppingBag, Zap, Globe, Shield, Star, TrendingUp, Sparkles } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import heroImage from "@/assets/hero-marketplace.jpg";
+import heroImage from "@/assets/hero-marketplace.webp";
 import iconProducts from "@/assets/icon-products.png";
 import iconPayment from "@/assets/icon-payment.png";
 import iconGlobal from "@/assets/icon-global.png";
@@ -177,8 +177,13 @@ const Home = () => {
             <div className="relative animate-in fade-in slide-in-from-right duration-700 delay-300">
               <img
                 src={heroImage}
-                alt="Digital Marketplace"
-                className="rounded-2xl shadow-[var(--shadow-card-hover)] hover:scale-105 transition-transform duration-500 w-full"
+                alt="Digisellix — Marketplace Produk Digital"
+                width={1600}
+                height={900}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="rounded-2xl shadow-[var(--shadow-card-hover)] hover:scale-105 transition-transform duration-500 w-full h-auto"
               />
             </div>
           </div>
