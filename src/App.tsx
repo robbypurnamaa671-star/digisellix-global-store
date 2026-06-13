@@ -17,6 +17,11 @@ import SalesHistory from "./pages/seller/Sales";
 import Wallet from "./pages/seller/Wallet";
 import BuyerDashboard from "./pages/buyer/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
+import CategoryDetail from "./pages/CategoryDetail";
+import SellerProfile from "./pages/SellerProfile";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +38,15 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/category/:slug" element={<CategoryDetail />} />
+            <Route path="/seller/:id" element={<SellerProfile />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            {/* Programmatic SEO landing pages */}
+            <Route path="/best-notion-templates" element={<Landing />} />
+            <Route path="/best-canva-templates" element={<Landing />} />
+            <Route path="/top-ai-prompts" element={<Landing />} />
+            <Route path="/trending-ebooks" element={<Landing />} />
             <Route path="/checkout/:orderId" element={<Checkout />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
