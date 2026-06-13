@@ -385,6 +385,35 @@ const ProductDetail = () => {
             </div>
           </div>
         )}
+
+        {sellerProducts && sellerProducts.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">More From {seller?.full_name || "This Seller"}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {sellerProducts.map((sp) => (
+                <Link key={sp.id} to={`/products/${sp.id}`}>
+                  <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all overflow-hidden h-full">
+                    <div className="aspect-video overflow-hidden bg-muted">
+                      {sp.thumbnail_url ? (
+                        <img src={sp.thumbnail_url} alt={`${sp.title} by ${seller?.full_name || "seller"}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                      ) : <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>}
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-bold line-clamp-2 mb-2">{sp.title}</h3>
+                      <div className="text-xl font-bold text-primary">${Number(sp.price_usd).toFixed(2)}</div>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                      <Button variant="outline" size="sm" className="w-full">View Details</Button>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4">
+              <Link to={`/seller/${product.seller_id}`} className="text-primary hover:underline">View all products from {seller?.full_name || "this seller"} →</Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
