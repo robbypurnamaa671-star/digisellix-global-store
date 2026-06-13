@@ -60,15 +60,33 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Browse Digital Products — Global Marketplace | Digisellix"
+        description="Discover thousands of digital products from creators worldwide — templates, AI prompts, e-books, design assets, and software. Instant download."
+        path="/products"
+        jsonLd={[
+          { "@context": "https://schema.org", "@type": "CollectionPage", name: "All Products", url: "https://digisellix-global-store.lovable.app/products" },
+          breadcrumbJsonLd([{ name: "Home", url: "/" }, { name: "Products", url: "/products" }]),
+        ]}
+      />
       <Navigation />
 
       {/* Header */}
       <section className="bg-gradient-to-br from-primary/10 to-accent/10 py-8 sm:py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Browse Products</h1>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Browse Digital Products</h1>
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-4">
             Discover amazing digital products from creators worldwide
           </p>
+          {categories && categories.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {categories.map((c) => (
+                <Link key={c.name} to={`/category/${categorySlug(c.name)}`} className="text-sm px-3 py-1 rounded-full border hover:bg-secondary transition-colors">
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
