@@ -12,6 +12,8 @@ import iconGlobal from "@/assets/icon-global.png";
 import iconSecure from "@/assets/icon-secure.png";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import SEOHead from "@/components/SEOHead";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const Home = () => {
   // Fetch featured products
@@ -130,6 +132,15 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${SITE_NAME} — Global Digital Product Marketplace`}
+        description="Buy and sell digital products on Digisellix — templates, AI prompts, e-books, design assets, and software. Instant download, secure global checkout."
+        path="/"
+        jsonLd={[
+          { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL, potentialAction: { "@type": "SearchAction", target: `${SITE_URL}/products?q={search_term_string}`, "query-input": "required name=search_term_string" } },
+          { "@context": "https://schema.org", "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        ]}
+      />
       <Navigation />
 
       {/* Hero Section */}

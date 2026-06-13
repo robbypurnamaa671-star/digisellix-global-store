@@ -12,3 +12,14 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /auth
+Disallow: /checkout/
+Disallow: /payment-success
+Disallow: /admin/
+Disallow: /buyer/
+Disallow: /seller/dashboard
+Disallow: /seller/add-product
+Disallow: /seller/sales
+Disallow: /seller/wallet
+
+Sitemap: https://digisellix-global-store.lovable.app/sitemap.xml
