@@ -132,6 +132,15 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${SITE_NAME} — Global Digital Product Marketplace`}
+        description="Buy and sell digital products on Digisellix — templates, AI prompts, e-books, design assets, and software. Instant download, secure global checkout."
+        path="/"
+        jsonLd={[
+          { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL, potentialAction: { "@type": "SearchAction", target: `${SITE_URL}/products?q={search_term_string}`, "query-input": "required name=search_term_string" } },
+          { "@context": "https://schema.org", "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        ]}
+      />
       <Navigation />
 
       {/* Hero Section */}
