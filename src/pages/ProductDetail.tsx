@@ -78,6 +78,22 @@ const ProductDetail = () => {
     enabled: !!product?.category,
   });
 
+  const { data: sellerProducts } = useQuery({
+    queryKey: ["seller-products", product?.seller_id, id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("seller_id", product?.seller_id)
+        .eq("status", "active")
+        .neq("id", id)
+        .limit(4);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.seller_id,
+  });
+
   const handleBuyNow = async () => {
     if (!user) {
       toast.error("Please sign in to purchase");
