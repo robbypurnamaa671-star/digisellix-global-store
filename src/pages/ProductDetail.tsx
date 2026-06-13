@@ -291,7 +291,9 @@ const ProductDetail = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Category</span>
-                  <span className="font-medium">{product.category}</span>
+                  <Link to={`/category/${categorySlug(product.category)}`} className="font-medium hover:text-primary">
+                    {product.category}
+                  </Link>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Sales</span>
@@ -307,6 +309,41 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* SEO content block — generated from product data */}
+        <section className="max-w-4xl mx-auto mb-12 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Product Overview</h2>
+            <p className="text-muted-foreground leading-relaxed">{overview}</p>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Key Benefits</h2>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              {benefits.map((b, i) => <li key={i}>{b}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Use Cases</h2>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              {useCases.map((u, i) => <li key={i}>{u}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Who Is This For?</h2>
+            <p className="text-muted-foreground leading-relaxed">{audience}</p>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((f, i) => (
+                <AccordionItem key={i} value={`p-${i}`}>
+                  <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
+                  <AccordionContent>{f.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
 
         {/* Related Products */}
         {relatedProducts && relatedProducts.length > 0 && (
