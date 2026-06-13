@@ -237,9 +237,9 @@ const ProductDetail = () => {
                 <User className="h-4 w-4 text-muted-foreground" />
                 <div className="text-sm text-muted-foreground">
                   By{" "}
-                  <span className="font-semibold text-foreground">
+                  <Link to={`/seller/${product.seller_id}`} className="font-semibold text-foreground hover:text-primary">
                     {seller?.full_name || "Seller"}
-                  </span>
+                  </Link>
                 </div>
                 {product.total_sales > 0 && (
                   <div className="text-sm text-muted-foreground">
