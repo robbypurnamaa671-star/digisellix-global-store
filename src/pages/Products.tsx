@@ -9,6 +9,8 @@ import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import SEOHead from "@/components/SEOHead";
+import { breadcrumbJsonLd, categorySlug } from "@/lib/seo";
 
 const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
