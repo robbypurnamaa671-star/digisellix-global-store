@@ -170,8 +170,32 @@ const ProductDetail = () => {
     );
   }
 
+  const faqs = productFAQ(product);
+  const overview = productOverview(product);
+  const benefits = productBenefits(product);
+  const useCases = productUseCases(product);
+  const audience = productAudience(product);
+  const path = `/products/${product.id}`;
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={productMetaTitle(product)}
+        description={productMetaDescription(product)}
+        path={path}
+        image={product.thumbnail_url}
+        type="product"
+        jsonLd={[
+          productJsonLd({ ...product, id: product.id, seller_name: seller?.full_name }),
+          breadcrumbJsonLd([
+            { name: "Home", url: "/" },
+            { name: "Products", url: "/products" },
+            { name: product.category, url: `/category/${categorySlug(product.category)}` },
+            { name: product.title, url: path },
+          ]),
+          faqJsonLd(faqs),
+        ]}
+      />
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
