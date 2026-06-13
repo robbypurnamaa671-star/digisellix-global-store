@@ -12,6 +12,8 @@ import iconGlobal from "@/assets/icon-global.png";
 import iconSecure from "@/assets/icon-secure.png";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import SEOHead from "@/components/SEOHead";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const Home = () => {
   // Fetch featured products
