@@ -3,12 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Download, Shield, ArrowLeft, User, ShoppingCart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import SEOHead from "@/components/SEOHead";
+import {
+  breadcrumbJsonLd,
+  categorySlug,
+  faqJsonLd,
+  productAudience,
+  productBenefits,
+  productFAQ,
+  productJsonLd,
+  productMetaDescription,
+  productMetaTitle,
+  productOverview,
+  productUseCases,
+} from "@/lib/seo";
 
 const ProductDetail = () => {
   const { id } = useParams();
