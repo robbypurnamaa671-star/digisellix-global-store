@@ -12,7 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingBag, Package, Download, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Package, Download, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -165,10 +166,7 @@ const BuyerDashboard = () => {
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <ShoppingBag className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Digisellix
-            </span>
+            <Logo className="h-8 w-auto sm:h-10" height={40} priority />
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">

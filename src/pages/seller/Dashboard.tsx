@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  ShoppingBag, 
+  
   Plus, 
   DollarSign, 
   Package, 
@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Eye
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -205,10 +206,7 @@ const SellerDashboard = () => {
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <ShoppingBag className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Digisellix
-            </span>
+            <Logo className="h-8 w-auto sm:h-10" height={40} priority />
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">
