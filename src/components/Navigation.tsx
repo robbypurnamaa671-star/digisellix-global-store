@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Shield, Menu } from "lucide-react";
+import { User, Shield, Menu } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -17,11 +18,8 @@ export const Navigation = () => {
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          <span className="font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-sm sm:text-base">
-            Digisellix
-          </span>
+        <Link to="/" className="flex items-center" aria-label="Digisellix Home">
+          <Logo className="h-8 sm:h-10 w-auto" height={40} priority />
         </Link>
 
         {/* Desktop Navigation */}

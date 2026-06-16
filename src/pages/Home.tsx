@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, ShoppingBag, Zap, Globe, Shield, Star, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, Zap, Globe, Shield, Star, TrendingUp, Sparkles } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { Navigation } from "@/components/Navigation";
 import heroImage from "@/assets/hero-marketplace.webp";
 import iconProducts from "@/assets/icon-products.png";
@@ -400,8 +401,7 @@ const Home = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">Digisellix</span>
+                <Logo className="h-8 w-auto sm:h-10" height={40} priority />
               </div>
               <p className="text-sm text-muted-foreground">
                 Global marketplace for digital products
