@@ -457,6 +457,11 @@ const BuyerDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <OpenDisputeDialog
+        open={!!disputeOrder}
+        onOpenChange={(o) => !o && setDisputeOrder(null)}
+        order={disputeOrder}
+      />
     </div>
   );
 };
