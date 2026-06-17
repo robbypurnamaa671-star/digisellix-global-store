@@ -32,7 +32,10 @@ import {
   Eye,
   Trash2,
   Star,
+  ShieldAlert,
 } from "lucide-react";
+import { EscrowStatusBadge } from "@/components/escrow/EscrowStatusBadge";
+import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -49,6 +52,50 @@ const AdminDashboard = () => {
     open: false,
     id: null,
     type: null,
+  });
+  const [resolveNotes, setResolveNotes] = useState<Record<string, string>>({});
+
+  // Fetch open/under-review disputes
+  const { data: disputes, isLoading: disputesLoading } = useQuery({
+    queryKey: ["admin-disputes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("disputes")
+        .select(`
+          *,
+          orders (id, amount_usd, currency, escrow_status, products (title)),
+          buyer:profiles!disputes_buyer_id_fkey (full_name),
+          seller:profiles!disputes_seller_id_fkey (full_name)
+        `)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: hasRole("admin"),
+  });
+
+  const resolveMutation = useMutation({
+    mutationFn: async ({
+      id,
+      inFavorOf,
+    }: {
+      id: string;
+      inFavorOf: "buyer" | "seller";
+    }) => {
+      const decision = resolveNotes[id]?.trim() || `Resolved in favor of ${inFavorOf}`;
+      const { error } = await supabase.rpc("admin_resolve_dispute", {
+        p_dispute_id: id,
+        p_decision: decision,
+        p_in_favor_of: inFavorOf,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Dispute resolved");
+      queryClient.invalidateQueries({ queryKey: ["admin-disputes"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+    },
+    onError: (e: any) => toast.error(e.message || "Failed to resolve dispute"),
   });
 
   useEffect(() => {
