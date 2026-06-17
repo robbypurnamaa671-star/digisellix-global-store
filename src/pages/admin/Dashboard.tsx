@@ -32,7 +32,10 @@ import {
   Eye,
   Trash2,
   Star,
+  ShieldAlert,
 } from "lucide-react";
+import { EscrowStatusBadge } from "@/components/escrow/EscrowStatusBadge";
+import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -49,6 +52,50 @@ const AdminDashboard = () => {
     open: false,
     id: null,
     type: null,
+  });
+  const [resolveNotes, setResolveNotes] = useState<Record<string, string>>({});
+
+  // Fetch open/under-review disputes
+  const { data: disputes, isLoading: disputesLoading } = useQuery({
+    queryKey: ["admin-disputes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("disputes")
+        .select(`
+          *,
+          orders (id, amount_usd, currency, escrow_status, products (title)),
+          buyer:profiles!disputes_buyer_id_fkey (full_name),
+          seller:profiles!disputes_seller_id_fkey (full_name)
+        `)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: hasRole("admin"),
+  });
+
+  const resolveMutation = useMutation({
+    mutationFn: async ({
+      id,
+      inFavorOf,
+    }: {
+      id: string;
+      inFavorOf: "buyer" | "seller";
+    }) => {
+      const decision = resolveNotes[id]?.trim() || `Resolved in favor of ${inFavorOf}`;
+      const { error } = await supabase.rpc("admin_resolve_dispute", {
+        p_dispute_id: id,
+        p_decision: decision,
+        p_in_favor_of: inFavorOf,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Dispute resolved");
+      queryClient.invalidateQueries({ queryKey: ["admin-disputes"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+    },
+    onError: (e: any) => toast.error(e.message || "Failed to resolve dispute"),
   });
 
   useEffect(() => {
@@ -299,6 +346,14 @@ const AdminDashboard = () => {
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="disputes">
+              Disputes
+              {disputes && disputes.filter((d: any) => d.status === "open" || d.status === "under_review").length > 0 && (
+                <Badge className="ml-2 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                  {disputes.filter((d: any) => d.status === "open" || d.status === "under_review").length}
+                </Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Products Tab */}
@@ -535,6 +590,130 @@ const AdminDashboard = () => {
                       })}
                     </TableBody>
                   </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Disputes Tab */}
+          <TabsContent value="disputes">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldAlert className="h-5 w-5 text-amber-600" />
+                  Escrow Disputes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {disputesLoading ? (
+                  <Skeleton className="h-64 w-full" />
+                ) : !disputes || disputes.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    No disputes have been opened yet.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {disputes.map((d: any) => {
+                      const order = d.orders;
+                      const isOpen = d.status === "open" || d.status === "under_review";
+                      return (
+                        <Card key={d.id} className="border-border">
+                          <CardContent className="p-6 space-y-4">
+                            <div className="flex flex-wrap items-start justify-between gap-3">
+                              <div>
+                                <div className="font-semibold">
+                                  {order?.products?.title || "Order"}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  Buyer: {d.buyer?.full_name || "—"} • Seller:{" "}
+                                  {d.seller?.full_name || "—"}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  Opened {new Date(d.created_at).toLocaleString()} • $
+                                  {Number(order?.amount_usd || 0).toFixed(2)}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <EscrowStatusBadge status={order?.escrow_status} />
+                                <Badge
+                                  variant={isOpen ? "secondary" : "outline"}
+                                  className={
+                                    d.status === "resolved_buyer"
+                                      ? "bg-green-500/10 text-green-600 border-green-500/20"
+                                      : d.status === "resolved_seller"
+                                      ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                                      : ""
+                                  }
+                                >
+                                  {d.status.replace("_", " ")}
+                                </Badge>
+                              </div>
+                            </div>
+
+                            <div className="text-sm bg-muted/50 rounded-md p-3">
+                              <div className="font-medium mb-1">Buyer's message:</div>
+                              <p className="text-muted-foreground whitespace-pre-wrap">
+                                {d.buyer_message}
+                              </p>
+                            </div>
+
+                            {d.admin_decision && (
+                              <div className="text-sm bg-muted/30 rounded-md p-3">
+                                <div className="font-medium mb-1">Resolution:</div>
+                                <p className="text-muted-foreground whitespace-pre-wrap">
+                                  {d.admin_decision}
+                                </p>
+                              </div>
+                            )}
+
+                            {isOpen && (
+                              <div className="space-y-2">
+                                <Textarea
+                                  placeholder="Resolution notes (optional)..."
+                                  value={resolveNotes[d.id] || ""}
+                                  onChange={(e) =>
+                                    setResolveNotes((p) => ({
+                                      ...p,
+                                      [d.id]: e.target.value,
+                                    }))
+                                  }
+                                  rows={2}
+                                />
+                                <div className="flex flex-wrap gap-2 justify-end">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() =>
+                                      resolveMutation.mutate({
+                                        id: d.id,
+                                        inFavorOf: "seller",
+                                      })
+                                    }
+                                    disabled={resolveMutation.isPending}
+                                  >
+                                    Resolve for seller (release)
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() =>
+                                      resolveMutation.mutate({
+                                        id: d.id,
+                                        inFavorOf: "buyer",
+                                      })
+                                    }
+                                    disabled={resolveMutation.isPending}
+                                  >
+                                    Resolve for buyer (refund)
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
                 )}
               </CardContent>
             </Card>
