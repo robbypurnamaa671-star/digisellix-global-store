@@ -346,6 +346,14 @@ const AdminDashboard = () => {
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="disputes">
+              Disputes
+              {disputes && disputes.filter((d: any) => d.status === "open" || d.status === "under_review").length > 0 && (
+                <Badge className="ml-2 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                  {disputes.filter((d: any) => d.status === "open" || d.status === "under_review").length}
+                </Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Products Tab */}
