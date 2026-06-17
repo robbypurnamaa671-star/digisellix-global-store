@@ -12,19 +12,51 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, Download, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Package, Download, Clock, CheckCircle, XCircle, ShieldCheck, AlertTriangle } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { EscrowStatusBadge } from "@/components/escrow/EscrowStatusBadge";
+import { OpenDisputeDialog } from "@/components/escrow/OpenDisputeDialog";
 
 const BuyerDashboard = () => {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [disputeOrder, setDisputeOrder] = useState<any | null>(null);
+
+  // Fetch user's existing disputes to know which orders already have one
+  const { data: disputeRows } = useQuery({
+    queryKey: ["order-disputes", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("disputes")
+        .select("order_id, status")
+        .eq("buyer_id", user?.id);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+  const disputedOrderIds = new Set((disputeRows || []).map((d) => d.order_id));
+
+  const confirmDeliveryMutation = useMutation({
+    mutationFn: async (orderId: string) => {
+      const { error } = await supabase.rpc("confirm_delivery", {
+        p_order_id: orderId,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Delivery confirmed. Funds released to seller.");
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (e: any) => toast.error(e.message || "Failed to confirm delivery"),
+  });
 
   useEffect(() => {
     if (!user || !hasRole("buyer")) {
@@ -310,13 +342,24 @@ const BuyerDashboard = () => {
                         <TableHead>Date</TableHead>
                         <TableHead>Amount</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Escrow</TableHead>
                         <TableHead className="text-right">Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {orders.map((order) => {
                         const product = order.products as any;
-                        
+                        const hasDispute = disputedOrderIds.has(order.id);
+                        const canConfirm =
+                          order.payment_status === "paid" &&
+                          order.escrow_status === "held" &&
+                          !hasDispute;
+                        const canDispute =
+                          order.payment_status === "paid" &&
+                          (order.escrow_status === "held" ||
+                            order.escrow_status === "disputed") &&
+                          !hasDispute;
+
                         return (
                           <TableRow key={order.id}>
                             <TableCell>
@@ -354,22 +397,54 @@ const BuyerDashboard = () => {
                               </div>
                             </TableCell>
                             <TableCell>{getStatusBadge(order.payment_status)}</TableCell>
+                            <TableCell>
+                              <EscrowStatusBadge status={order.escrow_status} />
+                              {hasDispute && (
+                                <div className="text-xs text-amber-600 mt-1">
+                                  Dispute open
+                                </div>
+                              )}
+                            </TableCell>
                             <TableCell className="text-right">
-                              {order.payment_status === "pending" && order.ipaymu_payment_url ? (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => window.open(order.ipaymu_payment_url, "_blank")}
-                                >
-                                  Pay Now
-                                </Button>
-                              ) : order.payment_status === "paid" ? (
-                                <Link to={`/products/${product?.id}`}>
-                                  <Button variant="ghost" size="sm">
-                                    View Product
+                              <div className="flex justify-end gap-2 flex-wrap">
+                                {order.payment_status === "pending" && order.ipaymu_payment_url && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => window.open(order.ipaymu_payment_url, "_blank")}
+                                  >
+                                    Pay Now
                                   </Button>
-                                </Link>
-                              ) : null}
+                                )}
+                                {canConfirm && (
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={() => confirmDeliveryMutation.mutate(order.id)}
+                                    disabled={confirmDeliveryMutation.isPending}
+                                  >
+                                    <ShieldCheck className="h-4 w-4 mr-1" />
+                                    Confirm Delivery
+                                  </Button>
+                                )}
+                                {canDispute && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setDisputeOrder(order)}
+                                  >
+                                    <AlertTriangle className="h-4 w-4 mr-1" />
+                                    Open Dispute
+                                  </Button>
+                                )}
+                                {order.payment_status === "paid" && product?.id && (
+                                  <Link to={`/products/${product.id}`}>
+                                    <Button variant="ghost" size="sm">
+                                      View
+                                    </Button>
+                                  </Link>
+                                )}
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
