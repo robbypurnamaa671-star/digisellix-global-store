@@ -40,6 +40,7 @@ const App = () => (
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryDetail />} />
             <Route path="/seller/:id" element={<SellerProfile />} />
+            <Route path="/store/:slug" element={<SellerProfile />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             {/* Programmatic SEO landing pages */}
