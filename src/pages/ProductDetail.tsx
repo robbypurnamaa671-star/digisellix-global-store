@@ -237,7 +237,10 @@ const ProductDetail = () => {
                 <User className="h-4 w-4 text-muted-foreground" />
                 <div className="text-sm text-muted-foreground">
                   By{" "}
-                  <Link to={`/seller/${product.seller_id}`} className="font-semibold text-foreground hover:text-primary">
+                  <Link
+                    to={seller?.slug ? `/store/${seller.slug}` : `/seller/${product.seller_id}`}
+                    className="font-semibold text-foreground hover:text-primary"
+                  >
                     {seller?.full_name || "Seller"}
                   </Link>
                 </div>
