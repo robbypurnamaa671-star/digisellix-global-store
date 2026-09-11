@@ -1,73 +1,183 @@
-# Welcome to your Lovable project
+# Digisellix Marketplace
 
-## Project info
+Build a global digital product marketplace web app called “Digisellix”.
 
-**URL**: https://lovable.dev/projects/d89df7d6-99da-4a7d-a449-f0e2646895ab
+All system language, features, dashboards, user flows, menus, and components must be in English.
+Only the homepage marketing text should be written in Bahasa Indonesia.
+The platform should support multi-vendor sellers, digital product uploads, and global buyers.**
 
-## How can I edit this code?
+🚀 Core Features (English)
+1. Authentication
 
-There are several ways of editing your application.
+Email/password register & login
 
-**Use Lovable**
+Role-based access: Seller, Buyer
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d89df7d6-99da-4a7d-a449-f0e2646895ab) and start prompting.
+Email verification
 
-Changes made via Lovable will be committed automatically to this repo.
+Seller onboarding setup
 
-**Use your preferred IDE**
+2. Seller Dashboard
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Add New Product
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Product Fields:
 
-Follow these steps:
+Product Title
+
+Description
+
+Price (USD and IDR)
+
+Upload File (max 2MB, optional)
+
+OR Add Download Link (required if file not uploaded)
+
+Thumbnail Image (optional)
+
+Sales History
+
+Wallet Balance
+
+Withdraw Request
+
+Withdraw Status Tracking
+
+3. Buyer Features
+
+Browse Products
+
+Filters: category, price, popularity, newest
+
+Product Detail Page
+
+Secure Checkout
+
+Order History
+
+Download Page (file or external link)
+
+4. Payment Gateway
+
+Use easy-to-integrate gateways:
+
+Primary: Xendit
+
+(works for global & Indonesian users)
+
+Backup: Stripe
+
+(for international users)
+
+Payment flow:
+
+Buyer selects product
+
+Checkout
+
+Redirect to payment
+
+Webhook → mark payment as paid
+
+Buyer gets immediate access to download
+
+5. Homepage (Bahasa Indonesia ONLY)
+
+Add these sections in Bahasa Indonesia:
+
+Hero Section
+
+Judul: “Jual & Beli Produk Digital Dengan Mudah”
+
+Subjudul: “Platform global untuk kreator menjual e-book, desain, musik, software, template, dan banyak lagi.”
+
+Tombol: “Mulai Jualan Sekarang”
+
+Cara Kerja
+
+Buat Akun
+
+Upload Produk
+
+Terima Pembayaran
+
+Pembeli Mendapatkan Link Unduhan
+
+Keunggulan Digisellix
+
+Pembayaran cepat
+
+Mendukung penjual global
+
+Upload file atau link
+
+Marketplace modern & responsif
+
+🎛 Admin Dashboard (English)
+
+Manage Users
+
+Manage Sellers
+
+Approve Withdrawals
+
+Product Moderation
+
+Payment Logs
+
+Marketplace Settings
+
+Financial Reports
+
+🛠 Technical Requirements
+
+Use Tailwind + shadcn UI
+
+Fully responsive
+
+File storage with 2MB limit
+
+Support link-based delivery
+
+SEO optimized product pages
+
+Global currency support
+
+Secure API for downloads
+
+✔ Expected Output
+
+Lovable should generate a fully functional global digital product marketplace with:
+
+English interface (except homepage text)
+
+Multi-vendor system
+
+File upload (2MB) or external download link
+
+Payment via Xendit & Stripe
+
+Complete admin panel
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://digisellix-global-store.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d89df7d6-99da-4a7d-a449-f0e2646895ab).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d89df7d6-99da-4a7d-a449-f0e2646895ab) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
