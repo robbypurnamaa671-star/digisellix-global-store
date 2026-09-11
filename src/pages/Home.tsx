@@ -80,36 +80,37 @@ const Home = () => {
 
   const ProductCard = ({ product }: { product: any }) => (
     <Link to={`/products/${product.id}`}>
-      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
+      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
         <div className="aspect-video overflow-hidden bg-muted">
           {product.thumbnail_url ? (
             <img
               src={product.thumbnail_url}
               alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
-              <span className="text-4xl">📦</span>
+              <span className="text-2xl">📦</span>
             </div>
           )}
         </div>
-        <CardContent className="p-4">
-          <Badge variant="secondary" className="mb-2">
+        <CardContent className="p-3">
+          <Badge variant="secondary" className="mb-1.5 text-[10px] px-1.5 py-0">
             {product.category}
           </Badge>
-          <h3 className="font-bold text-lg mb-2 line-clamp-2">
+          <h3 className="font-semibold text-sm mb-1 line-clamp-2">
             {product.title}
           </h3>
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-base font-bold text-primary">
             ${Number(product.price_usd).toFixed(2)}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-[11px] text-muted-foreground">
             Rp {Number(product.price_idr).toLocaleString('id-ID')}
           </div>
         </CardContent>
-        <CardFooter className="p-4 pt-0">
-          <Button variant="outline" className="w-full">
+        <CardFooter className="p-3 pt-0">
+          <Button variant="outline" size="sm" className="w-full h-8 text-xs">
             View Details
           </Button>
         </CardFooter>
@@ -120,13 +121,13 @@ const Home = () => {
   const ProductSkeleton = () => (
     <Card>
       <Skeleton className="aspect-video w-full" />
-      <CardContent className="p-4">
-        <Skeleton className="h-4 w-20 mb-2" />
-        <Skeleton className="h-6 w-full mb-2" />
-        <Skeleton className="h-8 w-24" />
+      <CardContent className="p-3">
+        <Skeleton className="h-3 w-16 mb-1.5" />
+        <Skeleton className="h-4 w-full mb-1.5" />
+        <Skeleton className="h-5 w-20" />
       </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Skeleton className="h-10 w-full" />
+      <CardFooter className="p-3 pt-0">
+        <Skeleton className="h-8 w-full" />
       </CardFooter>
     </Card>
   );
@@ -147,15 +148,15 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-        <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20 relative">
+        <div className="container mx-auto px-4 py-8 sm:py-10 lg:py-12 relative">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-left duration-700">
+            <div className="space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-left duration-700">
               <div className="inline-block">
                 <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-secondary text-secondary-foreground rounded-full text-xs sm:text-sm font-semibold">
                   Global Digital Marketplace
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-7xl font-bold leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight">
                 Buy & Sell Digital Products With Ease
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
@@ -192,15 +193,15 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
+      <section className="py-8 sm:py-10 lg:py-12 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">How It Works</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          <div className="text-center mb-6 sm:mb-8 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">How It Works</h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-4">
               Start selling your digital products in 4 easy steps
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { step: "01", title: "Create Account", desc: "Sign up free in seconds" },
               { step: "02", title: "Upload Product", desc: "Add file or download link" },
@@ -211,10 +212,10 @@ const Home = () => {
                 key={idx}
                 className="relative overflow-hidden group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105"
               >
-                <CardContent className="p-8">
-                  <div className="text-6xl font-bold text-primary/10 mb-4">{item.step}</div>
-                  <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.desc}</p>
+                <CardContent className="p-5">
+                  <div className="text-4xl font-bold text-primary/10 mb-2">{item.step}</div>
+                  <h3 className="text-lg font-bold mb-1.5">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -223,15 +224,15 @@ const Home = () => {
       </section>
 
       {/* Features */}
-      <section className="py-12 sm:py-16 lg:py-20">
+      <section className="py-8 sm:py-10 lg:py-12">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 sm:mb-16 space-y-3 sm:space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Digisellix Advantages</h2>
-            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          <div className="text-center mb-6 sm:mb-8 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">Digisellix Advantages</h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-4">
               Trusted marketplace platform with complete features for creators
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
                 icon: iconPayment,
@@ -258,12 +259,12 @@ const Home = () => {
                 key={idx}
                 className="text-center group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105"
               >
-                <CardContent className="p-8 space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <img src={feature.icon} alt={feature.title} className="w-12 h-12" />
+                <CardContent className="p-5 space-y-3">
+                  <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <img src={feature.icon} alt={feature.title} className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-bold">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.desc}</p>
+                  <h3 className="text-base font-bold">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground">{feature.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -273,19 +274,19 @@ const Home = () => {
 
       {/* Featured Products */}
       {featuredProducts && featuredProducts.length > 0 && (
-        <section className="py-20 bg-muted/30">
+        <section className="py-10 bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12 space-y-4">
+            <div className="text-center mb-6 space-y-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full">
                 <Star className="h-5 w-5 text-accent fill-accent" />
                 <span className="font-semibold text-accent">Featured Products</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold">Premium Picks</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold">Premium Picks</h2>
+              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 Handpicked premium products from top creators
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {loadingFeatured
                 ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
                 : featuredProducts.map((product) => (
@@ -298,19 +299,19 @@ const Home = () => {
 
       {/* Popular Products */}
       {popularProducts && popularProducts.length > 0 && (
-        <section className="py-20">
+        <section className="py-10">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12 space-y-4">
+            <div className="text-center mb-6 space-y-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span className="font-semibold text-primary">Best Sellers</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold">Popular Products</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold">Popular Products</h2>
+              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 Most purchased products by our community
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {loadingPopular
                 ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                 : popularProducts.map((product) => (
@@ -323,19 +324,19 @@ const Home = () => {
 
       {/* Newest Products */}
       {newestProducts && newestProducts.length > 0 && (
-        <section className="py-20 bg-muted/30">
+        <section className="py-10 bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12 space-y-4">
+            <div className="text-center mb-6 space-y-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full">
                 <Sparkles className="h-5 w-5 text-accent" />
                 <span className="font-semibold text-accent">Just Added</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold">Newest Products</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold">Newest Products</h2>
+              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
                 Fresh products just added to the marketplace
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {loadingNewest
                 ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                 : newestProducts.map((product) => (
@@ -347,22 +348,22 @@ const Home = () => {
       )}
 
       {/* All Products */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-10 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold">Explore All Products</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-6 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">Explore All Products</h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Browse our complete collection of digital products
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {loadingProducts
               ? [...Array(30)].map((_, i) => <ProductSkeleton key={i} />)
               : products?.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
           </div>
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link to="/products">
               <Button variant="hero" size="lg">
                 View All Products
@@ -374,7 +375,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-primary to-accent text-white">
+      <section className="py-8 sm:py-10 lg:py-12 bg-gradient-to-br from-primary to-accent text-white">
         <div className="container mx-auto px-4 text-center space-y-6 sm:space-y-8">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold px-4">
             Ready to Start Your Digital Business?
@@ -396,9 +397,9 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12 bg-card">
+      <footer className="border-t border-border py-8 bg-card">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Logo className="h-8 w-auto sm:h-10" height={40} priority />

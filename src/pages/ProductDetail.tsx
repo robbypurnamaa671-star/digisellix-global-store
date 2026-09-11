@@ -49,14 +49,14 @@ const ProductDetail = () => {
   const { data: seller } = useQuery({
     queryKey: ["seller", product?.seller_id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("full_name")
+      const { data, error } = await (supabase as any)
+        .from("public_sellers")
+        .select("id, full_name, slug, avatar_url")
         .eq("id", product?.seller_id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as { id: string; full_name: string; slug: string; avatar_url: string | null } | null;
     },
     enabled: !!product?.seller_id,
   });
@@ -237,7 +237,10 @@ const ProductDetail = () => {
                 <User className="h-4 w-4 text-muted-foreground" />
                 <div className="text-sm text-muted-foreground">
                   By{" "}
-                  <Link to={`/seller/${product.seller_id}`} className="font-semibold text-foreground hover:text-primary">
+                  <Link
+                    to={seller?.slug ? `/store/${seller.slug}` : `/seller/${product.seller_id}`}
+                    className="font-semibold text-foreground hover:text-primary"
+                  >
                     {seller?.full_name || "Seller"}
                   </Link>
                 </div>
