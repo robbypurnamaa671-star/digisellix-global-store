@@ -80,36 +80,37 @@ const Home = () => {
 
   const ProductCard = ({ product }: { product: any }) => (
     <Link to={`/products/${product.id}`}>
-      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:scale-105 overflow-hidden h-full">
+      <Card className="group hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
         <div className="aspect-video overflow-hidden bg-muted">
           {product.thumbnail_url ? (
             <img
               src={product.thumbnail_url}
               alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
-              <span className="text-4xl">📦</span>
+              <span className="text-2xl">📦</span>
             </div>
           )}
         </div>
-        <CardContent className="p-4">
-          <Badge variant="secondary" className="mb-2">
+        <CardContent className="p-3">
+          <Badge variant="secondary" className="mb-1.5 text-[10px] px-1.5 py-0">
             {product.category}
           </Badge>
-          <h3 className="font-bold text-lg mb-2 line-clamp-2">
+          <h3 className="font-semibold text-sm mb-1 line-clamp-2">
             {product.title}
           </h3>
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-base font-bold text-primary">
             ${Number(product.price_usd).toFixed(2)}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-[11px] text-muted-foreground">
             Rp {Number(product.price_idr).toLocaleString('id-ID')}
           </div>
         </CardContent>
-        <CardFooter className="p-4 pt-0">
-          <Button variant="outline" className="w-full">
+        <CardFooter className="p-3 pt-0">
+          <Button variant="outline" size="sm" className="w-full h-8 text-xs">
             View Details
           </Button>
         </CardFooter>
@@ -120,13 +121,13 @@ const Home = () => {
   const ProductSkeleton = () => (
     <Card>
       <Skeleton className="aspect-video w-full" />
-      <CardContent className="p-4">
-        <Skeleton className="h-4 w-20 mb-2" />
-        <Skeleton className="h-6 w-full mb-2" />
-        <Skeleton className="h-8 w-24" />
+      <CardContent className="p-3">
+        <Skeleton className="h-3 w-16 mb-1.5" />
+        <Skeleton className="h-4 w-full mb-1.5" />
+        <Skeleton className="h-5 w-20" />
       </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Skeleton className="h-10 w-full" />
+      <CardFooter className="p-3 pt-0">
+        <Skeleton className="h-8 w-full" />
       </CardFooter>
     </Card>
   );
