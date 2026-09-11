@@ -286,7 +286,7 @@ const Home = () => {
                 Handpicked premium products from top creators
               </p>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {loadingFeatured
                 ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
                 : featuredProducts.map((product) => (
@@ -311,7 +311,7 @@ const Home = () => {
                 Most purchased products by our community
               </p>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {loadingPopular
                 ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                 : popularProducts.map((product) => (
@@ -336,7 +336,7 @@ const Home = () => {
                 Fresh products just added to the marketplace
               </p>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {loadingNewest
                 ? [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                 : newestProducts.map((product) => (
@@ -356,7 +356,7 @@ const Home = () => {
               Browse our complete collection of digital products
             </p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {loadingProducts
               ? [...Array(30)].map((_, i) => <ProductSkeleton key={i} />)
               : products?.map((product) => (
@@ -399,7 +399,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 bg-card">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Logo className="h-8 w-auto sm:h-10" height={40} priority />
