@@ -9,7 +9,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SEOHead } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroImage from "@/assets/hero-marketplace.jpg";
+import heroImage from "@/assets/hero-banner.webp";
 import iconProducts from "@/assets/icon-products.png";
 import iconPayment from "@/assets/icon-payment.png";
 import iconGlobal from "@/assets/icon-global.png";
@@ -240,50 +240,34 @@ const Home = () => {
       />
       <Navigation />
 
-      {/* Hero Section */}
+      {/* Hero Section — full-width professional banner */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-        <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-left duration-700">
-              <div className="inline-block">
-                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-secondary text-secondary-foreground rounded-full text-xs sm:text-sm font-semibold">
-                  {t('hero.badge')}
-                </span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-7xl font-bold leading-tight">
-                {t('hero.title')}
-              </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground">
-                {t('hero.subtitle')}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/auth" className="w-full sm:w-auto">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
-                    {t('hero.startSelling')}
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  </Button>
-                </Link>
-                <Link to="/products" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
-                    {t('hero.viewProducts')}
-                  </Button>
-                </Link>
-                <Link to="/escrow" className="w-full sm:w-auto">
-                  <Button variant="secondary" size="lg" className="w-full sm:w-auto text-base sm:text-lg">
-                    {t('hero.escrow')}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="relative animate-in fade-in slide-in-from-right duration-700 delay-300">
-              <img
-                src={heroImage}
-                alt="Digital Marketplace"
-                className="rounded-2xl shadow-[var(--shadow-card-hover)] hover:scale-105 transition-transform duration-500 w-full"
-              />
-            </div>
-          </div>
+        <h1 className="sr-only">{t('hero.title')}</h1>
+        <p className="sr-only">{t('hero.subtitle')}</p>
+        <div className="relative w-full">
+          <img
+            src={heroImage}
+            alt="Digisellix — Marketplace Produk Digital Indonesia: jual dan beli produk digital seperti template, ebook, dan AI prompt"
+            width={1600}
+            height={900}
+            loading="eager"
+            {...{ fetchpriority: "high" }}
+            decoding="async"
+            className="w-full h-auto block"
+          />
+          {/* Invisible click targets over the banner's built-in call-to-action buttons */}
+          <Link
+            to="/auth"
+            aria-label="Mulai Jualan Sekarang"
+            className="absolute cursor-pointer"
+            style={{ left: "4.5%", top: "75.5%", width: "19.5%", height: "9.5%" }}
+          />
+          <Link
+            to="/products"
+            aria-label="Lihat Produk Digital"
+            className="absolute cursor-pointer"
+            style={{ left: "25.5%", top: "76%", width: "14%", height: "9%" }}
+          />
         </div>
       </section>
 

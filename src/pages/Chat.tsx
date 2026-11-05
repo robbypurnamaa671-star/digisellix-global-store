@@ -6,14 +6,14 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MessageCircle, 
-  Send, 
-  ArrowLeft, 
-  ShoppingBag, 
+import {
+  MessageCircle,
+  Send,
+  ArrowLeft,
   Package,
   User
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -238,11 +238,8 @@ const Chat = () => {
       {/* Navigation */}
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <ShoppingBag className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Digisellix
-            </span>
+          <Link to="/" className="flex items-center gap-2" aria-label="Digisellix - Home">
+            <Logo className="h-8 w-auto" alt="Digisellix" />
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/products">
