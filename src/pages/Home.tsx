@@ -244,7 +244,7 @@ const Home = () => {
       <section className="relative overflow-hidden">
         <h1 className="sr-only">{t('hero.title')}</h1>
         <p className="sr-only">{t('hero.subtitle')}</p>
-        <div className="relative w-full">
+        <div className="relative mx-auto w-full max-w-xl">
           <img
             src={heroImage}
             alt="Digisellix — Marketplace Produk Digital Indonesia: jual dan beli produk digital seperti template, ebook, dan AI prompt"
