@@ -240,34 +240,46 @@ const Home = () => {
       />
       <Navigation />
 
-      {/* Hero Section — full-width professional banner */}
-      <section className="relative overflow-hidden">
-        <h1 className="sr-only">{t('hero.title')}</h1>
-        <p className="sr-only">{t('hero.subtitle')}</p>
-        <div className="relative mx-auto w-full max-w-xl">
-          <img
-            src={heroImage}
-            alt="Digisellix — Marketplace Produk Digital Indonesia: jual dan beli produk digital seperti template, ebook, dan AI prompt"
-            width={1600}
-            height={900}
-            loading="eager"
-            {...{ fetchpriority: "high" }}
-            decoding="async"
-            className="w-full h-auto block"
-          />
-          {/* Invisible click targets over the banner's built-in call-to-action buttons */}
-          <Link
-            to="/auth"
-            aria-label="Mulai Jualan Sekarang"
-            className="absolute cursor-pointer"
-            style={{ left: "4.5%", top: "75.5%", width: "19.5%", height: "9.5%" }}
-          />
-          <Link
-            to="/products"
-            aria-label="Lihat Produk Digital"
-            className="absolute cursor-pointer"
-            style={{ left: "25.5%", top: "76%", width: "14%", height: "9%" }}
-          />
+      {/* Hero Section */}
+      <section className="overflow-hidden">
+        <div className="container mx-auto grid items-center gap-8 px-4 py-10 sm:py-14 lg:grid-cols-2 lg:gap-10 lg:py-16">
+          <div className="space-y-5">
+            <p className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-primary">
+              Marketplace Digital Global
+            </p>
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl">
+              {t('hero.title')}
+            </h1>
+            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {t('hero.subtitle')}
+            </p>
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <Button asChild size="lg">
+                <Link to="/auth">
+                  {t('hero.startSelling')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link to="/products">{t('hero.viewProducts')}</Link>
+              </Button>
+              <Button asChild size="lg" variant="ghost">
+                <Link to="/escrow">{t('hero.escrow')}</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
+            <img
+              src={heroImage}
+              alt="Ilustrasi marketplace produk digital Digisellix"
+              width={1600}
+              height={900}
+              loading="eager"
+              {...{ fetchpriority: "high" }}
+              decoding="async"
+              className="block h-auto w-full rounded-2xl"
+            />
+          </div>
         </div>
       </section>
 
