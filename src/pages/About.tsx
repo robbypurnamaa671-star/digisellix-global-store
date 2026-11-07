@@ -19,7 +19,7 @@ const About = () => {
     "@type": "Organization",
     "name": "Digisellix",
     "url": "https://digisellix.com",
-    "logo": "https://digisellix.com/favicon.ico",
+    "logo": "https://digisellix-global-store.lovable.app/android-chrome-512x512.png",
     "description": "Global marketplace for buying and selling digital products including design bundles, templates, software, and creative assets.",
     "foundingDate": "2024",
     "founders": [

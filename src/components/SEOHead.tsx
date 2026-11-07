@@ -15,7 +15,7 @@ export const SEOHead = ({
   title,
   description,
   canonicalUrl,
-  ogImage = 'https://lovable.dev/opengraph-image-p98pqg.png',
+  ogImage = 'https://digisellix-global-store.lovable.app/android-chrome-512x512.png',
   ogType = 'website',
   keywords,
   noIndex = false,

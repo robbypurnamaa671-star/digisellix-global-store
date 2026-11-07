@@ -91,7 +91,7 @@ const BlogPost = () => {
         "name": "Digisellix",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://digisellix.com/favicon.ico",
+          "url": "https://digisellix-global-store.lovable.app/android-chrome-512x512.png",
         },
       },
       "mainEntityOfPage": {
